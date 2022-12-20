@@ -1,0 +1,9 @@
+id: 2
+# Provider name
+name: "Red Tiger"
+# Image shown in the provider card
+cardImage: "red-tiger-logo-2.png"
+# Short description that will be shown in the provider card
+description: "Dedicated to building the best slots and table games"
+# url path to provider
+path: "redtiger"

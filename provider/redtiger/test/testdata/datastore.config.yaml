@@ -1,0 +1,46 @@
+# The following example uses anchors and merge directive to avoid
+# a bit of duplicate config, for more information see https://yaml.org/type/merge.html
+
+pamApiToken: pam-api-token
+
+providers:
+  - &provider
+    provider: Red Tiger
+    providerId: 4
+
+providerApiKeys:
+  - << : *provider
+    apiKey: rt-api-key
+
+providerSessions:
+  - << : *provider
+    key: RECON_TOKEN_LONGER_THAN_32_CHARACTERS
+
+games:
+  - &game
+    providerGameId: SomeSlotGame
+
+gameRounds:
+  - << : *game
+    providerRoundId: 456
+    startTime: 2006-01-02T15:04:05Z
+
+players:
+  - id: 1
+    playerIdentifier: 5000001
+  - id: 2
+    playerIdentifier: 5000002
+
+accounts:
+  - id: 1
+    playerIdentifier: 5000001
+    currency: EUR
+    country: SE
+    language: sv
+    cashAmount: 1000
+  - id: 2
+    playerIdentifier: 5000002
+    currency: EUR
+    country: SE
+    language: sv
+    cashAmount: 1000

@@ -1,0 +1,9 @@
+id: 1
+# Provider name
+name: "Evolution"
+# Image shown in the provider card
+cardImage: "evolution-logo.png"
+# Short description that will be shown in the provider card
+description: "Leading provider of online casino tech"
+# url path to provider
+path: "evolution"

@@ -1,0 +1,58 @@
+linters:
+  enable:
+    - bidichk # checks for dangerous unicode character sequences
+    - bodyclose # checks whether HTTP response body is closed successfully
+    - decorder # checks declaration order and count of types, constants, variables and functions
+    - errcheck # checking for unchecked errors
+    - errchkjson # Checks types passed to the json encoding functions
+    - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
+    - exportloopref # checks for pointers to enclosing loop variables
+    - forbidigo # forbids identifiers
+    - funlen # tool for detection of long functions
+    - goconst # finds repeated strings that could be replaced by a constant
+    - gocritic # provides diagnostics that check for bugs, performance and style issues
+    - gocyclo # computes and checks the cyclomatic complexity of functions
+    - gosimple # specializes in simplifying a code
+    - gosec # inspects source code for security problems
+    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - ineffassign # detects when assignments to existing variables are not used
+    - nilnil # checks that there is no simultaneous return of nil error and an invalid value
+    - nolintlint # reports ill-formed or insufficient nolint directives
+    - predeclared # finds code that shadows one of Go's predeclared identifiers
+    - revive # drop-in replacement of golint
+    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
+    - tenv # detects using os.Setenv instead of t.Setenv since Go1.17
+    - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
+    - typecheck # Like the front-end of a Go compiler, parses and type-checks Go code
+    - unconvert # removes unnecessary type conversions
+    - unparam # reports unused function parameters
+    - unused # checks for unused constants, variables, functions and types
+    - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - funlen
+        - govet
+        - bodyclose
+        - errchkjson
+        - goconst
+        - gosec
+        - unparam
+    - path: \.gen\.go
+      linters:
+        - funlen
+        - govet
+linters-settings:
+  revive:
+    rules:
+      - name: var-naming # enable this to check for stuff like Xml -> XML naming
+        arguments: 
+          - []
+          - ["SID", "RGI"]
+      - name: package-comments
+  govet:
+    check-shadowing: true
+    enable-all: true

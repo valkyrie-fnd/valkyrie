@@ -1,0 +1,59 @@
+logging:
+  level: debug # info, warn, error, fatal, panic
+  async: # Optional async configuration (enabled by default, with default values)
+    enabled: true
+    buffer_size: 500000 # Log buffer will be emptied when full to avoid blocking producers
+    poll_interval: 5ms # Time duration between the log writer polling for new events
+  output:
+    type: stdout # Supported types: stdout, stderr, file
+    # for type=file, the following config is available:
+    # filename: /var/log/valkyrie.log # is the file to write logs to
+    # max_size: 100                   # the maximum size in megabytes of the log file before it gets rotated
+    # max_age: 28                     # the maximum number of days to retain old log files based on the
+    #                                 # timestamp encoded in their filename
+    # max_backups: 3                  # the maximum number of old log files to retain
+    # compress: false                 # determines if the rotated log files should be compressed using gzip
+tracing:
+  type: stdout # zipkin, jeager, googleCloudTrace
+  service_name: traceServiceName #
+  url: "https://tracing-server-url"
+  google_project_id: xyz # if you're using googleCloudTrace
+pam: # player account management
+  name: generic # check /pam-folder for available PAMs
+  api_key: pam-api-key # api key to PAM
+  url: "https://pam-url" # base url to PAM
+providers:
+  - name: Evolution # Name of provider
+    url: "https://evo-url" # url used for gameLaunch
+    auth: # auth is specific to each provider check /provider/{providerName}/config.go
+      casino_key: evo-casino-key # Some providers require a casino identifier if for example you have multiple casinos with the same provider
+      api_key: evo-api-key
+      casino_token: evo-casino-token
+  - name: Red Tiger
+    url: "https://rt-url"
+    auth: # auth is specific to each provider
+      api_key: rt-api-key
+      recon_token: rt-recon-token
+  - name: Caleta
+    url: "https://caleta-url"
+    auth:
+      verification_key: |
+        -----BEGIN PUBLIC KEY-----
+        caleta-verification-key
+        -----END PUBLIC KEY-----
+      signing_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        caleta-signing-key
+        -----END RSA PRIVATE KEY-----
+      operator_id: caleta-operator-id
+http_server: # optional http server configuration
+  read_timeout: 3s
+  write_timeout: 3s
+  idle_timeout: 30s
+  provider_address: localhost:8083
+  operator_address: localhost:8084
+http_client: # optional http client configuration
+  read_timeout: 10s
+  write_timeout: 3s
+  idle_timeout: 30s
+  request_timeout: 10s

@@ -1,0 +1,11 @@
+# The following example uses anchors and merge directive to avoid
+# a bit of duplicate config, for more information see https://yaml.org/type/merge.html
+
+pamApiToken: pam-api-token
+
+providers:
+  - provider: Caleta
+    providerId: 5
+
+games:
+  - providerGameId: SomeSlotGame

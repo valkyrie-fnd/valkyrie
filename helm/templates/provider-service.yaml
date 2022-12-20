@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "valkyrie.fullname" . }}-provider
+  labels:
+    {{- include "valkyrie.labels" . | nindent 4 }}
+  {{- with .Values.providerService.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.providerService.type }}
+  ports:
+    - port: {{ .Values.providerService.port }}
+      targetPort: http-provider
+      protocol: TCP
+      name: http-provider
+  selector:
+    {{- include "valkyrie.selectorLabels" . | nindent 4 }}

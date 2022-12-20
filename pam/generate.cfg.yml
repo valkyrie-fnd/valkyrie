@@ -1,0 +1,4 @@
+output: model.gen.go
+package: pam
+generate:
+  models: true

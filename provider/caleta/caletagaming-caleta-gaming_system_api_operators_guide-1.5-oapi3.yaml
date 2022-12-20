@@ -1,0 +1,1746 @@
+openapi: 3.0.1
+info:
+  title: Caleta Gaming System API - Operator's Guide
+  description: "# Overview \n\nCaleta Gaming System is complete RGS + RNG system that\
+    \ has been designed to offer Game Providers and Operators an easy and quick solution\
+    \ for any kind of Game Platform: **Slots**, **Bingo**, **Kenos**, **Video Poker**,\
+    \ etc.\n\nThis is Guide intends to provide in some easy steps, how to connect\
+    \ into our platform.\n\n\n# Request signing\n\n- All **Games API** requests have\
+    \ to be signed by Operator.\n- All **Wallet API** requests have to be signed by\
+    \ Caleta.\n\nBefore the integration, the **Operator** generates a **private/public\
+    \ key pair** and sends the **public** key to Caleta. \n\nThe body of all requests\
+    \ will be signed with `RSA-SHA256` using the respective private key and encoded\
+    \ to BASE64 (We have a python script example that <a href=\"https://bitbucket.org/paulocaleta/signaturetest/src\"\
+    >can be found here</a>). The signature will be placed in the `X-Auth-Signature`\
+    \ header.\n\n## Example:\n\nRequest body: `{\"user\":\"test\",\"country\":\"BR\"\
+    ,\"currency\":\"EUR\",\"operator_id\":1,\"token\":\"d5dcb4f6-db06-4ab1-9c63-d1f7dc12694e\"\
+    ,\"game_id\":10,\"lang\":\"en\",\"lobby_url\":\"https://casinosample.com\",\"\
+    deposit_url\":\"https://casinosample.com/deposit\"}`\n\nPrivate Key: <a href=\"\
+    https://bitbucket.org/paulocaleta/signaturetest/src/master/keys/key\">download\
+    \ here</a>\n\nCorrect signature:\n`eLAVF38xYGp4KyHnybr3vEkKY9l7+G3VJusrY5k+FbseYBXZsRcH6EDP9PTUCkAQNftnq61HAo3fyjPKPxJpRQwBJjZpvSHgf5K/VLquf3GU92kXxQwVC1UQzhboKSfk9Ub9tRRt0sQlfRUdYtLSWYDRrWGuDElTOAgE5uhR6Mlkc5UXSKye1JaQHPxrJyVryHCTgFJd+HCy2QYVMQeEl7yF6RYRqmQPGZuawTbvTvz8nRVu5/z5zFFmEHZc2MPQMQAuweP28FjaGnljMWUE89KH5PxiY5CAYZJmez2WXoL9/Voc4c3PJjntAlIOEzLLQ26NNGRKMLwjUsq8ScEEmA==`\n\
+    \n\n# Request consistency\n\nNote that the process is different for DEMO and REAL\
+    \ gameplay modes. In DEMO mode, user can open the game and play with fun mode\
+    \ money.\n\nBelow is an example of interaction flow to open the game in DEMO mode:\n\
+    1. Operator makes a Game API call to `/game/url` to obtain game launch URL. For\
+    \ DEMO mode, Operator has to pass `\"currency\":\"FUN\"`. Params `token`, `user`\
+    \ may be omitted.\n2. When the game URL is returned, the Operator uses it to direct\
+    \ the player to the game (for example, launch it in iframe or redirect player\
+    \ to the URL).\n3. In DEMO mode, no calls to Operator's API are made because Caleta\
+    \ handle the balance itself.\nIf player liked the game and wants to switch to\
+    \ REAL mode, Operator should proceed with the next steps.\n\nBelow is an example\
+    \ of interaction flow between the customer, Operator and Caleta in REAL mode:\n\
+    1. Operator generates and stores a unique game session token.\n2. Operator makes\
+    \ a Game API call `/game/url` and passes the generated token along with the other\
+    \ request parameters.\n3. When the game URL is returned, the Operator uses it\
+    \ to direct the player to the game (for example, launch it in iframe or redirect\
+    \ player to the URL).\n4. When the game URL is loaded in the browser Caleta server\
+    \ makes a Wallet API call /wallet/balance to the Operator's server.\n5. Operator\
+    \ verifies the token against the stored token and returns the user's balance.\
+    \ The user can then place a bet.\n6. When the user attempts to place a bet, Wallet\
+    \ API is triggers a `wallet/bet` on the Operator's server.\n7. The Operator verifies\
+    \ the token, ensures that the user has enough money for this bet, decreases the\
+    \ user's balance by the bet amount, and returns the updated user's balance.\n\
+    8. If the user wins, the Wallet API triggers a call `wallet/win` on the Operator's\
+    \ server. \n9. Operator verifies the token, increases the user's balance by the\
+    \ win amount, and returns the updated user's balance.\n10. Behaviour in case of\
+    \ user's loss depends on game Operator's needs. Possible options:\n      * Nothing\
+    \ is sent\n      * Sent win with amount 0\n      \n# Generic Seamless Wallet\n\
+    \  Caleta has developed a generic seamless Wallet API that is available to any\
+    \ operator who wants to use it during their integration. As it requires the use\
+    \ of X-Auth-Signature it brings greater security in transactions.\n  As a security\
+    \ option, Caleta may sends its public key to the Operator and perform send the\
+    \ same `X-Auth-Signature`.\n  ## Optional \n  If the operator already has a Wallet\
+    \ API, we can make a custom integration based on Operator's API doc.\n  \n# Handling\
+    \ errors\nDuring wallet transactions is 'normal' to have issues between both servers,\
+    \ which may be caused by connection issues and also some other special conditions,\
+    \ like player out of money and sometimes servers outage. Caleta API was designed\
+    \ to cover most of these worst scenarious and created the following rules.\n\n\
+    ## BET ERROR\nAny bet that fails will be automatically `DISCARDED` or `ROLLED\
+    \ BACK` depending on the operator response. \n\n`KNOWN ERRORS` - Errors where\
+    \ we CAN BE SURE the bet does completed. In these cases there is no rollback,\
+    \ we simply consider the bet `DISCARDED`. [RS_ERROR_INVALID_TOKEN, RS_ERROR_INVALID_GAME,\
+    \ RS_ERROR_WRONG_CURRENCY, RS_ERROR_NOT_ENOUGH_MONEY, RS_ERROR_USER_DISABLED,\
+    \ RS_ERROR_INVALID_SIGNATURE, RS_ERROR_WRONG_SYNTAX, RS_ERROR_WRONG_TYPES, RS_ERROR_DUPLICATE_TRANSACTION,\
+    \ RS_ERROR_BET_LIMIT_EXCEEDED].\n\n`UNKNOWN ERRORS`- Generic errors that can happen\
+    \ in any moment of the bet, so we CAN NOT BE SURE the bet has completed on client\
+    \ side. In these cases we consider the bet `ROLLED_BACK` [ RS_ERROR_UNKNOWN, RS_ERROR_TIMEOUT\
+    \ ]. Sometimes we receive malformed responses that can't be decoded to JSON so\
+    \ we do rollback on these cases as well.  \n\n## WIN ERROR\n\nAny failed win will\
+    \ be retried as many times necessary until complete, unless the API returns the\
+    \ following status [ RS_ERROR_INVALID_TOKEN, RS_ERROR_INVALID_GAME, RS_ERROR_USER_DISABLED,\
+    \ RS_ERROR_WRONG_CURRENCY, RS_ERROR_INVALID_TOKEN, RS_ERROR_DUPLICATE_TRANSACTION,\
+    \ RS_ERROR_TRANSACTION_DOES_NOT_EXIST, RS_ERROR_TRANSACTION_ROLLED_BACK ]. \n\
+    When any of the above error appears the game will not continue unless the issue\
+    \ is solved by the casino and caleta's team, so please have a good read on the\
+    \ status usage to send these status when something pretty wrong is happening.\n\
+    \n## ROLLBACK ERROR\n\nAny rollback transaction will be retried as many times\
+    \ necessary until complete, unless the API returns the following status [ RS_ERROR_INVALID_TOKEN,\
+    \ RS_ERROR_INVALID_GAME, RS_ERROR_WRONG_CURRENCY, RS_ERROR_USER_DISABLED, RS_ERROR_INVALID_SIGNATURE,\
+    \ RS_ERROR_DUPLICATE_TRANSACTION, RS_ERROR_TRANSACTION_DOES_NOT_EXIST, RS_ERROR_TRANSACTION_ROLLED_BACK].\n\
+    \n# Policy of open rounds, transactions and archiving\n- We will automatically\
+    \ finish all the open rounds with more than 48 hours. \n- We will automatically\
+    \ resolve the pending transactions with more than 30 days. \n- We will archive\
+    \ all transactions with more than 4 months. \n  \n# Glossary\nAt the bottom of\
+    \ this page is located glossary of terms and entities which we use in our system\
+    \ and documentation. If you have run into an unknown parameter or need more information\
+    \ about a parameter, please, refer to the glossary for the description, examples,\
+    \ and a list of possible values.\n"
+  version: "1.5"
+servers:
+- url: //staging.the-rgs.com/
+tags:
+- name: Games API
+  description: Provides several methods for the Operator to display games on the Operator�s
+    website.
+- name: Freebets API
+  description: "Freebets API lets you grant rewards (freespins, freebets, prizes)\
+    \ to a single user or severals users. First-time-user bonuses are not supported\
+    \ the Freebet feature only functions if the player has interacted with our games\
+    \ before."
+- name: Wallet API
+  description: Operator is expected to provide API for Caleta Gaming System calls.
+    API should process the described requests from Caleta.
+paths:
+  /api/game/url:
+    post:
+      tags:
+      - Games API
+      description: |-
+        Returns the Landing URL of the chosen game. Operator has to forward User to returned URL. There are several ways to forward the User:
+                  1. Embed URL into iframe on your site;
+                  2. Redirect User to URL;
+                  3. Open URL in new window/tab of browser.
+      operationId: /game/url
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key associated with provided
+          operator_id.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: YqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/game_url_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+      x-codegen-request-body-name: body
+  /api/game/list:
+    post:
+      tags:
+      - Games API
+      description: Shows the list of games that are available for the Operator
+      operationId: /game/list
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key associated with provided
+          operator_id.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/game_list_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Games'
+              example:
+              - url_thumb: https://caletaholdings.com/staging/torchoffire/assets/game/lobby/icon.jpg
+              - url_square_thumb: https://caletaholdings.com/staging/torchoffire/assets/game/lobby/square_icon.jpg
+                url_background: https://caletaholdings.com/staging/torchoffire/assets/game/lobby/bg.jpg
+                product: Caleta
+                platforms:
+                - GPL_DESKTOP
+                - GPL_MOBILE
+                name: Torch of Fire
+                game_id: 1
+                game_code: cg_torchoffire
+                enabled: true
+                category: Video Slots
+                blocked_countries:
+                - PL
+                - BG
+      x-codegen-request-body-name: body
+  /api/game/round:
+    post:
+      tags:
+      - Games API
+      description: Return the URL of a game round detail.
+      operationId: /game/round
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key associated with provided
+          operator_id.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/game_round_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                url: https://backoffice.planetoffortune.com/round_details/id/user
+        "405":
+          description: ERROR
+          content:
+            application/json:
+              example:
+                code: "100,"
+                message: Invalid Round
+      x-codegen-request-body-name: body
+  /wallet/check:
+    post:
+      tags:
+      - Wallet API
+      description: '`OPTIONAL`- Change the initial token received on `/game/url` for
+        a new one that will be used on wallet transactions. '
+      operationId: /wallet/check
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key associated with provided
+          operator_id.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wallet_check_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+      x-codegen-request-body-name: body
+  /wallet/balance:
+    post:
+      tags:
+      - Wallet API
+      description: Called when player's balance is needed. Operator is expected to
+        return player's current balance. Game id is provided to help Operator with
+        player's activity statistics.
+      operationId: /wallet/balance
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wallet_balance_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+      x-codegen-request-body-name: body
+  /wallet/bet:
+    post:
+      tags:
+      - Wallet API
+      description: "Called when the User places a bet (debit). Operator is expected\
+        \ to decrease player's balance by `amount` and return new balance. Each bet\
+        \ has `transaction_uuid` which is unique identifier of this transaction. Before\
+        \ altering of User's balance, Operator has to check that bet wasn't processed\
+        \ before.<br/>There might be **Retry Policy**: In case of network fail (HTTP\
+        \ 502, timeout, nxdomain, etc.), we will retry 3 times with 1 sec of timeout.\
+        \ If we do not receive 200 HTTP status, this transaction will be counted as\
+        \ failed and there is no rollback for this operation).<br/>During **Free Bets**\
+        \ the fields `campaign_uuid` and `reward_uuid` will be referring to an existing\
+        \ campaign and the reward uuid given to a player."
+      operationId: /wallet/bet
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wallet_bet_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+      x-codegen-request-body-name: body
+  /wallet/win:
+    post:
+      tags:
+      - Wallet API
+      description: |-
+        Called when the User wins (credit). Operator is expected to increase player's balance by **amount** and return new balance. `reference_transaction_uuid` show to which bet this win is related. Each win has `transaction_uuid` which is unique identifier of this transaction. Before any altering of User's balance, Operator has to check that win wasn't processed before.
+        **Retry Policy**: In case of network fail (HTTP 502, timeout, nxdomain, etc.) we will retry 3 times with 1 sec of timeout. The rest of retry logic is left to provider's RGS: the retries may continue indefinitely or the bet may be rolled back, and the money returned back to user.
+      operationId: /transaction/win
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wallet_win_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+      x-codegen-request-body-name: body
+  /wallet/rollback:
+    post:
+      tags:
+      - Wallet API
+      description: "Called when there is need to roll back the effect of the referenced\
+        \ transaction. Operator is expected to find referenced transaction, roll back\
+        \ its effects and return the player's new balance."
+      operationId: /wallet/rollback
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wallet_rollback_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+      x-codegen-request-body-name: body
+  /api/freebet/rewards/create:
+    post:
+      tags:
+      - Freebets API
+      description: "Endpoint for creating rewards. You can create rewards of 2 types:\
+        \ **Single-use** and **Campaign-related**.<br/><br/>**Creating a Single-use\
+        \ reward**<br/><br/>1. Get a list of available prepaids via /prepaids/list\
+        \ and select a prepaid.<br/>2. Add the prepaid_uuid to request.<br/>3. If\
+        \ `bet_value` and/or `bet_count` in the prepaid is `NULL`, you can enter any\
+        \ values. Otherwise, the values from the prepaid will be used to create the\
+        \ reward.<br/><br/>**Creating a Campaign-related reward**<br/><br/>1. Create\
+        \ a campaign via campaigns/create.<br/>2. Pass the campaign_uuid.<br/>3. prepaid_uuid,\
+        \ bet_value, bet_count, start_time, and end_time values will be inherited\
+        \ from the campaign.<br/>We strongly recommend that you set the **start /\
+        \ end dates** for individual rewards and campaigns. Otherwise, the rewards\
+        \ will automatically expire in several weeks.<br/>**Rewards for new Users**<br/>It\
+        \ is possible to give free bets for users that never played Caleta games,\
+        \ just remember to send the `operator_id` and `sub_partner_id`, with these\
+        \ two information in hand the player will be automatically created and set\
+        \ the reward."
+      operationId: /freebet/rewards/create
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rewards_create_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+      x-codegen-request-body-name: body
+  /api/freebet/rewards/cancel:
+    post:
+      tags:
+      - Freebets API
+      description: Endpoint for canceling rewards. Please note that a reward already
+        claimed by user cannot be canceled.
+      operationId: /freebet/rewards/cancel
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rewards_cancel_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reward'
+      x-codegen-request-body-name: body
+  /api/freebet/prepaids/list:
+    post:
+      tags:
+      - Freebets API
+      description: Shows the list of available prepaids.
+      operationId: /freebet/prepaids/list
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/prepaids_list_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrepaidList'
+      x-codegen-request-body-name: body
+  /api/freebet/campaigns/list:
+    post:
+      tags:
+      - Freebets API
+      description: Shows the list of available campaigns.
+      operationId: /freebet/campaigns/list
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/campaigns_list_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignList'
+      x-codegen-request-body-name: body
+  /api/freebet/campaigns/create:
+    post:
+      tags:
+      - Freebets API
+      description: |
+        'Creating a campaign:
+         1. Get a list of available prepaids via `/prepaids/list` and select a prepaid.
+         2. Add the prepaid_uuid to request.
+         3. If `bet_value` and/or `bet_count` in the prepaid is `NULL`, you can enter any values. Otherwise, the values from the prepaid will be used to create the reward.
+         4. Submit `/campaigns/create` request.'
+      operationId: /freebet/campaigns/create
+      parameters:
+      - name: X-Auth-Signature
+        in: header
+        description: RSA-SHA256 is used to sign the request body using the private
+          key. The signature is validated using the public key sent to operator.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/campaigns_create_body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    BalanceResponse:
+      required:
+      - request_uuid
+      - status
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/user'
+        status:
+          $ref: '#/components/schemas/status'
+        request_uuid:
+          $ref: '#/components/schemas/request_uuid'
+        currency:
+          $ref: '#/components/schemas/currency'
+        balance:
+          $ref: '#/components/schemas/money_amount'
+    blocked_countries:
+      type: array
+      description: List of blocked countries. Game shouldn�t be shown and launched
+        for users from these countries.
+      example:
+      - PL
+      - BG
+      items:
+        $ref: '#/components/schemas/country'
+    category:
+      type: string
+      description: Game category. Following enum contains all possible values.
+      example: Blackjack
+      enum:
+      - Unknown
+      - Baccarat
+      - Bet On Poker
+      - Bingo
+      - Blackjack
+      - Casual Games
+      - Jackpot Slots
+      - Live Baccarat
+      - Live Blackjack
+      - Live Dealer
+      - Live Dice
+      - Live Games
+      - Live Keno
+      - Live Lottery
+      - Live Roulette
+      - Lottery
+      - Multiplayer
+      - Player Props
+      - Poker
+      - Roulette
+      - Scratch Cards
+      - Sportsbook
+      - Table Games
+      - Video Poker
+      - Video Slots
+      - Virtual Sports
+      - Wheel of Fortune
+      - Video Bingo
+      - Fixed Odds
+    country:
+      type: string
+      description: User's country ISO 3166-1 code. Following enum contains all supported
+        values.
+      example: EE
+      enum:
+      - XX
+      - AD
+      - AE
+      - AF
+      - AG
+      - AI
+      - AL
+      - AM
+      - AO
+      - AQ
+      - AR
+      - AS
+      - AT
+      - AU
+      - AW
+      - AX
+      - AZ
+      - BA
+      - BB
+      - BD
+      - BE
+      - BF
+      - BG
+      - BH
+      - BI
+      - BJ
+      - BL
+      - BM
+      - BN
+      - BO
+      - BQ
+      - BR
+      - BS
+      - BT
+      - BV
+      - BW
+      - BY
+      - BZ
+      - CA
+      - CC
+      - CD
+      - CF
+      - CG
+      - CH
+      - CI
+      - CK
+      - CL
+      - CM
+      - CN
+      - CO
+      - CR
+      - CU
+      - CV
+      - CW
+      - CX
+      - CY
+      - CZ
+      - DE
+      - DJ
+      - DK
+      - DM
+      - DO
+      - DZ
+      - EC
+      - EE
+      - EG
+      - EH
+      - ER
+      - ES
+      - ET
+      - FI
+      - FJ
+      - FK
+      - FM
+      - FO
+      - FR
+      - GA
+      - GB
+      - GD
+      - GE
+      - GF
+      - GG
+      - GH
+      - GI
+      - GL
+      - GM
+      - GN
+      - GP
+      - GQ
+      - GR
+      - GS
+      - GT
+      - GU
+      - GW
+      - GY
+      - HK
+      - HM
+      - HN
+      - HR
+      - HT
+      - HU
+      - ID
+      - IE
+      - IL
+      - IM
+      - IN
+      - IO
+      - IQ
+      - IR
+      - IS
+      - IT
+      - JE
+      - JM
+      - JO
+      - JP
+      - KE
+      - KG
+      - KH
+      - KI
+      - KM
+      - KN
+      - KP
+      - KR
+      - KW
+      - KY
+      - KZ
+      - LA
+      - LB
+      - LC
+      - LI
+      - LK
+      - LR
+      - LS
+      - LT
+      - LU
+      - LV
+      - LY
+      - MA
+      - MC
+      - MD
+      - ME
+      - MF
+      - MG
+      - MH
+      - MK
+      - ML
+      - MM
+      - MN
+      - MO
+      - MP
+      - MQ
+      - MR
+      - MS
+      - MT
+      - MU
+      - MV
+      - MW
+      - MX
+      - MY
+      - MZ
+      - NA
+      - NC
+      - NE
+      - NF
+      - NG
+      - NI
+      - NL
+      - "NO"
+      - NP
+      - NR
+      - NU
+      - NZ
+      - OM
+      - PA
+      - PE
+      - PF
+      - PG
+      - PH
+      - PK
+      - PL
+      - PM
+      - PN
+      - PR
+      - PS
+      - PT
+      - PW
+      - PY
+      - QA
+      - RE
+      - RO
+      - RS
+      - RU
+      - RW
+      - SA
+      - SB
+      - SC
+      - SD
+      - SE
+      - SG
+      - SH
+      - SI
+      - SJ
+      - SK
+      - SL
+      - SM
+      - SN
+      - SO
+      - SR
+      - SS
+      - ST
+      - SV
+      - SX
+      - SY
+      - SZ
+      - TC
+      - TD
+      - TF
+      - TG
+      - TH
+      - TJ
+      - TK
+      - TL
+      - TM
+      - TN
+      - TO
+      - TR
+      - TT
+      - TV
+      - TW
+      - TZ
+      - UA
+      - UG
+      - UM
+      - US
+      - UY
+      - UZ
+      - VA
+      - VC
+      - VE
+      - VG
+      - VI
+      - VN
+      - VU
+      - WF
+      - WS
+      - YE
+      - YT
+      - ZA
+      - ZM
+      - ZW
+    currency:
+      type: string
+      description: ISO 4217 currency code. Following enum contains all currencies
+        supported by our system. Existing of currency in this list doesn't mean that
+        all providers support native game play with it. Please contact us to know
+        which provider supports which currencies.
+      example: EUR
+      enum:
+      - PKR
+      - TMT
+      - CUC
+      - CRC
+      - SGD
+      - LAK
+      - SOS
+      - BWP
+      - CLP
+      - RWF
+      - TOP
+      - GMD
+      - JOD
+      - MKD
+      - ARS
+      - TND
+      - XOF
+      - XCD
+      - ZWD
+      - CAD
+      - DKK
+      - CUP
+      - ERN
+      - JPY
+      - MYR
+      - BBD
+      - NPR
+      - KRW
+      - PHP
+      - BAM
+      - KZT
+      - TZS
+      - BOB
+      - KMF
+      - SYP
+      - VND
+      - SAR
+      - BRL
+      - AMD
+      - KWD
+      - NAD
+      - GHS
+      - ALL
+      - OMR
+      - MAD
+      - MZN
+      - GIP
+      - DJF
+      - BIF
+      - uBTC
+      - PLN
+      - UZS
+      - NZD
+      - TTD
+      - EUR
+      - AWG
+      - IRR
+      - BGN
+      - UYU
+      - HNL
+      - LTC
+      - RUB
+      - BMD
+      - PAB
+      - LTL
+      - HRK
+      - UAH
+      - GYD
+      - SSP
+      - PGK
+      - IQD
+      - CZK
+      - AZN
+      - EGP
+      - AED
+      - KYD
+      - AOA
+      - RON
+      - MVR
+      - SZL
+      - mLTC
+      - BZD
+      - VEF
+      - AUD
+      - TJS
+      - MGA
+      - MMK
+      - SOC
+      - FJD
+      - DOP
+      - NGN
+      - BDT
+      - JMD
+      - XPF
+      - BYR
+      - HTG
+      - THB
+      - SCR
+      - TRY
+      - mETH
+      - uETH
+      - PYG
+      - GEL
+      - BND
+      - KES
+      - COP
+      - SDG
+      - SEK
+      - SRD
+      - IDR
+      - MNT
+      - FKP
+      - ETB
+      - YER
+      - RSD
+      - NIO
+      - HKD
+      - ETH
+      - TWD
+      - mBTC
+      - VUV
+      - DZD
+      - NOK
+      - CNY
+      - MUR
+      - MXN
+      - BSD
+      - MOP
+      - WST
+      - LRD
+      - BTN
+      - AFN
+      - XXX
+      - uLTC
+      - KPW
+      - INR
+      - LYD
+      - BHD
+      - LBP
+      - LKR
+      - GTQ
+      - KHR
+      - MWK
+      - ILS
+      - MRO
+      - ZAR
+      - CHF
+      - CVE
+      - PEN
+      - QAR
+      - KGS
+      - HUF
+      - GBP
+      - GNF
+      - ANG
+      - ZMW
+      - SBD
+      - SLL
+      - ISK
+      - UGX
+      - LSL
+      - MDL
+      - USD
+    datetime:
+      type: string
+      description: ISO 8601 Extended datetime format (YYYY-MM-DDThh:mm:ss).
+      format: ISO-8601
+      example: 2017-11-05T13:15:30
+    Game:
+      title: Game
+      required:
+      - blocked_countries
+      - category
+      - enabled
+      - game_id
+      - name
+      - platforms
+      - product
+      - url_background
+      - url_thumb
+      type: object
+      properties:
+        url_thumb:
+          type: string
+          description: Game preview image URL
+          example: https://games.caletagaming.com/slot/thumb.png
+        url_background:
+          type: string
+          description: Game background image URL
+          example: https://games.caletagaming.com/slot/bg.png
+        product:
+          $ref: '#/components/schemas/product'
+        platforms:
+          type: array
+          description: List of supported platforms
+          example:
+          - GPL_DESKTOP
+          - GPL_MOBILE
+          items:
+            $ref: '#/components/schemas/platform'
+        name:
+          type: string
+          description: Verbose game name
+          example: Torch of Fire
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        enabled:
+          type: boolean
+          description: Shows whether game is enabled or not
+          example: true
+        category:
+          $ref: '#/components/schemas/category'
+        blocked_countries:
+          $ref: '#/components/schemas/blocked_countries'
+      description: Caleta game item
+      example:
+        url_thumb: https://picture-hosting.com/blackjack/thumb.png
+        url_background: https://picture-hosting.com/blackjack/bg.png
+        product: OneTouch
+        platforms:
+        - GPL_DESKTOP
+        - GPL_MOBILE
+        name: Torch of Fire
+        game_id: 1
+        enabled: true
+        category: Video Slots
+        blocked_countries:
+        - PL
+        - BG
+    Games:
+      type: array
+      items:
+        $ref: '#/components/schemas/Game'
+    game_id:
+      type: integer
+      description: "Deprecated: Use `game_code` instead.<br/>Unique game ID Caleta\
+        \ system. Can be obtained from `/api/game/list` endpoint.<br/>Note: this value\
+        \ may change from each server (staging, production)"
+      example: 132
+    game_code:
+      type: string
+      description: Unique Game Code on Caleta system. Can be obtained from `/api/game/list`
+        endpoint. This variable intends to replace `game_id`.
+      example: cg_magicforest
+    is_free:
+      type: boolean
+      description: "Flag which shows that transaction was generated by a promotional\
+        \ tool (FreeSpins, etc). Usually, these transactions are credited to bonus\
+        \ wallets (if available)."
+      example: true
+    language:
+      type: string
+      description: "Supported ISO 639-1 language code, default is 'en'."
+      example: en
+      enum:
+      - en
+      - pt
+      - ko
+      - th
+      - de
+      - es
+      - ja
+      - ru
+      - tr
+      - vi
+      - zh
+    money_amount:
+      type: integer
+      description: "We use integers to represent the amount of money. To convert real\
+        \ float value to integer we multiply it by 100000. Example: $3.56 must be\
+        \ represented as 356000"
+      example: 1005000
+    Operator:
+      type: object
+      description: An Operator is a business with a platform (web site) that has been
+        authorised to Caleta games on their site. The Operator call Caleta Gaming
+        System API to get the games to their sites.
+    operator_id:
+      type: string
+      description: Unique identifier of Operator at Caleta Gaming System. Used to
+        authorize incoming requests. Can be obtained Caleta back office after Operator
+        is registered and set up Caleta system.
+      example: localhost
+    platform:
+      type: string
+      description: "User's platform. Affects what kind of game layout will be returned.\
+        \ `GPL_MOBILE` for mobiles and `GPL_DESKTOP` for desktop mode. Some Providers\
+        \ ignore this option and choose mode based on User's browser attributes (user-agent,\
+        \ resolution, ratio, orientation)."
+      example: GPL_DESKTOP
+      enum:
+      - GPL_DESKTOP
+      - GPL_MOBILE
+    product:
+      type: string
+      description: Name of the game product (Game Provider).
+      example: Caleta
+    request_uuid:
+      type: string
+      description: Standard 16-byte UUID. This id can be seen as network layer action.
+        An id of an action that is generated for each our call to Operator. Used to
+        sync Hub88 and Operator sides for debugging purposes. Operator has to respond
+        with the same request_uuid as the one that was received in request.
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    round:
+      type: string
+      description: Game round id. Used to relate all bets and wins in one round. All
+        transactions related to the same round will have the same value in this field.
+        It's unique through whole system.
+      example: CG-1718271
+    round_closed:
+      type: boolean
+      description: Denotes when the round is closed
+      example: false
+    status:
+      type: string
+      description: "Response status usage:<br/>RS_OK - when transaction was processed\
+        \ correctly or was already processed before.<br/>RS_ERROR_UNKNOWN - use this\
+        \ when you need a generic error code<br/>RS_ERROR_TIMEOUT - when the server\
+        \ was disconnected by timeout<br/>RS_ERROR_INVALID_TOKEN - when token never\
+        \ existed or is not associated to this player.<br/>RS_ERROR_INVALID_GAME -\
+        \ when the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the currency\
+        \ is not active or does not exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user\
+        \ is short of money<br/>RS_ERROR_USER_DISABLED when user is banned or inactive<br/>RS_ERROR_INVALID_SIGNATURE\
+        \ - when signature doesn't match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token\
+        \ exists (this rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX\
+        \ - message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e. when\
+        \ a type should be integer and came as string<br/>RS_ERROR_DUPLICATE_TRANSACTION\
+        \ - when the same transaction_uuid appears but for a different user, round\
+        \ and game, otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST\
+        \ - when doing a 'win' transaction and the 'bet' transaction id doesn't exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK\
+        \ - when a 'win' transaction happens in name of a rolled back transaction\
+        \ (when receiving a 'rollback' replies with 'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED\
+        \ - when the user exceeded its limits"
+      example: RS_OK
+      enum:
+      - RS_OK
+      - RS_ERROR_UNKNOWN
+      - RS_ERROR_TIMEOUT
+      - RS_ERROR_INVALID_TOKEN
+      - RS_ERROR_INVALID_GAME
+      - RS_ERROR_WRONG_CURRENCY
+      - RS_ERROR_NOT_ENOUGH_MONEY
+      - RS_ERROR_USER_DISABLED
+      - RS_ERROR_INVALID_SIGNATURE
+      - RS_ERROR_TOKEN_EXPIRED
+      - RS_ERROR_WRONG_SYNTAX
+      - RS_ERROR_WRONG_TYPES
+      - RS_ERROR_DUPLICATE_TRANSACTION
+      - RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+      - RS_ERROR_TRANSACTION_ROLLED_BACK
+      - RS_ERROR_BET_LIMIT_EXCEEDED
+    sub_partner_id:
+      type: string
+      description: "Id of Operator's sub-partner (brand, whitelabel, site, etc.) which\
+        \ uses same integration and credentials as Operator."
+      example: my-casino-id
+    supplier_user:
+      type: string
+      description: "The name of the user in Provider's system (in case Operator needs\
+        \ to find user in Provder's back office or report problem with the user).\
+        \ If value is NULL, the Operator can search for their own user_id."
+      example: user_19098
+    token:
+      type: string
+      description: "Operator's back end generates a token associated with the User,\
+        \ game, his or her current currency and maybe other parameters depending on\
+        \ the Operator's preferences. The token acts as an ID parameter for the game\
+        \ session. It is important that the currency is not changed during the current\
+        \ game session. If the User changes the currency or display unit, the Operator's\
+        \ backend needs to generate a new token and re-open the game with new token.\
+        \ In case of DEMO gameplay, this parameter may be omitted.<br/>A token should\
+        \ be valid for all bet transactions until a new one is generated, expired\
+        \ tokens should continue be valid for Win/Rollback transactions if is related\
+        \ to a previous existing bet."
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    transaction_uuid:
+      type: string
+      description: Unique wallet transaction.
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    user:
+      type: string
+      description: "Unique User ID in the Operator�s system. In case of DEMO gameplay,\
+        \ this parameter may be omitted."
+      example: user1210
+    reward_uuid:
+      type: string
+      description: "This holds the uuid of a reward given to a player on Caleta side.\
+        \ Rewards holds information about which campaigns belong, player, quantity\
+        \ left of Free Bets."
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    prepaid_uuid:
+      type: string
+      description: Unique identifier of the prepaid in Caleta side.
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    campaign_uuid:
+      type: string
+      description: "Each Free Bet campaign contains an unique identifier on Caleta\
+        \ side. Campaings holds information of game where Free Bet will happen, total\
+        \ of spins, bet value and period of campaign."
+      example: f562a685-a160-4d17-876d-ab3363db331c
+    Reward:
+      required:
+      - game_id
+      - prepaid_uuid
+      - reward_uuid
+      - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/user'
+        start_time:
+          $ref: '#/components/schemas/datetime'
+        reward_uuid:
+          $ref: '#/components/schemas/reward_uuid'
+        prepaid_uuid:
+          $ref: '#/components/schemas/prepaid_uuid'
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        end_time:
+          $ref: '#/components/schemas/datetime'
+        currency:
+          $ref: '#/components/schemas/currency'
+        campaign_uuid:
+          $ref: '#/components/schemas/campaign_uuid'
+        bet_value:
+          type: integer
+          description: We use integers to represent the amount of money. To convert
+            real float value to integer we multiply it by 100000. Example `3.56` must
+            be represented as 356000
+          example: 100000
+        bet_count:
+          type: integer
+          description: Quantity of given free bets
+          example: 5
+    PrepaidList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Prepaid'
+    Prepaid:
+      required:
+      - currency
+      - game_id
+      - prepaid_uuid
+      type: object
+      properties:
+        prepaid_uuid:
+          $ref: '#/components/schemas/prepaid_uuid'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        currency:
+          $ref: '#/components/schemas/currency'
+        bet_value:
+          type: integer
+          description: We use integers to represent the amount of money. To convert
+            real float value to integer we multiply it by 100000. Example `3.56` must
+            be represented as 356000
+          example: 100000
+        bet_count:
+          type: integer
+          description: Quantity of given free bets
+          example: 5
+    CampaignList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Campaign'
+    Campaign:
+      required:
+      - campaign_uuid
+      - game_id
+      - name
+      - prepaid_uuid
+      type: object
+      properties:
+        start_time:
+          $ref: '#/components/schemas/datetime'
+        prepaid_uuid:
+          $ref: '#/components/schemas/prepaid_uuid'
+        name:
+          type: string
+          description: Name of the campaign
+          example: Tasty campaign - Bingo 5 x 1.00 EUR
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        currency:
+          $ref: '#/components/schemas/currency'
+        campaign_uuid:
+          $ref: '#/components/schemas/campaign_uuid'
+        bet_value:
+          type: integer
+          description: We use integers to represent the amount of money. To convert
+            real float value to integer we multiply it by 100000. Example `3.56` must
+            be represented as 356000
+          example: 100000
+        bet_count:
+          type: integer
+          description: Quantity of given free bets
+          example: 5
+    game_url_body:
+      required:
+      - country
+      - currency
+      - game_code
+      - lang
+      - lobby_url
+      - operator_id
+      - sub_partner_id
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/user'
+        token:
+          $ref: '#/components/schemas/token'
+        sub_partner_id:
+          $ref: '#/components/schemas/sub_partner_id'
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+        lobby_url:
+          type: string
+          description: Most games have a `Home` button that redirects the User back
+            to the lobby. Put the lobby URL here.
+          example: https://casinosample.com/lobby
+        lang:
+          $ref: '#/components/schemas/language'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+        deposit_url:
+          type: string
+          description: Some games have button that redirects User to page where he
+            can deposit money. Put your URL to deposit page here.
+          example: https://amazing-casion.com/deposit
+        currency:
+          $ref: '#/components/schemas/currency'
+        country:
+          $ref: '#/components/schemas/country'
+    inline_response_200:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Landing URL of chosen game
+      example:
+        url: https://games.caletagaming.com/games/?token=d4d73882-b3fb-11e7-a3a6-58404eea6d16
+    inline_response_404:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Reason why request failed
+      example:
+        error: The operator_id does not correspond to any existing Operator.
+    game_list_body:
+      required:
+      - operator_id
+      type: object
+      properties:
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+    game_round_body:
+      required:
+      - operator_id
+      type: object
+      properties:
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+        transaction_uuid:
+          $ref: '#/components/schemas/transaction_uuid'
+        user:
+          $ref: '#/components/schemas/user'
+        round:
+          $ref: '#/components/schemas/round'
+    wallet_check_body:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+    inline_response_200_1:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+    wallet_balance_body:
+      required:
+      - game_code
+      - request_uuid
+      - supplier_user
+      - token
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+        request_uuid:
+          $ref: '#/components/schemas/request_uuid'
+        supplier_user:
+          $ref: '#/components/schemas/supplier_user'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+    wallet_bet_body:
+      required:
+      - amount
+      - currency
+      - game_code
+      - is_free
+      - request_uuid
+      - round
+      - round_closed
+      - supplier_user
+      - token
+      - transaction_uuid
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+        transaction_uuid:
+          $ref: '#/components/schemas/transaction_uuid'
+        supplier_user:
+          $ref: '#/components/schemas/supplier_user'
+        round_closed:
+          $ref: '#/components/schemas/round_closed'
+        round:
+          $ref: '#/components/schemas/round'
+        request_uuid:
+          $ref: '#/components/schemas/request_uuid'
+        is_free:
+          $ref: '#/components/schemas/is_free'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+        currency:
+          $ref: '#/components/schemas/currency'
+        campaign_uuid:
+          $ref: '#/components/schemas/campaign_uuid'
+        reward_uuid:
+          $ref: '#/components/schemas/reward_uuid'
+        bet:
+          type: string
+          description: "Field for metadata related to transaction, such as type of\
+            \ bet, value, time, etc. Differs from game to game. Not relevant for transaction\
+            \ processing procedure but could be useful for statistics or activity\
+            \ backtracking."
+          example: Extra balls n1
+        amount:
+          $ref: '#/components/schemas/money_amount'
+    wallet_win_body:
+      required:
+      - amount
+      - currency
+      - game_code
+      - is_free
+      - reference_transaction_uuid
+      - request_uuid
+      - round
+      - round_closed
+      - supplier_user
+      - token
+      - transaction_uuid
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+        transaction_uuid:
+          $ref: '#/components/schemas/transaction_uuid'
+        supplier_user:
+          $ref: '#/components/schemas/supplier_user'
+        round_closed:
+          $ref: '#/components/schemas/round_closed'
+        round:
+          $ref: '#/components/schemas/round'
+        request_uuid:
+          $ref: '#/components/schemas/request_uuid'
+        reference_transaction_uuid:
+          type: string
+          description: "Unique identifier of the transaction that this transaction\
+            \ is referencing. In case of rollback, this field will contain transaction_uuid\
+            \ of the transaction which needs to be rolled back. In case of win, there\
+            \ will be transaction_uuid of the bet to which this win is related."
+          example: f562a685-a160-4d17-876d-ab3363db331c
+        is_free:
+          $ref: '#/components/schemas/is_free'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+        currency:
+          $ref: '#/components/schemas/currency'
+        bet:
+          type: string
+          description: "Field for metadata related to transaction, such as type of\
+            \ bet, value, time, etc. Differs from game to game. Not relevant for transaction\
+            \ processing procedure but could be useful for statistics or activity\
+            \ backtracking."
+          example: Extra balls n1
+        amount:
+          $ref: '#/components/schemas/money_amount'
+        campaign_uuid:
+          $ref: '#/components/schemas/campaign_uuid'
+        reward_uuid:
+          $ref: '#/components/schemas/reward_uuid'
+        jackpot_win:
+          type: integer
+          description: "This field is included if a jackpot win occurred. The reported value indicate\
+            \ how much of the win amount was contributed to from winning the jackpot.\
+            \ This value is represented as an integer similar to amount."
+          example: 1005000
+    wallet_rollback_body:
+      required:
+      - game_code
+      - reference_transaction_uuid
+      - request_uuid
+      - round
+      - round_closed
+      - token
+      - transaction_uuid
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+        transaction_uuid:
+          $ref: '#/components/schemas/transaction_uuid'
+        round_closed:
+          $ref: '#/components/schemas/round_closed'
+        round:
+          $ref: '#/components/schemas/round'
+        request_uuid:
+          $ref: '#/components/schemas/request_uuid'
+        reference_transaction_uuid:
+          type: string
+          description: "Unique identifier of the transaction that this transaction\
+            \ is referencing. In case of rollback, this field will contain transaction_uuid\
+            \ of the transaction which needs to be rolled back. In case of win, there\
+            \ will be transaction_uuid of the bet to which this win is related."
+          example: f562a685-a160-4d17-876d-ab3363db331c
+        is_free:
+          $ref: '#/components/schemas/is_free'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+        user:
+          $ref: '#/components/schemas/user'
+    rewards_create_body:
+      required:
+      - prepaid_uuid
+      - sub_partner_id
+      - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/user'
+        sub_partner_id:
+          $ref: '#/components/schemas/sub_partner_id'
+        start_time:
+          $ref: '#/components/schemas/datetime'
+        prepaid_uuid:
+          $ref: '#/components/schemas/prepaid_uuid'
+        reward_uuid:
+          $ref: '#/components/schemas/reward_uuid'
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        end_time:
+          $ref: '#/components/schemas/datetime'
+        campaign_uuid:
+          $ref: '#/components/schemas/campaign_uuid'
+        bet_value:
+          type: integer
+          description: We use integers to represent the amount of money. To convert
+            real float value to integer we multiply it by 100000. Example `3.56` must
+            be represented as 356000
+          example: 100000
+        bet_count:
+          type: integer
+          description: Quantity of given free bets
+          example: 5
+    rewards_cancel_body:
+      required:
+      - operator_id
+      - reward_uuid
+      type: object
+      properties:
+        reward_uuid:
+          $ref: '#/components/schemas/reward_uuid'
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+    prepaids_list_body:
+      required:
+      - operator_id
+      type: object
+      properties:
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+        game_id:
+          $ref: '#/components/schemas/game_id'
+        game_code:
+          $ref: '#/components/schemas/game_code'
+        currency:
+          $ref: '#/components/schemas/currency'
+    campaigns_list_body:
+      required:
+      - operator_id
+      type: object
+      properties:
+        operator_id:
+          $ref: '#/components/schemas/operator_id'
+    campaigns_create_body:
+      required:
+      - name
+      - prepaid_uuid
+      type: object
+      properties:
+        start_time:
+          $ref: '#/components/schemas/datetime'
+        prepaid_uuid:
+          $ref: '#/components/schemas/prepaid_uuid'
+        name:
+          type: string
+          description: Name of the campaign
+          example: Tasty campaign - Bingo 5 x 1.00 EUR
+        currency:
+          $ref: '#/components/schemas/currency'
+        bet_value:
+          type: integer
+          description: We use integers to represent the amount of money. To convert
+            real float value to integer we multiply it by 100000. Example `3.56` must
+            be represented as 356000
+          example: 100000
+        bet_count:
+          type: integer
+          description: Quantity of given free bets
+          example: 5
+x-original-swagger-version: "2.0"

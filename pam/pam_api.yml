@@ -1,0 +1,760 @@
+openapi: 3.1.0
+info:
+  title: Valkyrie PAM API
+  description: |
+    Specification describing required endpoints implemented in an operator
+    Player Account Management(PAM) system, in order to integrate with
+    the Valkyrie aggregator.
+
+    Response format will consist of a common wrapper containing status
+    code and either requested data or error details according to specs
+    below. In general HTTP error codes will only describe hard errors
+    not business logic.
+    ```json
+    {
+      "status": "OK",
+      "entity": {...}
+    }
+    ```
+    or in case of error:
+    ```json
+    {
+      "status": "ERROR",
+      "error": {
+        "code": 1
+        "msg": "provider not recognized"
+      }
+    }
+    ```
+  version: 0.5.0
+servers:
+  - url: http://pam-url
+    description: operator pam server
+tags:
+  - name: session
+    description: Player session operations
+  - name: account
+    description: Player account operations
+  - name: transactions
+    description: Player transaction operations
+  - name: gameround
+    description: Player game round
+
+paths:
+  /players/session:
+    get:
+      operationId: getSession
+      summary: Get session details
+      description: |
+        Get details for the player game session. The session details shall not change during the session lifetime.
+      tags:
+        - session
+      parameters:
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+      responses:
+        "200":
+          description: A SessionResponse containing the session details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      operationId: refreshSession
+      summary: Refresh player session
+      description: |
+        Refresh the player game session, returning a new session. Useful for cases when game launch
+        relies on tokens that might leak in transit. The old player session token is invalidated.
+      tags:
+        - session
+      parameters:
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+      responses:
+        "200":
+          description: A new session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /players/{playerId}/balance:
+    get:
+      operationId: getBalance
+      summary: Get player account balance
+      description: Get account balance information for a player
+      tags:
+        - account
+      parameters:
+        - $ref: "#/components/parameters/playerId"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+      responses:
+        "200":
+          description: The player balance summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BalanceResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /players/{playerId}/transactions:
+    get:
+      operationId: getTransactions
+      summary: Get transactions
+      description: |
+        Lookup transactions. At least one lookup parameter, `providerTransactionId` or `providerBetRef`, is required.
+
+        If both are present `providerBetRef` will be prioritized.
+      tags:
+        - transactions
+      parameters:
+        - $ref: "#/components/parameters/playerId"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+        - in: query
+          name: providerTransactionId
+          schema:
+            $ref: "#/components/schemas/ProviderTransactionId"
+        - in: query
+          name: providerBetRef
+          schema:
+            $ref: "#/components/schemas/ProviderBetRef"
+      responses:
+        "200":
+          description: The found transactions or error containing reason
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTransactionsResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "400":
+          description: Missing query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - error
+                properties:
+                  status:
+                    description: Status is error
+                    type: string
+                    example: Error
+                  error:
+                    description: Error details describing why PAM rejected the request
+                    type: object
+                    required:
+                      - code
+                      - message
+                    properties:
+                      message:
+                        type: string
+                      code:
+                        description: Pam Error code "PAM_ERR_MISSING_PROVIDER" or "PAM_ERR_UNDEFINED"
+                        type: string
+                        example: PAM_ERR_MISSING_PROVIDER
+
+    post:
+      operationId: addTransaction
+      summary: |
+        Create transaction for one player
+      description: |
+        Create a transaction for player with `playerId`  
+        Behavior for transaction types:  
+          All addTransactions calls are expected to be idempotent, i.e. if a transaction already exists then balance should be returned together with status OK.  
+          - WITHDRAW, PROMOWITHDRAW  
+            A withdraw transaction starts the chain of events for a game round.  
+          - DEPOSIT  
+            If there is no corresponding game round, return error `PAM_ERR_TRANS_NOT_FOUND` and balance.  
+            If there is a transaction with the same id but different user, game or round return error `PAM_ERR_DUPLICATE_TRANS`  
+            If there is in fact a corresponding game round, but it's closed, return error `PAM_ERR_TRANS_ALREADY_SETTLED` and balance.  
+          - PROMODEPOSIT  
+            A corresponding WITHDRAW does not need to exist for a PROMODEPOSIT to be accepted.  
+          - CANCEL, PROMOCANCEL  
+            If the corresponding WITHDRAW does not exist, return error `PAM_ERR_CANCEL_NOT_FOUND` and balance.  
+            If trying to cancel an already cancelled transaction, i.e. with a second unique cancellation request, return `PAM_ERR_TRANS_ALREADY_CANCELLED` and balance.  
+            If trying to cancel an already settled transaction, return error `PAM_ERR_TRANS_ALREADY_SETTLED` and balance.  
+            If trying to cancel something else, return error `PAM_ERR_CANCEL_NON_WITHDRAW` and balance.
+
+      tags:
+        - transactions
+      parameters:
+        - $ref: "#/components/parameters/playerId"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transaction"
+      responses:
+        "200":
+          description: The transaction response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddTransactionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "400":
+          description: Invalid request body
+
+  /players/{playerId}/gamerounds/{providerGameRoundId}:
+    get:
+      operationId: getGameRound
+      summary: Get game rounds
+      description: |
+        Get game round for `playerId` of the game round `providerGameRoundId`
+      tags:
+        - gameround
+      parameters:
+        - $ref: "#/components/parameters/playerId"
+        - $ref: "#/components/parameters/provider"
+        - $ref: "#/components/parameters/sessionToken"
+        - $ref: "#/components/parameters/correlationId"
+        - in: path
+          name: providerGameRoundId
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProviderRoundId"
+      responses:
+        "200":
+          description: Game round
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameRoundResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+components:
+  parameters:
+    provider:
+      in: query
+      name: provider
+      required: true
+      description: Name of the game provider associated with the session
+      example: Evolution
+      schema:
+        type: string
+    playerId:
+      in: path
+      required: true
+      name: playerId
+      description: id of player
+      example: "73619e57b3bc4b4e9014132be3bd12a9"
+      schema:
+        type: string
+    sessionToken:
+      name: X-Player-Token
+      description: Player game session identifier
+      in: header
+      required: true
+      schema:
+        $ref: "#/components/schemas/SessionToken"
+    correlationId:
+      name: X-Correlation-ID
+      description: |
+        Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
+      in: header
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    SessionToken:
+      name: sessionToken
+      description: Player game session identifier
+      type: string
+      example: 7ca10daf12f2cac9fecf559b11f0f0c8bd21ae43
+      minLength: 32
+      maxLength: 40
+    TransactionId:
+      type: string
+      description: Unique transaction identifier from the PAM system
+      minLength: 1
+      maxLength: 40
+      example: "05a9edc0f73c297b"
+    Currency:
+      type: string
+      description: "ISO 4217 three letter currency code"
+      pattern: "^[A-Z]{3}$"
+      example: "USD"
+      externalDocs:
+        url: https://en.wikipedia.org/wiki/ISO_4217
+    Country:
+      type: string
+      description: "ISO 3166-1 alpha-2 two letter country code"
+      pattern: "^[A-Z]{2}$"
+      example: "US"
+      externalDocs:
+        url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    Language:
+      type: string
+      description: "ISO 639-1 two letter language code"
+      pattern: "^[A-Z]{2}$"
+      example: "en"
+      externalDocs:
+        url: https://en.wikipedia.org/wiki/ISO_639-1
+    Provider:
+      type: string
+      description: "Game provider identity known by the PAM and Valkyrie"
+      example: "Evolution"
+    TransactionType:
+      type: string
+      enum:
+        - DEPOSIT
+        - WITHDRAW
+        - CANCEL
+        - PROMODEPOSIT
+        - PROMOWITHDRAW
+        - PROMOCANCEL
+      description: |
+        Transaction types according to:
+        * `DEPOSIT` - for adding funds
+        * `WITHDRAW` - subtract funds from an account balance. Generally for placing bets
+        * `CANCEL` - reverting a previous transaction
+        * `PROMODEPOSIT` - payout from promo and similar offerings programs
+        * `PROMOWITHDRAW` - buyin to promo and similar offerings programs
+        * `PROMOCANCEL` - reverting a previous promo transaction
+    Amount:
+      type: number
+      description: Amount in some currency, rounded to 6 decimal places
+      format: double
+      example: 1236.123456
+      x-go-type: Amt
+    ProviderTransactionId:
+      description: The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
+      type: string
+      example: 42a9e3d4eddade52363a5c4fac852e80681c2fe5
+      minLength: 1
+      maxLength: 40
+    ProviderBetRef:
+      description: Provider bet reference for grouping or matching transactions. Either this or `providerTransactionId` is required. This one is prioritized if both are present. It is used for RGS:s that encapsulate many transactions in a wrapper transaction.
+      type: string
+      example: f1adc846131b33be72df6a0c87e5e5da59dde0ff
+      minLength: 1
+      maxLength: 40
+    ProviderGameId:
+      description: The game identifier unique for the RGS(provider)
+      type: string
+      example: ecf559b11f0
+      minLength: 1
+      maxLength: 40
+    ProviderRoundId:
+      description: The unique game round identifier for the provider
+      type: string
+      example: 47d4f7c212464aacf10
+      minLength: 1
+      maxLength: 40
+    Timestamp:
+      description: A date and time in IS0 8601 format
+      example: 1994-11-05T13:15:30Z
+      format: date-time
+      type: string
+    PromoName:
+      description: Name of offering, if any
+      type: string
+      example: Try this other game for free
+      minLength: 1
+      maxLength: 40
+    PromoStatus:
+      description: Offering status, if any
+      type: string
+      example: Active
+      minLength: 1
+      maxLength: 40
+    PromoCode:
+      description: Offering code, if any
+      type: string
+      example: A1
+      minLength: 1
+      maxLength: 40
+    PromoConfigRef:
+      description: Offering configuration reference, if any
+      type: string
+      example: B2
+      minLength: 1
+      maxLength: 40
+    PromoAwardRef:
+      description: Offering award reference, if any
+      type: string
+      example: C3
+      minLength: 1
+      maxLength: 40
+    PromoReference:
+      description: Reference to the offering, if any
+      type: string
+      example: C3
+      minLength: 1
+      maxLength: 40
+    JackpotId:
+      description: Jackpot identifier
+      type: string
+      example: Jackpot1
+      minLength: 1
+      maxLength: 40
+    JackpotReference:
+      description: Jackpot reference, arbitrary use
+      type: string
+      example: Jackpot1
+      minLength: 1
+      maxLength: 40
+    BucketType:
+      description: Type of jackpot bucket, if any. Arbitrary use
+      type: string
+      example: Jackpot1
+      minLength: 1
+      maxLength: 40
+    BucketReference:
+      description: Jackpot bucket reference, arbitrary use
+      type: string
+      example: Jackpot1
+      minLength: 1
+      maxLength: 40
+    PlayerId:
+      description: id of player
+      type: string
+      example: 73619e57b3bc4b4e9014132be3bd12a9
+      minLength: 1
+      maxLength: 40
+    PromoType:
+      type: string
+      enum:
+        - PROMOBONUS
+        - PROMOTOURNAMENT
+        - PROMOFROMGAME
+        - PROMOCAP
+        - PROMOLIMIT
+        - PROMOMONEYREWARD
+        - FREEROUNDS
+        - FREESPINS
+      description: |
+        Promo types according to:
+        * `PROMOBONUS` - bonus promotion
+        * `PROMOTOURNAMENT` - tournament related promotion
+        * `PROMOFROMGAME` - promotion awarded from a game
+        * `PROMOCAP` - capped promotion
+        * `PROMOLIMIT` - limited promotion
+        * `PROMOMONEYREWARD` - real money promotion award
+        * `FREEROUNDS` - extra game rounds for free
+        * `FREESPINS` - extra spins for free
+    Promo:
+      type: object
+      properties:
+        promoType:
+          $ref: "#/components/schemas/PromoType"
+        promoName:
+          $ref: "#/components/schemas/PromoName"
+        promoStatus:
+          $ref: "#/components/schemas/PromoStatus"
+        promoReference:
+          $ref: "#/components/schemas/PromoReference"
+        promoCode:
+          $ref: "#/components/schemas/PromoCode"
+        promoAmount:
+          $ref: "#/components/schemas/Amount"
+        promoAmountTotal:
+          $ref: "#/components/schemas/Amount"
+        promoConfigRef:
+          $ref: "#/components/schemas/PromoConfigRef"
+        promoAwardRef:
+          $ref: "#/components/schemas/PromoAwardRef"
+        currency:
+          $ref: "#/components/schemas/Currency"
+    Jackpot:
+      type: object
+      properties:
+        jackpotId:
+          $ref: "#/components/schemas/JackpotId"
+        jackpotReference:
+          $ref: "#/components/schemas/JackpotReference"
+        jackpotAmount:
+          $ref: "#/components/schemas/Amount"
+        jackpotBuckets:
+          type: array
+          items:
+            $ref: "#/components/schemas/JackpotBucket"
+    JackpotBucket:
+      type: object
+      properties:
+        bucketType:
+          $ref: "#/components/schemas/BucketType"
+        bucketReference:
+          $ref: "#/components/schemas/BucketReference"
+        bucketAmount:
+          $ref: "#/components/schemas/Amount"
+        currency:
+          $ref: "#/components/schemas/Currency"
+    Tip:
+      type: object
+      properties:
+        tipAmount:
+          $ref: "#/components/schemas/Amount"
+    Transaction:
+      type: object
+      properties:
+        currency:
+          $ref: "#/components/schemas/Currency"
+        provider:
+          $ref: "#/components/schemas/Provider"
+        transactionType:
+          $ref: "#/components/schemas/TransactionType"
+        cashAmount:
+          $ref: "#/components/schemas/Amount"
+        bonusAmount:
+          $ref: "#/components/schemas/Amount"
+        promoAmount:
+          $ref: "#/components/schemas/Amount"
+        transactionDateTime:
+          $ref: "#/components/schemas/Timestamp"
+        providerTransactionId:
+          $ref: "#/components/schemas/ProviderTransactionId"
+        providerBetRef:
+          $ref: "#/components/schemas/ProviderBetRef"
+        providerGameId:
+          $ref: "#/components/schemas/ProviderGameId"
+        providerRoundId:
+          $ref: "#/components/schemas/ProviderRoundId"
+        isGameOver:
+          type: boolean
+        promos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Promo"
+        jackpots:
+          type: array
+          items:
+            $ref: "#/components/schemas/Jackpot"
+        tip:
+          $ref: "#/components/schemas/Tip"
+      required:
+        - currency
+        - provider
+        - transactionType
+        - cashAmount
+        - bonusAmount
+        - promoAmount
+        - transactionDateTime
+        - providerTransactionId
+    GameRound:
+      description: Game round object
+      type: object
+      properties:
+        providerGameId:
+          $ref: "#/components/schemas/ProviderGameId"
+        providerRoundId:
+          $ref: "#/components/schemas/ProviderRoundId"
+        startTime:
+          $ref: "#/components/schemas/Timestamp"
+        endTime:
+          $ref: "#/components/schemas/Timestamp"
+      required:
+        - providerGameId
+        - providerRoundId
+        - startTime
+    Balance:
+      description: player account balance
+      type: object
+      properties:
+        cashAmount:
+          description: Funds on the account.
+          $ref: "#/components/schemas/Amount"
+        bonusAmount:
+          description: Funds on the bonus account.
+          $ref: "#/components/schemas/Amount"
+        promoAmount:
+          $ref: "#/components/schemas/Amount"
+      required:
+        - cashAmount
+        - bonusAmount
+        - promoAmount
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/StatusCode"
+        error:
+          $ref: "#/components/schemas/PamError"
+      required:
+        - status
+    BalanceResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            balance:
+              $ref: "#/components/schemas/Balance"
+    GetTransactionsResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            transactions:
+              type: array
+              items:
+                $ref: "#/components/schemas/Transaction"
+
+    AddTransactionResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            transactionResult:
+              $ref: "#/components/schemas/TransactionResult"
+    TransactionResult:
+      type: object
+      properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        balance:
+          $ref: "#/components/schemas/Balance"
+
+    SessionResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            session:
+              $ref: "#/components/schemas/Session"
+    Session:
+      type: object
+      properties:
+        playerId:
+          $ref: "#/components/schemas/PlayerId"
+        token:
+          $ref: "#/components/schemas/SessionToken"
+        currency:
+          $ref: "#/components/schemas/Currency"
+        country:
+          $ref: "#/components/schemas/Country"
+        language:
+          $ref: "#/components/schemas/Language"
+        gameId:
+          $ref: "#/components/schemas/ProviderGameId"
+      required:
+        - playerId
+        - token
+        - currency
+        - country
+        - language
+    GameRoundResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            gameround:
+              $ref: "#/components/schemas/GameRound"
+
+    StatusCode:
+      type: string
+      enum: ["OK", "ERROR"]
+    PamError:
+      description: Error details describing why PAM rejected the request
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        message:
+          type: string
+    ErrorCode:
+      type: string
+      description: |
+        - `PAM_ERR_UNDEFINED` - When you need a generic error.
+        - `PAM_ERR_ACC_NOT_FOUND` - When account of `playerId` is not found.
+        - `PAM_ERR_GAME_NOT_FOUND` - When specified `providerGameId` is not found.
+        - `PAM_ERR_ROUND_NOT_FOUND` - In getGameRound, when there is no game round with id `providerGameRoundId`.
+        - `PAM_ERR_TRANS_NOT_FOUND` - In DEPOSIT transaction if the game round with id `providerRoundId` is not found.
+        - `PAM_ERR_CASH_OVERDRAFT` - When user does not have enough funds on their account for a withdraw transactions.
+        - `PAM_ERR_BONUS_OVERDRAFT` - When user does not have enough funds on their bonus account for a withdraw transaction.
+        - `PAM_ERR_SESSION_NOT_FOUND` - When no session is found for provided `X-Player-Token`.
+        - `PAM_ERR_SESSION_EXPIRED` - When session related to `X-Player-Token` has expired.
+        - `PAM_ERR_MISSING_PROVIDER` - When specified query parameter `provider` is not found.
+        - `PAM_ERR_TRANS_CURRENCY` - When specified `Currency` does not match that of the session.
+        - `PAM_ERR_NEGATIVE_STAKE` - When transaction amount is negative.
+        - `PAM_ERR_CANCEL_NOT_FOUND` - When the transaction trying to cancel doesn't exist.
+        - `PAM_ERR_TRANS_ALREADY_CANCELLED` - When trying to cancel an already cancelled transaction, or when a Deposit is made toward a cancelled withdraw.
+        - `PAM_ERR_CANCEL_NON_WITHDRAW` - When trying to cancel a transaction that is not a Withdraw transaction.
+        - `PAM_ERR_BET_NOT_ALLOWED` - When a bet cannot be done, eg when the user is blocked.
+        - `PAM_ERR_PLAYER_NOT_FOUND` - When `playerId` is not found.
+        - `PAM_ERR_API_TOKEN` - When `Authorization` header api token does not match the PAM api token.
+        - `PAM_ERR_TRANS_ALREADY_SETTLED` - When trying to cancel an already Deposited bet or when trying to Deposit on an already finished gameRound, finished bet.
+        - `PAM_ERR_DUPLICATE_TRANS` - When a Deposit is made with an already existing `providerTransactionId` but with different `playerId`/`providerGameId`/`providerRoundId`.
+        - `PAM_ERR_PROMO_OVERDRAFT` - When user does not have enough funds on their promo account for a withdraw transaction.
+        - `PAM_ERR_TIMEOUT` - A timeout occurred
+      enum:
+        - PAM_ERR_UNDEFINED
+        - PAM_ERR_ACC_NOT_FOUND
+        - PAM_ERR_GAME_NOT_FOUND
+        - PAM_ERR_ROUND_NOT_FOUND
+        - PAM_ERR_TRANS_NOT_FOUND
+        - PAM_ERR_CASH_OVERDRAFT
+        - PAM_ERR_BONUS_OVERDRAFT
+        - PAM_ERR_SESSION_NOT_FOUND
+        - PAM_ERR_SESSION_EXPIRED
+        - PAM_ERR_MISSING_PROVIDER
+        - PAM_ERR_TRANS_CURRENCY
+        - PAM_ERR_NEGATIVE_STAKE
+        - PAM_ERR_CANCEL_NOT_FOUND
+        - PAM_ERR_TRANS_ALREADY_CANCELLED
+        - PAM_ERR_CANCEL_NON_WITHDRAW
+        - PAM_ERR_BET_NOT_ALLOWED
+        - PAM_ERR_PLAYER_NOT_FOUND
+        - PAM_ERR_API_TOKEN
+        - PAM_ERR_TRANS_ALREADY_SETTLED
+        - PAM_ERR_DUPLICATE_TRANS
+        - PAM_ERR_PROMO_OVERDRAFT
+        - PAM_ERR_TIMEOUT
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: PAM API token, if any is required
+      scheme: bearer
+  responses:
+    Unauthorized:
+      description: Invalid session or api key
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                description: Status is Error
+                type: string
+                example: Error
+              error:
+                description: Error details describing why PAM rejected the request
+                type: object
+                required:
+                  - code
+                  - message
+                properties:
+                  message:
+                    type: string
+                  code:
+                    description: Pam Error code "PAM_ERR_SESSION_NOT_FOUND" or "PAM_ERR_UNDEFINED"
+                    type: string
+                    example: PAM_ERR_SESSION_NOT_FOUND
+
+security:
+  - bearerAuth: []

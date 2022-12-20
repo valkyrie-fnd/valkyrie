@@ -1,0 +1,26 @@
+# Uses forked oapi-codegen with fiber support, follow these instructions to generate:
+# 1. clone forked oapi-codegen: "git clone https://github.com/four-fingers/oapi-codegen.git"
+# 2. build the command: "cd oapi-codegen; go build ./cmd/oapi-codegen"
+# 3. generate: path/to/built/oapi-codegen --config handlers.cfg.yml /path/to/caleta-oapi3-definition.yaml
+package: caleta
+generate:
+  fiber-server: true
+  strict-server: true
+output: handlers.gen.go
+output-options:
+  include-tags:
+    - Wallet API
+  user-templates:
+    # override the default fiber-register.tmpl with our own template
+    "fiber/fiber-register.tmpl": |
+      func Routes(wrapper ServerInterfaceWrapper) []provider.Route {
+        return []provider.Route{
+        {{range .}}
+          {
+            Path:        "{{.Path | swaggerUriToFiberUri}}",
+            Method:      "{{.Method }}",
+            HandlerFunc: wrapper.{{.OperationId}},
+          },
+        {{end}}
+        }
+      }

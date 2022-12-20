@@ -1,0 +1,283 @@
+version: '3'
+
+# include .env files using dotenv
+dotenv: ['.env', '.env.local']
+
+# When doing interpolation of variables, Task will look for the below. 
+# They are listed below in order of importance (i.e. most important first):
+#
+# * Variables declared in the task definition
+# * Variables given while calling a task from another (See Calling another task above)
+# * Variables of the included Taskfile (when the task is included)
+# * Variables of the inclusion of the Taskfile (when the task is included)
+# * Global variables (those declared in the vars: option in the Taskfile)
+# * Environment variables
+vars: 
+  NAME: valkyrie
+  BUILD_DIR: build
+  VERSION:
+    sh: bash .github/tools/version.sh
+  BUILD_CMD: CGO_ENABLED=0 go build -ldflags="-w -s -X main.appVersion={{.VERSION}}"
+  # workaround to use built-in windows commands
+  SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
+
+# https://taskfile.dev/usage/#watch-tasks  
+interval: '500ms'
+
+tasks:
+  default:
+    desc: default task
+    cmds: # run the task sequentially
+      - task: tidy
+      - task: gen
+      - task: lint
+      - task: test
+
+  tidy:
+    desc: tidy module
+    sources:
+      - ./go.mod
+    generates:
+      - ./go.sum
+    cmds:
+      - go mod tidy
+
+  generate:
+    desc: generate code
+    aliases:
+      - gen
+    sources:
+      - ./**/generate.go
+      - ./provider/*/service.go
+      - ./provider/caleta/caletagaming-caleta-gaming_system_api_operators_guide-1.5-oapi3.yaml
+      - ./pam/pam_api.yml
+    generates:
+      - ./**/*.gen.go
+      - ./**/generated/*
+    cmds:
+      - go generate ./...
+
+  lint:
+    desc: run linters configured by .golangci.yml
+    aliases:
+      - lint-go
+    sources:
+      - ./**/*.go
+      - go.mod
+    cmds:
+      - golangci-lint run
+    preconditions:
+      - sh: "command -v golangci-lint"
+        msg: "Please install golangci-lint first: https://golangci-lint.run/usage/install/"
+        
+  lint-yaml:
+    desc: lint yaml files
+    cmds:
+      - docker run --rm -it -v $(pwd):/data cytopia/yamllint -f parsable $(git ls-files '*.yml' '*.yaml')
+  
+  lint-docker:
+    desc: lint Dockerfile
+    cmds:
+      - docker run --rm -i hadolint/hadolint hadolint - < ./Dockerfile
+  
+  test:
+    desc: run all tests
+    sources:
+      - ./**/*.go
+      - go.mod
+    cmds:
+      - go install gotest.tools/gotestsum@latest
+      - gotestsum
+
+  coverage:
+    desc: run all tests with code coverage
+    cmds:
+      - go test -cover -covermode=count -coverprofile=profile.cov ./...
+      - go tool cover -func profile.cov
+      - defer: '{{.SHELL}} rm profile.cov'
+
+  run:
+    desc: run the application locally
+    aliases:
+      - run-local
+    cmds:
+      - go run main.go -config configs/testdata/valkyrie_config.test.yml
+  
+  pre-build:
+    internal: true
+    run: once
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}
+
+  build:
+    desc: build binary
+    aliases: [build-local]
+    deps:
+      - pre-build
+    sources:
+      - ./**/*.go
+      - go.mod
+    generates:
+      - "{{.BUILD_DIR}}/{{.NAME}}"
+    cmds:
+      - "{{.BUILD_CMD}} -o {{.BUILD_DIR}}/{{.NAME}}"
+
+  build-linux:
+    desc: build linux binary
+    deps:
+      - pre-build
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}/linux-amd64
+      - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
+
+  build-windows:
+    desc: build windows binary
+    deps:
+      - pre-build
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}/windows-amd64
+      - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
+        
+  build-osx:
+    desc: build OSX binary
+    deps:
+      - pre-build
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}/darwin-amd64
+      - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
+      - mkdir -p {{.BUILD_DIR}}/darwin-arm64
+      - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
+
+  build-all:
+    desc: build for all supported platforms
+    deps:
+      - build-linux
+      - build-windows
+      - build-osx
+
+  package-linux:
+    desc: package linux binary
+    deps:
+      - build-linux
+    cmds:
+      - cp scripts/* {{.BUILD_DIR}}/linux-amd64
+      - cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/linux-amd64/config.yml
+      - tar -C {{.BUILD_DIR}}/linux-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-linux-amd64.tar.gz {{.NAME}} svc.sh valkyrie.service.template config.yml
+
+  package-windows:
+    desc: package windows binary
+    deps:
+      - build-windows
+    cmds:
+      - zip {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-windows-amd64.zip {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
+
+  package-osx:
+    desc: package osx binary
+    deps:
+      - build-osx
+    cmds:
+      - tar -C {{.BUILD_DIR}}/darwin-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-amd64.tar.gz {{.NAME}}
+      - tar -C {{.BUILD_DIR}}/darwin-arm64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-arm64.tar.gz {{.NAME}}
+
+  package-all:
+    desc: package all binaries
+    deps:
+      - package-linux
+      - package-windows
+      - package-osx
+        
+  changelog:
+    desc: print latest changes in CHANGELOG.md
+    cmds:
+      - bash .github/tools/changelog.sh {{.VERSION}}
+  
+  clean:
+    desc: clean project
+    vars:
+      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{else}}-f{{end}}'
+    cmds:
+      - '{{.SHELL}} rm -r {{.FORCE}} {{.BUILD_DIR}}'
+      - go clean
+        
+  release:
+    desc: create a release
+    cmds:
+      - '{{.SHELL}} cat .github/RELEASING.md' # print instructions, as releases are not automated
+        
+  docker-build:
+    desc: build a docker image
+    vars:
+      DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
+      TAG: '{{ default "latest" .VERSION }}'
+      SRC_REPO:
+        sh: git ls-remote --get-url | sed 's/\.git$//g'
+    cmds:
+      - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
+  
+  docker-push:
+    desc: push docker image
+    deps:
+      - docker-build
+    vars:
+      DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
+      TAG: '{{ default "latest" .VERSION }}'
+    cmds:
+      - docker push "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}"
+
+  helm-package:
+    desc: package helm chart
+    dir: helm
+    cmds:
+      - helm package . --app-version {{.VERSION}} --version {{.VERSION}}
+    preconditions:
+      - sh: "command -v helm"
+        msg: "Please install helm first: https://helm.sh/docs/intro/install/"
+        
+  helm-push:
+    desc: push helm chart to registry
+    dir: helm
+    deps:
+      - helm-package
+    cmds:
+      - helm push $(ls valkyrie-*.tgz) "oci://{{.HELM_REPO}}"
+    preconditions:
+      - sh: test $HELM_REPO
+        msg: Please set the $HELM_REPO environment variable to an OCI compatible repository
+
+  doc:
+    desc: documentation
+    cmds:
+      - go install golang.org/x/tools/cmd/godoc@latest
+      - echo 'documentation served from http://localhost:8080/'
+      - godoc -http=localhost:8080
+
+  outdated:
+    desc: list directly dependent modules that can be upgraded
+    cmds:
+      - go list -u -m $(go list -m -f '{{`{{.Indirect}} {{.}}`}}' all | grep '^false' | cut -d ' ' -f2) | grep '\['
+
+  graph:
+    desc: graph of upstream modules with gmchart
+    cmds:
+      - go install github.com/PaulXu-cn/go-mod-graph-chart/gmchart@latest
+      - go mod graph | gmchart
+  
+  licenses:
+    desc: list project dependency licenses
+    cmds:
+      - go install github.com/google/go-licenses@latest
+      - go-licenses report .
+
+  binmap:
+    desc: treemap breakdown of binary
+    deps:
+      - build
+    cmds:
+      - go install github.com/nikolaydubina/go-binsize-treemap@latest
+      - go tool nm -size ./build/valkyrie | go-binsize-treemap > ./build/binsize.svg
+      - open ./build/binsize.svg
+
+  bench:
+    desc: run benchmarks
+    cmds:
+      - go test -bench=. -benchmem ./...

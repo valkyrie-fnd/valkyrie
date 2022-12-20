@@ -1,0 +1,22 @@
+# macOS
+**/.DS_Store
+
+# Dev build
+build/
+tmp/
+
+# Test
+*.out
+
+# Environment variables
+.env
+
+# Dev environment
+.vscode/launch.json
+.vscode/settings.json
+
+# IDEs
+.idea
+
+# taskfile
+.task

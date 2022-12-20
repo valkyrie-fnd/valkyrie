@@ -1,0 +1,9 @@
+id: 3
+# Provider name
+name: "Caleta"
+# Image shown in the provider card
+cardImage: "caleta-logo.png"
+# Short description that will be shown in the provider card
+description: "Making better games"
+# url path to provider
+path: "caleta"
