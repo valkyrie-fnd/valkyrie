@@ -12,6 +12,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [0.3.0] - 2022-12-20
+
+### Added
+
 - Added a provider implementation for Evolution
 - Added a provider implementation for Red Tiger
 - Added a provider implementation for Caleta
