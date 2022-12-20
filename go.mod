@@ -16,6 +16,7 @@ require (
 	github.com/gofiber/swagger v0.1.8
 	github.com/google/go-querystring v1.1.0
 	github.com/google/uuid v1.3.0
+	github.com/hashicorp/go-hclog v1.4.0
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
@@ -37,8 +38,7 @@ require (
 
 require (
 	github.com/deepmap/oapi-codegen v1.11.0 // indirect
-	github.com/fatih/color v1.7.0 // indirect
-	github.com/hashicorp/go-hclog v0.14.1 // indirect
+	github.com/fatih/color v1.13.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
