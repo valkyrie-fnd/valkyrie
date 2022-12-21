@@ -25,8 +25,8 @@ func NewService(pamClient pam.PamClient) *ProviderService {
 // @Produce      json
 // @Param        req               body      WalletbalanceJSONRequestBody   true  "Request body"
 // @Param        X-Auth-Signature  header    string                         true  "Signature for request"
-// @Success      200     {object}  WalletbalanceResponseObject
-// @Failure      400     {object}  WalletbalanceResponseObject
+// @Success      200     {object}  Walletbalance200JSONResponse
+// @Failure      400     {object}  Walletbalance200JSONResponse
 // @Router       /providers/caleta/wallet/balance [post]
 func (s *ProviderService) Walletbalance(ctx context.Context, request WalletbalanceRequestObject) (WalletbalanceResponseObject, error) {
 	session, err := s.GetSession(s.getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
@@ -57,8 +57,8 @@ func (s *ProviderService) Walletbalance(ctx context.Context, request Walletbalan
 // @Produce      json
 // @Param        req               body      WalletcheckJSONRequestBody     true  "Request body"
 // @Param        X-Auth-Signature  header    string                         true  "Signature for request"
-// @Success      200     {object}  WalletcheckResponseObject
-// @Failure      400     {object}  WalletcheckResponseObject
+// @Success      200     {object}  Walletcheck200JSONResponse
+// @Failure      400     {object}  Walletcheck200JSONResponse
 // @Router       /providers/caleta/wallet/check [post]
 func (s *ProviderService) Walletcheck(ctx context.Context, request WalletcheckRequestObject) (WalletcheckResponseObject, error) {
 	session, err := s.RefreshSession(s.refreshSessionMapper(ctx, request.Body.Token, ""))
@@ -79,8 +79,8 @@ func (s *ProviderService) Walletcheck(ctx context.Context, request WalletcheckRe
 // @Produce      json
 // @Param        req               body      WalletbetJSONRequestBody       true  "Request body"
 // @Param        X-Auth-Signature  header    string                         true  "Signature for request"
-// @Success      200     {object}  WalletbetResponseObject
-// @Failure      400     {object}  WalletbetResponseObject
+// @Success      200     {object}  Walletbet200JSONResponse
+// @Failure      400     {object}  Walletbet200JSONResponse
 // @Router       /providers/caleta/wallet/bet [post]
 func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetRequestObject) (WalletbetResponseObject, error) {
 	session, err := s.GetSession(s.getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
@@ -116,8 +116,8 @@ func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetReques
 // @Produce      json
 // @Param        req               body      TransactionwinJSONRequestBody  true  "Request body"
 // @Param        X-Auth-Signature  header    string                         true  "Signature for request"
-// @Success      200     {object}  TransactionwinResponseObject
-// @Failure      400     {object}  TransactionwinResponseObject
+// @Success      200     {object}  Transactionwin200JSONResponse
+// @Failure      400     {object}  Transactionwin200JSONResponse
 // @Router       /providers/caleta/wallet/win [post]
 func (s *ProviderService) Transactionwin(ctx context.Context, request TransactionwinRequestObject) (TransactionwinResponseObject, error) {
 	session, err := s.GetSession(s.getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
@@ -168,8 +168,8 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 // @Produce      json
 // @Param        req               body      WalletrollbackJSONRequestBody  true  "Request body"
 // @Param        X-Auth-Signature  header    string                         true  "Signature for request"
-// @Success      200     {object}  WalletrollbackResponseObject
-// @Failure      400     {object}  WalletrollbackResponseObject
+// @Success      200     {object}  Walletrollback200JSONResponse
+// @Failure      400     {object}  Walletrollback200JSONResponse
 // @Router       /providers/caleta/wallet/rollback [post]
 func (s *ProviderService) Walletrollback(ctx context.Context, request WalletrollbackRequestObject) (WalletrollbackResponseObject, error) {
 	session, err := s.GetSession(s.getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))

@@ -20,6 +20,7 @@ import (
 // @host            localhost:8083
 // @basePath        /
 // @schemes         http
+// @version         -
 // @description     The exposed endpoints by the enabled game provider modules.
 func ConfigureSwagger(config *configs.ValkyrieConfig, provider, operator fiber.Router) error {
 	log.Info().Msg("Registering Swagger routes under GET /swagger/")
