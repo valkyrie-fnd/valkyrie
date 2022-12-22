@@ -51,11 +51,15 @@ const docTemplateprovider = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletbalance200JSONResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletbalance200JSONResponse"
+                        }
                     }
                 }
             }
@@ -95,11 +99,15 @@ const docTemplateprovider = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletbet200JSONResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletbet200JSONResponse"
+                        }
                     }
                 }
             }
@@ -139,11 +147,15 @@ const docTemplateprovider = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletcheck200JSONResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletcheck200JSONResponse"
+                        }
                     }
                 }
             }
@@ -183,11 +195,15 @@ const docTemplateprovider = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletrollback200JSONResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Walletrollback200JSONResponse"
+                        }
                     }
                 }
             }
@@ -227,11 +243,15 @@ const docTemplateprovider = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Transactionwin200JSONResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/caleta.Transactionwin200JSONResponse"
+                        }
                     }
                 }
             }
@@ -1231,6 +1251,78 @@ const docTemplateprovider = `{
                 "ZWD"
             ]
         },
+        "caleta.Status": {
+            "type": "string",
+            "enum": [
+                "RS_ERROR_BET_LIMIT_EXCEEDED",
+                "RS_ERROR_DUPLICATE_TRANSACTION",
+                "RS_ERROR_INVALID_GAME",
+                "RS_ERROR_INVALID_SIGNATURE",
+                "RS_ERROR_INVALID_TOKEN",
+                "RS_ERROR_NOT_ENOUGH_MONEY",
+                "RS_ERROR_TIMEOUT",
+                "RS_ERROR_TOKEN_EXPIRED",
+                "RS_ERROR_TRANSACTION_DOES_NOT_EXIST",
+                "RS_ERROR_TRANSACTION_ROLLED_BACK",
+                "RS_ERROR_UNKNOWN",
+                "RS_ERROR_USER_DISABLED",
+                "RS_ERROR_WRONG_CURRENCY",
+                "RS_ERROR_WRONG_SYNTAX",
+                "RS_ERROR_WRONG_TYPES",
+                "RS_OK"
+            ],
+            "x-enum-varnames": [
+                "RSERRORBETLIMITEXCEEDED",
+                "RSERRORDUPLICATETRANSACTION",
+                "RSERRORINVALIDGAME",
+                "RSERRORINVALIDSIGNATURE",
+                "RSERRORINVALIDTOKEN",
+                "RSERRORNOTENOUGHMONEY",
+                "RSERRORTIMEOUT",
+                "RSERRORTOKENEXPIRED",
+                "RSERRORTRANSACTIONDOESNOTEXIST",
+                "RSERRORTRANSACTIONROLLEDBACK",
+                "RSERRORUNKNOWN",
+                "RSERRORUSERDISABLED",
+                "RSERRORWRONGCURRENCY",
+                "RSERRORWRONGSYNTAX",
+                "RSERRORWRONGTYPES",
+                "RSOK"
+            ]
+        },
+        "caleta.Transactionwin200JSONResponse": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "description": "Balance We use integers to represent the amount of money. To convert real float value to integer we multiply it by 100000. Example: $3.56 must be represented as 356000",
+                    "type": "integer"
+                },
+                "currency": {
+                    "description": "Currency ISO 4217 currency code. Following enum contains all currencies supported by our system. Existing of currency in this list doesn't mean that all providers support native game play with it. Please contact us to know which provider supports which currencies.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Currency"
+                        }
+                    ]
+                },
+                "request_uuid": {
+                    "description": "RequestUuid Standard 16-byte UUID. This id can be seen as network layer action. An id of an action that is generated for each our call to Operator. Used to sync Hub88 and Operator sides for debugging purposes. Operator has to respond with the same request_uuid as the one that was received in request.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status Response status usage:\u003cbr/\u003eRS_OK - when transaction was processed correctly or was already processed before.\u003cbr/\u003eRS_ERROR_UNKNOWN - use this when you need a generic error code\u003cbr/\u003eRS_ERROR_TIMEOUT - when the server was disconnected by timeout\u003cbr/\u003eRS_ERROR_INVALID_TOKEN - when token never existed or is not associated to this player.\u003cbr/\u003eRS_ERROR_INVALID_GAME - when the game doesn't exist\u003cbr/\u003eRS_ERROR_WRONG_CURRENCY - when the currency is not active or does not exist\u003cbr/\u003eRS_ERROR_NOT_ENOUGH_MONEY - when user is short of money\u003cbr/\u003eRS_ERROR_USER_DISABLED when user is banned or inactive\u003cbr/\u003eRS_ERROR_INVALID_SIGNATURE - when signature doesn't match\u003cbr/\u003eRS_ERROR_TOKEN_EXPIRED - when a new token exists (this rule applies only for /wallet/bet)\u003cbr/\u003eRS_ERROR_WRONG_SYNTAX - message can't be decoded to JSON\u003cbr/\u003eRS_ERROR_WRONG_TYPES - i.e. when a type should be integer and came as string\u003cbr/\u003eRS_ERROR_DUPLICATE_TRANSACTION - when the same transaction_uuid appears but for a different user, round and game, otherwise returns RS_OK\u003cbr/\u003eRS_ERROR_TRANSACTION_DOES_NOT_EXIST - when doing a 'win' transaction and the 'bet' transaction id doesn't exist\u003cbr/\u003eRS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win' transaction happens in name of a rolled back transaction (when receiving a 'rollback' replies with 'RS_OK'\u003cbr/\u003eRS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its limits",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Status"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User Unique User ID in the Operator�s system. In case of DEMO gameplay, this parameter may be omitted.",
+                    "type": "string"
+                }
+            }
+        },
         "caleta.TransactionwinJSONRequestBody": {
             "type": "object",
             "properties": {
@@ -1304,6 +1396,39 @@ const docTemplateprovider = `{
                 }
             }
         },
+        "caleta.Walletbalance200JSONResponse": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "description": "Balance We use integers to represent the amount of money. To convert real float value to integer we multiply it by 100000. Example: $3.56 must be represented as 356000",
+                    "type": "integer"
+                },
+                "currency": {
+                    "description": "Currency ISO 4217 currency code. Following enum contains all currencies supported by our system. Existing of currency in this list doesn't mean that all providers support native game play with it. Please contact us to know which provider supports which currencies.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Currency"
+                        }
+                    ]
+                },
+                "request_uuid": {
+                    "description": "RequestUuid Standard 16-byte UUID. This id can be seen as network layer action. An id of an action that is generated for each our call to Operator. Used to sync Hub88 and Operator sides for debugging purposes. Operator has to respond with the same request_uuid as the one that was received in request.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status Response status usage:\u003cbr/\u003eRS_OK - when transaction was processed correctly or was already processed before.\u003cbr/\u003eRS_ERROR_UNKNOWN - use this when you need a generic error code\u003cbr/\u003eRS_ERROR_TIMEOUT - when the server was disconnected by timeout\u003cbr/\u003eRS_ERROR_INVALID_TOKEN - when token never existed or is not associated to this player.\u003cbr/\u003eRS_ERROR_INVALID_GAME - when the game doesn't exist\u003cbr/\u003eRS_ERROR_WRONG_CURRENCY - when the currency is not active or does not exist\u003cbr/\u003eRS_ERROR_NOT_ENOUGH_MONEY - when user is short of money\u003cbr/\u003eRS_ERROR_USER_DISABLED when user is banned or inactive\u003cbr/\u003eRS_ERROR_INVALID_SIGNATURE - when signature doesn't match\u003cbr/\u003eRS_ERROR_TOKEN_EXPIRED - when a new token exists (this rule applies only for /wallet/bet)\u003cbr/\u003eRS_ERROR_WRONG_SYNTAX - message can't be decoded to JSON\u003cbr/\u003eRS_ERROR_WRONG_TYPES - i.e. when a type should be integer and came as string\u003cbr/\u003eRS_ERROR_DUPLICATE_TRANSACTION - when the same transaction_uuid appears but for a different user, round and game, otherwise returns RS_OK\u003cbr/\u003eRS_ERROR_TRANSACTION_DOES_NOT_EXIST - when doing a 'win' transaction and the 'bet' transaction id doesn't exist\u003cbr/\u003eRS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win' transaction happens in name of a rolled back transaction (when receiving a 'rollback' replies with 'RS_OK'\u003cbr/\u003eRS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its limits",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Status"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User Unique User ID in the Operator�s system. In case of DEMO gameplay, this parameter may be omitted.",
+                    "type": "string"
+                }
+            }
+        },
         "caleta.WalletbalanceJSONRequestBody": {
             "type": "object",
             "properties": {
@@ -1325,6 +1450,39 @@ const docTemplateprovider = `{
                 },
                 "token": {
                     "description": "Token Operator's back end generates a token associated with the User, game, his or her current currency and maybe other parameters depending on the Operator's preferences. The token acts as an ID parameter for the game session. It is important that the currency is not changed during the current game session. If the User changes the currency or display unit, the Operator's backend needs to generate a new token and re-open the game with new token. In case of DEMO gameplay, this parameter may be omitted.\u003cbr/\u003eA token should be valid for all bet transactions until a new one is generated, expired tokens should continue be valid for Win/Rollback transactions if is related to a previous existing bet.",
+                    "type": "string"
+                }
+            }
+        },
+        "caleta.Walletbet200JSONResponse": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "description": "Balance We use integers to represent the amount of money. To convert real float value to integer we multiply it by 100000. Example: $3.56 must be represented as 356000",
+                    "type": "integer"
+                },
+                "currency": {
+                    "description": "Currency ISO 4217 currency code. Following enum contains all currencies supported by our system. Existing of currency in this list doesn't mean that all providers support native game play with it. Please contact us to know which provider supports which currencies.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Currency"
+                        }
+                    ]
+                },
+                "request_uuid": {
+                    "description": "RequestUuid Standard 16-byte UUID. This id can be seen as network layer action. An id of an action that is generated for each our call to Operator. Used to sync Hub88 and Operator sides for debugging purposes. Operator has to respond with the same request_uuid as the one that was received in request.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status Response status usage:\u003cbr/\u003eRS_OK - when transaction was processed correctly or was already processed before.\u003cbr/\u003eRS_ERROR_UNKNOWN - use this when you need a generic error code\u003cbr/\u003eRS_ERROR_TIMEOUT - when the server was disconnected by timeout\u003cbr/\u003eRS_ERROR_INVALID_TOKEN - when token never existed or is not associated to this player.\u003cbr/\u003eRS_ERROR_INVALID_GAME - when the game doesn't exist\u003cbr/\u003eRS_ERROR_WRONG_CURRENCY - when the currency is not active or does not exist\u003cbr/\u003eRS_ERROR_NOT_ENOUGH_MONEY - when user is short of money\u003cbr/\u003eRS_ERROR_USER_DISABLED when user is banned or inactive\u003cbr/\u003eRS_ERROR_INVALID_SIGNATURE - when signature doesn't match\u003cbr/\u003eRS_ERROR_TOKEN_EXPIRED - when a new token exists (this rule applies only for /wallet/bet)\u003cbr/\u003eRS_ERROR_WRONG_SYNTAX - message can't be decoded to JSON\u003cbr/\u003eRS_ERROR_WRONG_TYPES - i.e. when a type should be integer and came as string\u003cbr/\u003eRS_ERROR_DUPLICATE_TRANSACTION - when the same transaction_uuid appears but for a different user, round and game, otherwise returns RS_OK\u003cbr/\u003eRS_ERROR_TRANSACTION_DOES_NOT_EXIST - when doing a 'win' transaction and the 'bet' transaction id doesn't exist\u003cbr/\u003eRS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win' transaction happens in name of a rolled back transaction (when receiving a 'rollback' replies with 'RS_OK'\u003cbr/\u003eRS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its limits",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Status"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User Unique User ID in the Operator�s system. In case of DEMO gameplay, this parameter may be omitted.",
                     "type": "string"
                 }
             }
@@ -1394,11 +1552,53 @@ const docTemplateprovider = `{
                 }
             }
         },
+        "caleta.Walletcheck200JSONResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "Token Operator's back end generates a token associated with the User, game, his or her current currency and maybe other parameters depending on the Operator's preferences. The token acts as an ID parameter for the game session. It is important that the currency is not changed during the current game session. If the User changes the currency or display unit, the Operator's backend needs to generate a new token and re-open the game with new token. In case of DEMO gameplay, this parameter may be omitted.\u003cbr/\u003eA token should be valid for all bet transactions until a new one is generated, expired tokens should continue be valid for Win/Rollback transactions if is related to a previous existing bet.",
+                    "type": "string"
+                }
+            }
+        },
         "caleta.WalletcheckJSONRequestBody": {
             "type": "object",
             "properties": {
                 "token": {
                     "description": "Token Operator's back end generates a token associated with the User, game, his or her current currency and maybe other parameters depending on the Operator's preferences. The token acts as an ID parameter for the game session. It is important that the currency is not changed during the current game session. If the User changes the currency or display unit, the Operator's backend needs to generate a new token and re-open the game with new token. In case of DEMO gameplay, this parameter may be omitted.\u003cbr/\u003eA token should be valid for all bet transactions until a new one is generated, expired tokens should continue be valid for Win/Rollback transactions if is related to a previous existing bet.",
+                    "type": "string"
+                }
+            }
+        },
+        "caleta.Walletrollback200JSONResponse": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "description": "Balance We use integers to represent the amount of money. To convert real float value to integer we multiply it by 100000. Example: $3.56 must be represented as 356000",
+                    "type": "integer"
+                },
+                "currency": {
+                    "description": "Currency ISO 4217 currency code. Following enum contains all currencies supported by our system. Existing of currency in this list doesn't mean that all providers support native game play with it. Please contact us to know which provider supports which currencies.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Currency"
+                        }
+                    ]
+                },
+                "request_uuid": {
+                    "description": "RequestUuid Standard 16-byte UUID. This id can be seen as network layer action. An id of an action that is generated for each our call to Operator. Used to sync Hub88 and Operator sides for debugging purposes. Operator has to respond with the same request_uuid as the one that was received in request.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status Response status usage:\u003cbr/\u003eRS_OK - when transaction was processed correctly or was already processed before.\u003cbr/\u003eRS_ERROR_UNKNOWN - use this when you need a generic error code\u003cbr/\u003eRS_ERROR_TIMEOUT - when the server was disconnected by timeout\u003cbr/\u003eRS_ERROR_INVALID_TOKEN - when token never existed or is not associated to this player.\u003cbr/\u003eRS_ERROR_INVALID_GAME - when the game doesn't exist\u003cbr/\u003eRS_ERROR_WRONG_CURRENCY - when the currency is not active or does not exist\u003cbr/\u003eRS_ERROR_NOT_ENOUGH_MONEY - when user is short of money\u003cbr/\u003eRS_ERROR_USER_DISABLED when user is banned or inactive\u003cbr/\u003eRS_ERROR_INVALID_SIGNATURE - when signature doesn't match\u003cbr/\u003eRS_ERROR_TOKEN_EXPIRED - when a new token exists (this rule applies only for /wallet/bet)\u003cbr/\u003eRS_ERROR_WRONG_SYNTAX - message can't be decoded to JSON\u003cbr/\u003eRS_ERROR_WRONG_TYPES - i.e. when a type should be integer and came as string\u003cbr/\u003eRS_ERROR_DUPLICATE_TRANSACTION - when the same transaction_uuid appears but for a different user, round and game, otherwise returns RS_OK\u003cbr/\u003eRS_ERROR_TRANSACTION_DOES_NOT_EXIST - when doing a 'win' transaction and the 'bet' transaction id doesn't exist\u003cbr/\u003eRS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win' transaction happens in name of a rolled back transaction (when receiving a 'rollback' replies with 'RS_OK'\u003cbr/\u003eRS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its limits",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/caleta.Status"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User Unique User ID in the Operator�s system. In case of DEMO gameplay, this parameter may be omitted.",
                     "type": "string"
                 }
             }
@@ -2261,7 +2461,7 @@ const docTemplateprovider = `{
 
 // SwaggerInfoprovider holds exported Swagger Info so clients can modify it
 var SwaggerInfoprovider = &swag.Spec{
-	Version:          "",
+	Version:          "-",
 	Host:             "localhost:8083",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
