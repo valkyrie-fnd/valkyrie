@@ -1,4 +1,5 @@
-package ops
+// Package swagger adds API documentation endpoints
+package swagger
 
 import (
 	"strings"

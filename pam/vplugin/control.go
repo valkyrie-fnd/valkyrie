@@ -34,8 +34,8 @@ var PluginConfig func(string, string) plugin.ClientConfig = func(name, path stri
 		Plugins: map[string]plugin.Plugin{
 			name: &VPlugin{},
 		},
-		Cmd: exec.Command(path),
-		// TODO: config logging as well
+		Cmd:    exec.Command(path),
+		Logger: NewZerologAdapter(),
 	}
 }
 
