@@ -1,2104 +1,2017 @@
-openapi: 3.0.0
+basePath: /
+definitions:
+  caleta.Currency:
+    enum:
+    - AED
+    - AFN
+    - ALL
+    - AMD
+    - ANG
+    - AOA
+    - ARS
+    - AUD
+    - AWG
+    - AZN
+    - BAM
+    - BBD
+    - BDT
+    - BGN
+    - BHD
+    - BIF
+    - BMD
+    - BND
+    - BOB
+    - BRL
+    - BSD
+    - BTN
+    - BWP
+    - BYR
+    - BZD
+    - CAD
+    - CHF
+    - CLP
+    - CNY
+    - COP
+    - CRC
+    - CUC
+    - CUP
+    - CVE
+    - CZK
+    - DJF
+    - DKK
+    - DOP
+    - DZD
+    - EGP
+    - ERN
+    - ETB
+    - ETH
+    - EUR
+    - FJD
+    - FKP
+    - GBP
+    - GEL
+    - GHS
+    - GIP
+    - GMD
+    - GNF
+    - GTQ
+    - GYD
+    - HKD
+    - HNL
+    - HRK
+    - HTG
+    - HUF
+    - IDR
+    - ILS
+    - INR
+    - IQD
+    - IRR
+    - ISK
+    - JMD
+    - JOD
+    - JPY
+    - KES
+    - KGS
+    - KHR
+    - KMF
+    - KPW
+    - KRW
+    - KWD
+    - KYD
+    - KZT
+    - LAK
+    - LBP
+    - LKR
+    - LRD
+    - LSL
+    - LTC
+    - LTL
+    - LYD
+    - MAD
+    - mBTC
+    - MDL
+    - mETH
+    - MGA
+    - MKD
+    - mLTC
+    - MMK
+    - MNT
+    - MOP
+    - MRO
+    - MUR
+    - MVR
+    - MWK
+    - MXN
+    - MYR
+    - MZN
+    - NAD
+    - NGN
+    - NIO
+    - NOK
+    - NPR
+    - NZD
+    - OMR
+    - PAB
+    - PEN
+    - PGK
+    - PHP
+    - PKR
+    - PLN
+    - PYG
+    - QAR
+    - RON
+    - RSD
+    - RUB
+    - RWF
+    - SAR
+    - SBD
+    - SCR
+    - SDG
+    - SEK
+    - SGD
+    - SLL
+    - SOC
+    - SOS
+    - SRD
+    - SSP
+    - SYP
+    - SZL
+    - THB
+    - TJS
+    - TMT
+    - TND
+    - TOP
+    - TRY
+    - TTD
+    - TWD
+    - TZS
+    - UAH
+    - uBTC
+    - uETH
+    - UGX
+    - uLTC
+    - USD
+    - UYU
+    - UZS
+    - VEF
+    - VND
+    - VUV
+    - WST
+    - XCD
+    - XOF
+    - XPF
+    - XXX
+    - YER
+    - ZAR
+    - ZMW
+    - ZWD
+    type: string
+    x-enum-varnames:
+    - AED
+    - AFN
+    - ALL
+    - AMD
+    - ANG
+    - AOA
+    - ARS
+    - AUD
+    - AWG
+    - AZN
+    - BAM
+    - BBD
+    - BDT
+    - BGN
+    - BHD
+    - BIF
+    - BMD
+    - BND
+    - BOB
+    - BRL
+    - BSD
+    - BTN
+    - BWP
+    - BYR
+    - BZD
+    - CAD
+    - CHF
+    - CLP
+    - CNY
+    - COP
+    - CRC
+    - CUC
+    - CUP
+    - CVE
+    - CZK
+    - DJF
+    - DKK
+    - DOP
+    - DZD
+    - EGP
+    - ERN
+    - ETB
+    - ETH
+    - EUR
+    - FJD
+    - FKP
+    - GBP
+    - GEL
+    - GHS
+    - GIP
+    - GMD
+    - GNF
+    - GTQ
+    - GYD
+    - HKD
+    - HNL
+    - HRK
+    - HTG
+    - HUF
+    - IDR
+    - ILS
+    - INR
+    - IQD
+    - IRR
+    - ISK
+    - JMD
+    - JOD
+    - JPY
+    - KES
+    - KGS
+    - KHR
+    - KMF
+    - KPW
+    - KRW
+    - KWD
+    - KYD
+    - KZT
+    - LAK
+    - LBP
+    - LKR
+    - LRD
+    - LSL
+    - LTC
+    - LTL
+    - LYD
+    - MAD
+    - MBTC
+    - MDL
+    - METH
+    - MGA
+    - MKD
+    - MLTC
+    - MMK
+    - MNT
+    - MOP
+    - MRO
+    - MUR
+    - MVR
+    - MWK
+    - MXN
+    - MYR
+    - MZN
+    - NAD
+    - NGN
+    - NIO
+    - NOK
+    - NPR
+    - NZD
+    - OMR
+    - PAB
+    - PEN
+    - PGK
+    - PHP
+    - PKR
+    - PLN
+    - PYG
+    - QAR
+    - RON
+    - RSD
+    - RUB
+    - RWF
+    - SAR
+    - SBD
+    - SCR
+    - SDG
+    - SEK
+    - SGD
+    - SLL
+    - SOC
+    - SOS
+    - SRD
+    - SSP
+    - SYP
+    - SZL
+    - THB
+    - TJS
+    - TMT
+    - TND
+    - TOP
+    - TRY
+    - TTD
+    - TWD
+    - TZS
+    - UAH
+    - UBTC
+    - UETH
+    - UGX
+    - ULTC
+    - USD
+    - UYU
+    - UZS
+    - VEF
+    - VND
+    - VUV
+    - WST
+    - XCD
+    - XOF
+    - XPF
+    - XXX
+    - YER
+    - ZAR
+    - ZMW
+    - ZWD
+  caleta.Status:
+    enum:
+    - RS_ERROR_BET_LIMIT_EXCEEDED
+    - RS_ERROR_DUPLICATE_TRANSACTION
+    - RS_ERROR_INVALID_GAME
+    - RS_ERROR_INVALID_SIGNATURE
+    - RS_ERROR_INVALID_TOKEN
+    - RS_ERROR_NOT_ENOUGH_MONEY
+    - RS_ERROR_TIMEOUT
+    - RS_ERROR_TOKEN_EXPIRED
+    - RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+    - RS_ERROR_TRANSACTION_ROLLED_BACK
+    - RS_ERROR_UNKNOWN
+    - RS_ERROR_USER_DISABLED
+    - RS_ERROR_WRONG_CURRENCY
+    - RS_ERROR_WRONG_SYNTAX
+    - RS_ERROR_WRONG_TYPES
+    - RS_OK
+    type: string
+    x-enum-varnames:
+    - RSERRORBETLIMITEXCEEDED
+    - RSERRORDUPLICATETRANSACTION
+    - RSERRORINVALIDGAME
+    - RSERRORINVALIDSIGNATURE
+    - RSERRORINVALIDTOKEN
+    - RSERRORNOTENOUGHMONEY
+    - RSERRORTIMEOUT
+    - RSERRORTOKENEXPIRED
+    - RSERRORTRANSACTIONDOESNOTEXIST
+    - RSERRORTRANSACTIONROLLEDBACK
+    - RSERRORUNKNOWN
+    - RSERRORUSERDISABLED
+    - RSERRORWRONGCURRENCY
+    - RSERRORWRONGSYNTAX
+    - RSERRORWRONGTYPES
+    - RSOK
+  caleta.Transactionwin200JSONResponse:
+    properties:
+      balance:
+        description: 'Balance We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/caleta.Status'
+        description: Status Response status usage:<br/>RS_OK - when transaction was
+          processed correctly or was already processed before.<br/>RS_ERROR_UNKNOWN
+          - use this when you need a generic error code<br/>RS_ERROR_TIMEOUT - when
+          the server was disconnected by timeout<br/>RS_ERROR_INVALID_TOKEN - when
+          token never existed or is not associated to this player.<br/>RS_ERROR_INVALID_GAME
+          - when the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the currency
+          is not active or does not exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user
+          is short of money<br/>RS_ERROR_USER_DISABLED when user is banned or inactive<br/>RS_ERROR_INVALID_SIGNATURE
+          - when signature doesn't match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token
+          exists (this rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX
+          - message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e. when
+          a type should be integer and came as string<br/>RS_ERROR_DUPLICATE_TRANSACTION
+          - when the same transaction_uuid appears but for a different user, round
+          and game, otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+          - when doing a 'win' transaction and the 'bet' transaction id doesn't exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK
+          - when a 'win' transaction happens in name of a rolled back transaction
+          (when receiving a 'rollback' replies with 'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED
+          - when the user exceeded its limits
+      user:
+        description: User Unique User ID in the Operator�s system. In case of DEMO
+          gameplay, this parameter may be omitted.
+        type: string
+    type: object
+  caleta.TransactionwinJSONRequestBody:
+    properties:
+      amount:
+        description: 'Amount We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      bet:
+        description: Bet Field for metadata related to transaction, such as type of
+          bet, value, time, etc. Differs from game to game. Not relevant for transaction
+          processing procedure but could be useful for statistics or activity backtracking.
+        type: string
+      campaign_uuid:
+        description: CampaignUuid Each Free Bet campaign contains an unique identifier
+          on Caleta side. Campaings holds information of game where Free Bet will
+          happen, total of spins, bet value and period of campaign.
+        type: string
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      game_code:
+        description: GameCode Unique Game Code on Caleta system. Can be obtained from
+          `/api/game/list` endpoint. This variable intends to replace `game_id`.
+        type: string
+      game_id:
+        description: 'GameId Deprecated: Use `game_code` instead.<br/>Unique game
+          ID Caleta system. Can be obtained from `/api/game/list` endpoint.<br/>Note:
+          this value may change from each server (staging, production)'
+        type: integer
+      is_free:
+        description: IsFree Flag which shows that transaction was generated by a promotional
+          tool (FreeSpins, etc). Usually, these transactions are credited to bonus
+          wallets (if available).
+        type: boolean
+      jackpot_win:
+        description: JackpotWin This field is included if a jackpot win occurred.
+          The reported value indicate how much of the win amount was contributed to
+          from winning the jackpot. This value is represented as an integer similar
+          to amount.
+        type: integer
+      reference_transaction_uuid:
+        description: ReferenceTransactionUuid Unique identifier of the transaction
+          that this transaction is referencing. In case of rollback, this field will
+          contain transaction_uuid of the transaction which needs to be rolled back.
+          In case of win, there will be transaction_uuid of the bet to which this
+          win is related.
+        type: string
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      reward_uuid:
+        description: RewardUuid This holds the uuid of a reward given to a player
+          on Caleta side. Rewards holds information about which campaigns belong,
+          player, quantity left of Free Bets.
+        type: string
+      round:
+        description: Round Game round id. Used to relate all bets and wins in one
+          round. All transactions related to the same round will have the same value
+          in this field. It's unique through whole system.
+        type: string
+      round_closed:
+        description: RoundClosed Denotes when the round is closed
+        type: boolean
+      supplier_user:
+        description: SupplierUser The name of the user in Provider's system (in case
+          Operator needs to find user in Provder's back office or report problem with
+          the user). If value is NULL, the Operator can search for their own user_id.
+        type: string
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+      transaction_uuid:
+        description: TransactionUuid Unique wallet transaction.
+        type: string
+    type: object
+  caleta.Walletbalance200JSONResponse:
+    properties:
+      balance:
+        description: 'Balance We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/caleta.Status'
+        description: Status Response status usage:<br/>RS_OK - when transaction was
+          processed correctly or was already processed before.<br/>RS_ERROR_UNKNOWN
+          - use this when you need a generic error code<br/>RS_ERROR_TIMEOUT - when
+          the server was disconnected by timeout<br/>RS_ERROR_INVALID_TOKEN - when
+          token never existed or is not associated to this player.<br/>RS_ERROR_INVALID_GAME
+          - when the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the currency
+          is not active or does not exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user
+          is short of money<br/>RS_ERROR_USER_DISABLED when user is banned or inactive<br/>RS_ERROR_INVALID_SIGNATURE
+          - when signature doesn't match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token
+          exists (this rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX
+          - message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e. when
+          a type should be integer and came as string<br/>RS_ERROR_DUPLICATE_TRANSACTION
+          - when the same transaction_uuid appears but for a different user, round
+          and game, otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+          - when doing a 'win' transaction and the 'bet' transaction id doesn't exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK
+          - when a 'win' transaction happens in name of a rolled back transaction
+          (when receiving a 'rollback' replies with 'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED
+          - when the user exceeded its limits
+      user:
+        description: User Unique User ID in the Operator�s system. In case of DEMO
+          gameplay, this parameter may be omitted.
+        type: string
+    type: object
+  caleta.WalletbalanceJSONRequestBody:
+    properties:
+      game_code:
+        description: GameCode Unique Game Code on Caleta system. Can be obtained from
+          `/api/game/list` endpoint. This variable intends to replace `game_id`.
+        type: string
+      game_id:
+        description: 'GameId Deprecated: Use `game_code` instead.<br/>Unique game
+          ID Caleta system. Can be obtained from `/api/game/list` endpoint.<br/>Note:
+          this value may change from each server (staging, production)'
+        type: integer
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      supplier_user:
+        description: SupplierUser The name of the user in Provider's system (in case
+          Operator needs to find user in Provder's back office or report problem with
+          the user). If value is NULL, the Operator can search for their own user_id.
+        type: string
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+    type: object
+  caleta.Walletbet200JSONResponse:
+    properties:
+      balance:
+        description: 'Balance We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/caleta.Status'
+        description: Status Response status usage:<br/>RS_OK - when transaction was
+          processed correctly or was already processed before.<br/>RS_ERROR_UNKNOWN
+          - use this when you need a generic error code<br/>RS_ERROR_TIMEOUT - when
+          the server was disconnected by timeout<br/>RS_ERROR_INVALID_TOKEN - when
+          token never existed or is not associated to this player.<br/>RS_ERROR_INVALID_GAME
+          - when the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the currency
+          is not active or does not exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user
+          is short of money<br/>RS_ERROR_USER_DISABLED when user is banned or inactive<br/>RS_ERROR_INVALID_SIGNATURE
+          - when signature doesn't match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token
+          exists (this rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX
+          - message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e. when
+          a type should be integer and came as string<br/>RS_ERROR_DUPLICATE_TRANSACTION
+          - when the same transaction_uuid appears but for a different user, round
+          and game, otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+          - when doing a 'win' transaction and the 'bet' transaction id doesn't exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK
+          - when a 'win' transaction happens in name of a rolled back transaction
+          (when receiving a 'rollback' replies with 'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED
+          - when the user exceeded its limits
+      user:
+        description: User Unique User ID in the Operator�s system. In case of DEMO
+          gameplay, this parameter may be omitted.
+        type: string
+    type: object
+  caleta.WalletbetJSONRequestBody:
+    properties:
+      amount:
+        description: 'Amount We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      bet:
+        description: Bet Field for metadata related to transaction, such as type of
+          bet, value, time, etc. Differs from game to game. Not relevant for transaction
+          processing procedure but could be useful for statistics or activity backtracking.
+        type: string
+      campaign_uuid:
+        description: CampaignUuid Each Free Bet campaign contains an unique identifier
+          on Caleta side. Campaings holds information of game where Free Bet will
+          happen, total of spins, bet value and period of campaign.
+        type: string
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      game_code:
+        description: GameCode Unique Game Code on Caleta system. Can be obtained from
+          `/api/game/list` endpoint. This variable intends to replace `game_id`.
+        type: string
+      game_id:
+        description: 'GameId Deprecated: Use `game_code` instead.<br/>Unique game
+          ID Caleta system. Can be obtained from `/api/game/list` endpoint.<br/>Note:
+          this value may change from each server (staging, production)'
+        type: integer
+      is_free:
+        description: IsFree Flag which shows that transaction was generated by a promotional
+          tool (FreeSpins, etc). Usually, these transactions are credited to bonus
+          wallets (if available).
+        type: boolean
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      reward_uuid:
+        description: RewardUuid This holds the uuid of a reward given to a player
+          on Caleta side. Rewards holds information about which campaigns belong,
+          player, quantity left of Free Bets.
+        type: string
+      round:
+        description: Round Game round id. Used to relate all bets and wins in one
+          round. All transactions related to the same round will have the same value
+          in this field. It's unique through whole system.
+        type: string
+      round_closed:
+        description: RoundClosed Denotes when the round is closed
+        type: boolean
+      supplier_user:
+        description: SupplierUser The name of the user in Provider's system (in case
+          Operator needs to find user in Provder's back office or report problem with
+          the user). If value is NULL, the Operator can search for their own user_id.
+        type: string
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+      transaction_uuid:
+        description: TransactionUuid Unique wallet transaction.
+        type: string
+    type: object
+  caleta.Walletcheck200JSONResponse:
+    properties:
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+    type: object
+  caleta.WalletcheckJSONRequestBody:
+    properties:
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+    type: object
+  caleta.Walletrollback200JSONResponse:
+    properties:
+      balance:
+        description: 'Balance We use integers to represent the amount of money. To
+          convert real float value to integer we multiply it by 100000. Example: $3.56
+          must be represented as 356000'
+        type: integer
+      currency:
+        allOf:
+        - $ref: '#/definitions/caleta.Currency'
+        description: Currency ISO 4217 currency code. Following enum contains all
+          currencies supported by our system. Existing of currency in this list doesn't
+          mean that all providers support native game play with it. Please contact
+          us to know which provider supports which currencies.
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/caleta.Status'
+        description: Status Response status usage:<br/>RS_OK - when transaction was
+          processed correctly or was already processed before.<br/>RS_ERROR_UNKNOWN
+          - use this when you need a generic error code<br/>RS_ERROR_TIMEOUT - when
+          the server was disconnected by timeout<br/>RS_ERROR_INVALID_TOKEN - when
+          token never existed or is not associated to this player.<br/>RS_ERROR_INVALID_GAME
+          - when the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the currency
+          is not active or does not exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user
+          is short of money<br/>RS_ERROR_USER_DISABLED when user is banned or inactive<br/>RS_ERROR_INVALID_SIGNATURE
+          - when signature doesn't match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token
+          exists (this rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX
+          - message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e. when
+          a type should be integer and came as string<br/>RS_ERROR_DUPLICATE_TRANSACTION
+          - when the same transaction_uuid appears but for a different user, round
+          and game, otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST
+          - when doing a 'win' transaction and the 'bet' transaction id doesn't exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK
+          - when a 'win' transaction happens in name of a rolled back transaction
+          (when receiving a 'rollback' replies with 'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED
+          - when the user exceeded its limits
+      user:
+        description: User Unique User ID in the Operator�s system. In case of DEMO
+          gameplay, this parameter may be omitted.
+        type: string
+    type: object
+  caleta.WalletrollbackJSONRequestBody:
+    properties:
+      game_code:
+        description: GameCode Unique Game Code on Caleta system. Can be obtained from
+          `/api/game/list` endpoint. This variable intends to replace `game_id`.
+        type: string
+      game_id:
+        description: 'GameId Deprecated: Use `game_code` instead.<br/>Unique game
+          ID Caleta system. Can be obtained from `/api/game/list` endpoint.<br/>Note:
+          this value may change from each server (staging, production)'
+        type: integer
+      is_free:
+        description: IsFree Flag which shows that transaction was generated by a promotional
+          tool (FreeSpins, etc). Usually, these transactions are credited to bonus
+          wallets (if available).
+        type: boolean
+      reference_transaction_uuid:
+        description: ReferenceTransactionUuid Unique identifier of the transaction
+          that this transaction is referencing. In case of rollback, this field will
+          contain transaction_uuid of the transaction which needs to be rolled back.
+          In case of win, there will be transaction_uuid of the bet to which this
+          win is related.
+        type: string
+      request_uuid:
+        description: RequestUuid Standard 16-byte UUID. This id can be seen as network
+          layer action. An id of an action that is generated for each our call to
+          Operator. Used to sync Hub88 and Operator sides for debugging purposes.
+          Operator has to respond with the same request_uuid as the one that was received
+          in request.
+        type: string
+      round:
+        description: Round Game round id. Used to relate all bets and wins in one
+          round. All transactions related to the same round will have the same value
+          in this field. It's unique through whole system.
+        type: string
+      round_closed:
+        description: RoundClosed Denotes when the round is closed
+        type: boolean
+      token:
+        description: Token Operator's back end generates a token associated with the
+          User, game, his or her current currency and maybe other parameters depending
+          on the Operator's preferences. The token acts as an ID parameter for the
+          game session. It is important that the currency is not changed during the
+          current game session. If the User changes the currency or display unit,
+          the Operator's backend needs to generate a new token and re-open the game
+          with new token. In case of DEMO gameplay, this parameter may be omitted.<br/>A
+          token should be valid for all bet transactions until a new one is generated,
+          expired tokens should continue be valid for Win/Rollback transactions if
+          is related to a previous existing bet.
+        type: string
+      transaction_uuid:
+        description: TransactionUuid Unique wallet transaction.
+        type: string
+      user:
+        description: User Unique User ID in the Operator�s system. In case of DEMO
+          gameplay, this parameter may be omitted.
+        type: string
+    type: object
+  evolution.BalanceRequest:
+    properties:
+      currency:
+        type: string
+      game: {}
+      sid:
+        type: string
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - currency
+    - sid
+    - userId
+    type: object
+  evolution.CancelRequest:
+    properties:
+      currency:
+        type: string
+      game:
+        $ref: '#/definitions/evolution.Game'
+      sid:
+        type: string
+      transaction:
+        $ref: '#/definitions/evolution.Transaction'
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - currency
+    - game
+    - sid
+    - userId
+    type: object
+  evolution.CheckRequest:
+    properties:
+      channel:
+        properties:
+          type:
+            type: string
+        type: object
+      sid:
+        type: string
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - sid
+    - userId
+    type: object
+  evolution.CheckResponse:
+    properties:
+      sid:
+        type: string
+      status:
+        type: string
+      uuid:
+        type: string
+    type: object
+  evolution.CreditRequest:
+    properties:
+      currency:
+        type: string
+      game:
+        $ref: '#/definitions/evolution.Game'
+      sid:
+        type: string
+      transaction:
+        $ref: '#/definitions/evolution.Transaction'
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - currency
+    - game
+    - sid
+    - transaction
+    - userId
+    type: object
+  evolution.DebitRequest:
+    properties:
+      currency:
+        type: string
+      game:
+        $ref: '#/definitions/evolution.Game'
+      sid:
+        type: string
+      transaction:
+        $ref: '#/definitions/evolution.Transaction'
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - currency
+    - game
+    - sid
+    - transaction
+    - userId
+    type: object
+  evolution.Game:
+    properties:
+      details:
+        $ref: '#/definitions/evolution.GameDetails'
+      id:
+        type: string
+      type:
+        type: string
+    type: object
+  evolution.GameDetails:
+    properties:
+      table:
+        $ref: '#/definitions/evolution.GameTable'
+    type: object
+  evolution.GameTable:
+    properties:
+      id:
+        type: string
+      vid:
+        type: string
+    type: object
+  evolution.PromoPayoutRequest:
+    properties:
+      currency:
+        type: string
+      game:
+        $ref: '#/definitions/evolution.Game'
+      promoTransaction:
+        $ref: '#/definitions/evolution.PromoTransaction'
+      sid:
+        type: string
+      userId:
+        type: string
+      uuid:
+        type: string
+    required:
+    - currency
+    - game
+    - sid
+    - userId
+    type: object
+  evolution.PromoTransaction:
+    properties:
+      amount:
+        type: number
+      id:
+        type: string
+      remainingRounds:
+        type: integer
+      type:
+        type: string
+      voucherId:
+        type: string
+    type: object
+  evolution.StandardResponse:
+    properties:
+      balance:
+        type: number
+      bonus:
+        type: number
+      retransmission:
+        type: boolean
+      status:
+        type: string
+      uuid:
+        type: string
+    required:
+    - balance
+    - status
+    type: object
+  evolution.Transaction:
+    properties:
+      amount:
+        type: number
+      id:
+        type: string
+      refId:
+        type: string
+    type: object
+  redtiger.AuthRequest:
+    properties:
+      affiliate:
+        maxLength: 255
+        type: string
+      casino:
+        maxLength: 50
+        type: string
+      channel:
+        maxLength: 8
+        type: string
+      currency:
+        maxLength: 8
+        type: string
+      extras:
+        type: string
+      ip:
+        type: string
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+      userId:
+        maxLength: 36
+        type: string
+    required:
+    - token
+    type: object
+  redtiger.AuthResponse:
+    properties:
+      balance:
+        $ref: '#/definitions/redtiger.Balance'
+      casino:
+        maxLength: 50
+        type: string
+      country:
+        type: string
+      currency:
+        maxLength: 8
+        type: string
+      language:
+        maxLength: 6
+        type: string
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+      userId:
+        maxLength: 32
+        type: string
+    type: object
+  redtiger.AuthResponseWrapper:
+    properties:
+      error:
+        $ref: '#/definitions/redtiger.Error'
+      result:
+        $ref: '#/definitions/redtiger.AuthResponse'
+      success:
+        type: boolean
+    type: object
+  redtiger.Balance:
+    properties:
+      bonus:
+        type: number
+      cash:
+        type: number
+    type: object
+  redtiger.Error:
+    properties:
+      code:
+        $ref: '#/definitions/redtiger.RTErrorCode'
+      message:
+        type: string
+    type: object
+  redtiger.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/redtiger.Error'
+      success:
+        type: boolean
+    type: object
+  redtiger.Game:
+    properties:
+      key:
+        maxLength: 128
+        type: string
+      type:
+        type: string
+      version:
+        maxLength: 128
+        type: string
+    type: object
+  redtiger.Jackpot:
+    properties:
+      contribution:
+        type: string
+      group:
+        maxLength: 100
+        type: string
+      pots:
+        items:
+          type: string
+        type: array
+    type: object
+  redtiger.PayoutDetails:
+    properties:
+      game:
+        type: number
+      jackpot:
+        type: number
+    type: object
+  redtiger.PayoutRequest:
+    properties:
+      casino:
+        maxLength: 50
+        type: string
+      currency:
+        maxLength: 8
+        type: string
+      game:
+        $ref: '#/definitions/redtiger.Game'
+      ip:
+        type: string
+      jackpot:
+        $ref: '#/definitions/redtiger.Jackpot'
+      promo:
+        $ref: '#/definitions/redtiger.Promo'
+      retry:
+        type: boolean
+      round:
+        $ref: '#/definitions/redtiger.Round'
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+      transaction:
+        $ref: '#/definitions/redtiger.TransactionPayout'
+      userId:
+        maxLength: 36
+        type: string
+    required:
+    - token
+    type: object
+  redtiger.PayoutResponse:
+    properties:
+      balance:
+        $ref: '#/definitions/redtiger.Balance'
+      currency:
+        maxLength: 8
+        type: string
+      id:
+        type: string
+      payout:
+        $ref: '#/definitions/redtiger.Balance'
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+    type: object
+  redtiger.PayoutResponseWrapper:
+    properties:
+      error:
+        $ref: '#/definitions/redtiger.Error'
+      result:
+        $ref: '#/definitions/redtiger.PayoutResponse'
+      success:
+        type: boolean
+    type: object
+  redtiger.Promo:
+    properties:
+      campaignCode:
+        maxLength: 64
+        type: string
+      campaignId:
+        type: integer
+      instanceCode:
+        maxLength: 64
+        type: string
+      instanceId:
+        type: integer
+      type:
+        type: string
+    type: object
+  redtiger.RTErrorCode:
+    enum:
+    - 100
+    - 200
+    - 201
+    - 301
+    - 302
+    - 303
+    - 304
+    - 305
+    - 306
+    - 400
+    - 401
+    - 500
+    - 501
+    type: integer
+    x-enum-varnames:
+    - APIAuthError
+    - InvalidInput
+    - GenericError
+    - NotAuthorized
+    - UserNotFound
+    - BannedUser
+    - InsufficientFunds
+    - InvalidUserCurrency
+    - UserLimitedPlaying
+    - TransactionNotFound
+    - DuplicateTransaction
+    - InternalServerError
+    - UnderMaintenanceMode
+  redtiger.RefundRequest:
+    properties:
+      casino:
+        maxLength: 50
+        type: string
+      currency:
+        maxLength: 8
+        type: string
+      game:
+        $ref: '#/definitions/redtiger.Game'
+      ip:
+        type: string
+      promo:
+        $ref: '#/definitions/redtiger.Promo'
+      round:
+        $ref: '#/definitions/redtiger.Round'
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+      transaction:
+        $ref: '#/definitions/redtiger.TransactionStake'
+      userId:
+        maxLength: 36
+        type: string
+    required:
+    - token
+    type: object
+  redtiger.RefundResponseWrapper:
+    properties:
+      balance:
+        $ref: '#/definitions/redtiger.Balance'
+      currency:
+        type: string
+      error:
+        $ref: '#/definitions/redtiger.Error'
+      result:
+        $ref: '#/definitions/redtiger.RefundResult'
+      success:
+        type: boolean
+    type: object
+  redtiger.RefundResult:
+    properties:
+      id:
+        type: string
+      stake:
+        $ref: '#/definitions/redtiger.Balance'
+      token:
+        type: string
+    type: object
+  redtiger.Round:
+    properties:
+      ends:
+        type: boolean
+      id:
+        maxLength: 32
+        type: string
+      starts:
+        type: boolean
+    type: object
+  redtiger.Sources:
+    properties:
+      features:
+        type: number
+      jackpot:
+        additionalProperties:
+          type: number
+        type: object
+      lines:
+        type: number
+    type: object
+  redtiger.StakeDetails:
+    properties:
+      game:
+        type: number
+      jackpot:
+        type: number
+    type: object
+  redtiger.StakeRequest:
+    properties:
+      casino:
+        maxLength: 50
+        type: string
+      currency:
+        maxLength: 8
+        type: string
+      game:
+        $ref: '#/definitions/redtiger.Game'
+      ip:
+        type: string
+      promo:
+        $ref: '#/definitions/redtiger.Promo'
+      round:
+        $ref: '#/definitions/redtiger.Round'
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+      transaction:
+        $ref: '#/definitions/redtiger.TransactionStake'
+      userId:
+        maxLength: 36
+        type: string
+    required:
+    - token
+    type: object
+  redtiger.StakeResponse:
+    properties:
+      balance:
+        $ref: '#/definitions/redtiger.Balance'
+      currency:
+        maxLength: 8
+        type: string
+      id:
+        type: string
+      stake:
+        $ref: '#/definitions/redtiger.Balance'
+      token:
+        maxLength: 128
+        minLength: 32
+        type: string
+    type: object
+  redtiger.StakeResponseWrapper:
+    properties:
+      error:
+        $ref: '#/definitions/redtiger.Error'
+      result:
+        $ref: '#/definitions/redtiger.StakeResponse'
+      success:
+        type: boolean
+    type: object
+  redtiger.TransactionPayout:
+    properties:
+      details:
+        $ref: '#/definitions/redtiger.PayoutDetails'
+      id:
+        maxLength: 32
+        type: string
+      payout:
+        minimum: 0
+        type: number
+      payoutPromo:
+        minimum: 0
+        type: number
+      sources:
+        $ref: '#/definitions/redtiger.Sources'
+    type: object
+  redtiger.TransactionStake:
+    properties:
+      details:
+        $ref: '#/definitions/redtiger.StakeDetails'
+      id:
+        maxLength: 32
+        type: string
+      stake:
+        type: number
+      stakePromo:
+        type: number
+    type: object
+host: localhost:8083
 info:
   contact: {}
   description: The exposed endpoints by the enabled game provider modules.
   title: Valkyrie Provider API
-  version: "-"
+  version: '-'
 paths:
   /providers/caleta/wallet/balance:
     post:
+      consumes:
+      - application/json
       description: Wallet balance
       operationId: CaletaBalance
       parameters:
-        - description: Signature for request
-          in: header
-          name: X-Auth-Signature
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/caleta.WalletbalanceJSONRequestBody"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/caleta.WalletbalanceJSONRequestBody'
+      - description: Signature for request
+        in: header
+        name: X-Auth-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletbalance200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletbalance200JSONResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletbalance200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletbalance200JSONResponse'
       summary: Balance
       tags:
-        - Caleta
+      - Caleta
   /providers/caleta/wallet/bet:
     post:
+      consumes:
+      - application/json
       description: Wallet bet
       operationId: CaletaBet
       parameters:
-        - description: Signature for request
-          in: header
-          name: X-Auth-Signature
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/caleta.WalletbetJSONRequestBody"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/caleta.WalletbetJSONRequestBody'
+      - description: Signature for request
+        in: header
+        name: X-Auth-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletbet200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletbet200JSONResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletbet200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletbet200JSONResponse'
       summary: Bet
       tags:
-        - Caleta
+      - Caleta
   /providers/caleta/wallet/check:
     post:
+      consumes:
+      - application/json
       description: Wallet check
       operationId: CaletaCheck
       parameters:
-        - description: Signature for request
-          in: header
-          name: X-Auth-Signature
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/caleta.WalletcheckJSONRequestBody"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/caleta.WalletcheckJSONRequestBody'
+      - description: Signature for request
+        in: header
+        name: X-Auth-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletcheck200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletcheck200JSONResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletcheck200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletcheck200JSONResponse'
       summary: Check
       tags:
-        - Caleta
+      - Caleta
   /providers/caleta/wallet/rollback:
     post:
+      consumes:
+      - application/json
       description: Wallet rollback
       operationId: CaletaRollback
       parameters:
-        - description: Signature for request
-          in: header
-          name: X-Auth-Signature
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/caleta.WalletrollbackJSONRequestBody"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/caleta.WalletrollbackJSONRequestBody'
+      - description: Signature for request
+        in: header
+        name: X-Auth-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletrollback200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletrollback200JSONResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Walletrollback200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Walletrollback200JSONResponse'
       summary: Rollback
       tags:
-        - Caleta
+      - Caleta
   /providers/caleta/wallet/win:
     post:
+      consumes:
+      - application/json
       description: Wallet win
       operationId: CaletaWin
       parameters:
-        - description: Signature for request
-          in: header
-          name: X-Auth-Signature
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/caleta.TransactionwinJSONRequestBody"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/caleta.TransactionwinJSONRequestBody'
+      - description: Signature for request
+        in: header
+        name: X-Auth-Signature
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Transactionwin200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Transactionwin200JSONResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/caleta.Transactionwin200JSONResponse"
+          schema:
+            $ref: '#/definitions/caleta.Transactionwin200JSONResponse'
       summary: Win
       tags:
-        - Caleta
+      - Caleta
   /providers/evolution/balance:
     post:
+      consumes:
+      - application/json
       description: Used to get user’s balance
       operationId: EvoBalance
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.BalanceRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.BalanceRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: Balance
       tags:
-        - Evolution
+      - Evolution
   /providers/evolution/cancel:
     post:
+      consumes:
+      - application/json
       description: Used to cancel user’s bet
       operationId: EvoCancel
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.CancelRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.CancelRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: Cancel
       tags:
-        - Evolution
+      - Evolution
   /providers/evolution/check:
     post:
-      description: Should be used for additional validation of redirected user and sid
+      consumes:
+      - application/json
+      description: Should be used for additional validation of redirected user and
+        sid
       operationId: EvoCheck
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.CheckRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.CheckRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.CheckResponse"
+          schema:
+            $ref: '#/definitions/evolution.CheckResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: Check
       tags:
-        - Evolution
+      - Evolution
   /providers/evolution/credit:
     post:
+      consumes:
+      - application/json
       description: Used to credit user’s account (settle bets)
       operationId: EvoCredit
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.CreditRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.CreditRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: Credit
       tags:
-        - Evolution
+      - Evolution
   /providers/evolution/debit:
     post:
+      consumes:
+      - application/json
       description: Used to debit from account (place bets)
       operationId: EvoDebit
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.DebitRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.DebitRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: Debit
       tags:
-        - Evolution
+      - Evolution
   /providers/evolution/promo_payout:
     post:
+      consumes:
+      - application/json
       description: Used to communicate promotional payout transactions
       operationId: EvoPromoPayout
       parameters:
-        - description: Api token
-          in: query
-          name: authToken
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/evolution.PromoPayoutRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/evolution.PromoPayoutRequest'
+      - description: Api token
+        in: query
+        name: authToken
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
         "500":
           description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/evolution.StandardResponse"
+          schema:
+            $ref: '#/definitions/evolution.StandardResponse'
       summary: PromoPayout
       tags:
-        - Evolution
+      - Evolution
   /providers/redtiger/auth:
     post:
+      consumes:
+      - application/json
       description: Authenticate
       operationId: RTAuth
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/redtiger.AuthRequest"
-        description: Request body
+      - description: Request body
+        in: body
+        name: req
         required: true
+        schema:
+          $ref: '#/definitions/redtiger.AuthRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.AuthResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.AuthResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: Auth
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/payout:
     post:
+      consumes:
+      - application/json
       description: Payout
       operationId: RTPayout
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.PayoutRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.PayoutRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.PayoutResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.PayoutResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: Payout
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/promo/buyin:
     post:
+      consumes:
+      - application/json
       description: PromoBuyin
       operationId: RTPromoBuyin
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.StakeRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.StakeRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.StakeResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.StakeResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: PromoBuyin
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/promo/refund:
     post:
+      consumes:
+      - application/json
       description: PromoRefund
       operationId: RTPromoRefund
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.RefundRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.RefundRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.RefundResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.RefundResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: PromoRefund
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/promo/settle:
     post:
+      consumes:
+      - application/json
       description: PromoSettle
       operationId: RTPromoSettle
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.PayoutRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.PayoutRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.PayoutResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.PayoutResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: PromoSettle
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/refund:
     post:
+      consumes:
+      - application/json
       description: Refund
       operationId: RTRefund
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.RefundRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.RefundRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.RefundResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.RefundResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: Refund
       tags:
-        - Red Tiger
+      - Red Tiger
   /providers/redtiger/stake:
     post:
+      consumes:
+      - application/json
       description: Stake
       operationId: RTStake
       parameters:
-        - description: API Key
-          in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/redtiger.StakeRequest"
+      - description: Request body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/redtiger.StakeRequest'
+      - description: API Key
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.StakeResponseWrapper"
+          schema:
+            $ref: '#/definitions/redtiger.StakeResponseWrapper'
         "400":
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/redtiger.ErrorResponse"
+          schema:
+            $ref: '#/definitions/redtiger.ErrorResponse'
       summary: Stake
       tags:
-        - Red Tiger
-servers:
-  - url: http://localhost:8083
-components:
-  requestBodies:
-    redtiger.StakeRequest:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/redtiger.StakeRequest"
-      description: Request body
-      required: true
-    redtiger.RefundRequest:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/redtiger.RefundRequest"
-      description: Request body
-      required: true
-    redtiger.PayoutRequest:
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/redtiger.PayoutRequest"
-      description: Request body
-      required: true
-  schemas:
-    caleta.Currency:
-      enum:
-        - AED
-        - AFN
-        - ALL
-        - AMD
-        - ANG
-        - AOA
-        - ARS
-        - AUD
-        - AWG
-        - AZN
-        - BAM
-        - BBD
-        - BDT
-        - BGN
-        - BHD
-        - BIF
-        - BMD
-        - BND
-        - BOB
-        - BRL
-        - BSD
-        - BTN
-        - BWP
-        - BYR
-        - BZD
-        - CAD
-        - CHF
-        - CLP
-        - CNY
-        - COP
-        - CRC
-        - CUC
-        - CUP
-        - CVE
-        - CZK
-        - DJF
-        - DKK
-        - DOP
-        - DZD
-        - EGP
-        - ERN
-        - ETB
-        - ETH
-        - EUR
-        - FJD
-        - FKP
-        - GBP
-        - GEL
-        - GHS
-        - GIP
-        - GMD
-        - GNF
-        - GTQ
-        - GYD
-        - HKD
-        - HNL
-        - HRK
-        - HTG
-        - HUF
-        - IDR
-        - ILS
-        - INR
-        - IQD
-        - IRR
-        - ISK
-        - JMD
-        - JOD
-        - JPY
-        - KES
-        - KGS
-        - KHR
-        - KMF
-        - KPW
-        - KRW
-        - KWD
-        - KYD
-        - KZT
-        - LAK
-        - LBP
-        - LKR
-        - LRD
-        - LSL
-        - LTC
-        - LTL
-        - LYD
-        - MAD
-        - mBTC
-        - MDL
-        - mETH
-        - MGA
-        - MKD
-        - mLTC
-        - MMK
-        - MNT
-        - MOP
-        - MRO
-        - MUR
-        - MVR
-        - MWK
-        - MXN
-        - MYR
-        - MZN
-        - NAD
-        - NGN
-        - NIO
-        - NOK
-        - NPR
-        - NZD
-        - OMR
-        - PAB
-        - PEN
-        - PGK
-        - PHP
-        - PKR
-        - PLN
-        - PYG
-        - QAR
-        - RON
-        - RSD
-        - RUB
-        - RWF
-        - SAR
-        - SBD
-        - SCR
-        - SDG
-        - SEK
-        - SGD
-        - SLL
-        - SOC
-        - SOS
-        - SRD
-        - SSP
-        - SYP
-        - SZL
-        - THB
-        - TJS
-        - TMT
-        - TND
-        - TOP
-        - TRY
-        - TTD
-        - TWD
-        - TZS
-        - UAH
-        - uBTC
-        - uETH
-        - UGX
-        - uLTC
-        - USD
-        - UYU
-        - UZS
-        - VEF
-        - VND
-        - VUV
-        - WST
-        - XCD
-        - XOF
-        - XPF
-        - XXX
-        - YER
-        - ZAR
-        - ZMW
-        - ZWD
-      type: string
-      x-enum-varnames:
-        - AED
-        - AFN
-        - ALL
-        - AMD
-        - ANG
-        - AOA
-        - ARS
-        - AUD
-        - AWG
-        - AZN
-        - BAM
-        - BBD
-        - BDT
-        - BGN
-        - BHD
-        - BIF
-        - BMD
-        - BND
-        - BOB
-        - BRL
-        - BSD
-        - BTN
-        - BWP
-        - BYR
-        - BZD
-        - CAD
-        - CHF
-        - CLP
-        - CNY
-        - COP
-        - CRC
-        - CUC
-        - CUP
-        - CVE
-        - CZK
-        - DJF
-        - DKK
-        - DOP
-        - DZD
-        - EGP
-        - ERN
-        - ETB
-        - ETH
-        - EUR
-        - FJD
-        - FKP
-        - GBP
-        - GEL
-        - GHS
-        - GIP
-        - GMD
-        - GNF
-        - GTQ
-        - GYD
-        - HKD
-        - HNL
-        - HRK
-        - HTG
-        - HUF
-        - IDR
-        - ILS
-        - INR
-        - IQD
-        - IRR
-        - ISK
-        - JMD
-        - JOD
-        - JPY
-        - KES
-        - KGS
-        - KHR
-        - KMF
-        - KPW
-        - KRW
-        - KWD
-        - KYD
-        - KZT
-        - LAK
-        - LBP
-        - LKR
-        - LRD
-        - LSL
-        - LTC
-        - LTL
-        - LYD
-        - MAD
-        - MBTC
-        - MDL
-        - METH
-        - MGA
-        - MKD
-        - MLTC
-        - MMK
-        - MNT
-        - MOP
-        - MRO
-        - MUR
-        - MVR
-        - MWK
-        - MXN
-        - MYR
-        - MZN
-        - NAD
-        - NGN
-        - NIO
-        - NOK
-        - NPR
-        - NZD
-        - OMR
-        - PAB
-        - PEN
-        - PGK
-        - PHP
-        - PKR
-        - PLN
-        - PYG
-        - QAR
-        - RON
-        - RSD
-        - RUB
-        - RWF
-        - SAR
-        - SBD
-        - SCR
-        - SDG
-        - SEK
-        - SGD
-        - SLL
-        - SOC
-        - SOS
-        - SRD
-        - SSP
-        - SYP
-        - SZL
-        - THB
-        - TJS
-        - TMT
-        - TND
-        - TOP
-        - TRY
-        - TTD
-        - TWD
-        - TZS
-        - UAH
-        - UBTC
-        - UETH
-        - UGX
-        - ULTC
-        - USD
-        - UYU
-        - UZS
-        - VEF
-        - VND
-        - VUV
-        - WST
-        - XCD
-        - XOF
-        - XPF
-        - XXX
-        - YER
-        - ZAR
-        - ZMW
-        - ZWD
-    caleta.Status:
-      enum:
-        - RS_ERROR_BET_LIMIT_EXCEEDED
-        - RS_ERROR_DUPLICATE_TRANSACTION
-        - RS_ERROR_INVALID_GAME
-        - RS_ERROR_INVALID_SIGNATURE
-        - RS_ERROR_INVALID_TOKEN
-        - RS_ERROR_NOT_ENOUGH_MONEY
-        - RS_ERROR_TIMEOUT
-        - RS_ERROR_TOKEN_EXPIRED
-        - RS_ERROR_TRANSACTION_DOES_NOT_EXIST
-        - RS_ERROR_TRANSACTION_ROLLED_BACK
-        - RS_ERROR_UNKNOWN
-        - RS_ERROR_USER_DISABLED
-        - RS_ERROR_WRONG_CURRENCY
-        - RS_ERROR_WRONG_SYNTAX
-        - RS_ERROR_WRONG_TYPES
-        - RS_OK
-      type: string
-      x-enum-varnames:
-        - RSERRORBETLIMITEXCEEDED
-        - RSERRORDUPLICATETRANSACTION
-        - RSERRORINVALIDGAME
-        - RSERRORINVALIDSIGNATURE
-        - RSERRORINVALIDTOKEN
-        - RSERRORNOTENOUGHMONEY
-        - RSERRORTIMEOUT
-        - RSERRORTOKENEXPIRED
-        - RSERRORTRANSACTIONDOESNOTEXIST
-        - RSERRORTRANSACTIONROLLEDBACK
-        - RSERRORUNKNOWN
-        - RSERRORUSERDISABLED
-        - RSERRORWRONGCURRENCY
-        - RSERRORWRONGSYNTAX
-        - RSERRORWRONGTYPES
-        - RSOK
-    caleta.Transactionwin200JSONResponse:
-      properties:
-        balance:
-          description: "Balance We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        status:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Status"
-          description: Status Response status usage:<br/>RS_OK - when transaction was
-            processed correctly or was already processed
-            before.<br/>RS_ERROR_UNKNOWN - use this when you need a generic
-            error code<br/>RS_ERROR_TIMEOUT - when the server was disconnected
-            by timeout<br/>RS_ERROR_INVALID_TOKEN - when token never existed or
-            is not associated to this player.<br/>RS_ERROR_INVALID_GAME - when
-            the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the
-            currency is not active or does not
-            exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user is short of
-            money<br/>RS_ERROR_USER_DISABLED when user is banned or
-            inactive<br/>RS_ERROR_INVALID_SIGNATURE - when signature doesn't
-            match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token exists (this
-            rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX -
-            message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e.
-            when a type should be integer and came as
-            string<br/>RS_ERROR_DUPLICATE_TRANSACTION - when the same
-            transaction_uuid appears but for a different user, round and game,
-            otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST -
-            when doing a 'win' transaction and the 'bet' transaction id doesn't
-            exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win'
-            transaction happens in name of a rolled back transaction (when
-            receiving a 'rollback' replies with
-            'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its
-            limits
-        user:
-          description: User Unique User ID in the Operator�s system. In case of DEMO
-            gameplay, this parameter may be omitted.
-          type: string
-      type: object
-    caleta.TransactionwinJSONRequestBody:
-      properties:
-        amount:
-          description: "Amount We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        bet:
-          description: Bet Field for metadata related to transaction, such as type of bet,
-            value, time, etc. Differs from game to game. Not relevant for
-            transaction processing procedure but could be useful for statistics
-            or activity backtracking.
-          type: string
-        campaign_uuid:
-          description: CampaignUuid Each Free Bet campaign contains an unique identifier
-            on Caleta side. Campaings holds information of game where Free Bet
-            will happen, total of spins, bet value and period of campaign.
-          type: string
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        game_code:
-          description: GameCode Unique Game Code on Caleta system. Can be obtained from
-            `/api/game/list` endpoint. This variable intends to replace
-            `game_id`.
-          type: string
-        game_id:
-          description: "GameId Deprecated: Use `game_code` instead.<br/>Unique game ID
-            Caleta system. Can be obtained from `/api/game/list`
-            endpoint.<br/>Note: this value may change from each server (staging,
-            production)"
-          type: integer
-        is_free:
-          description: IsFree Flag which shows that transaction was generated by a
-            promotional tool (FreeSpins, etc). Usually, these transactions are
-            credited to bonus wallets (if available).
-          type: boolean
-        jackpot_win:
-          description: JackpotWin This field is included if a jackpot win occurred. The
-            reported value indicate how much of the win amount was contributed
-            to from winning the jackpot. This value is represented as an integer
-            similar to amount.
-          type: integer
-        reference_transaction_uuid:
-          description: ReferenceTransactionUuid Unique identifier of the transaction that
-            this transaction is referencing. In case of rollback, this field
-            will contain transaction_uuid of the transaction which needs to be
-            rolled back. In case of win, there will be transaction_uuid of the
-            bet to which this win is related.
-          type: string
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        reward_uuid:
-          description: RewardUuid This holds the uuid of a reward given to a player on
-            Caleta side. Rewards holds information about which campaigns belong,
-            player, quantity left of Free Bets.
-          type: string
-        round:
-          description: Round Game round id. Used to relate all bets and wins in one round.
-            All transactions related to the same round will have the same value
-            in this field. It's unique through whole system.
-          type: string
-        round_closed:
-          description: RoundClosed Denotes when the round is closed
-          type: boolean
-        supplier_user:
-          description: SupplierUser The name of the user in Provider's system (in case
-            Operator needs to find user in Provder's back office or report
-            problem with the user). If value is NULL, the Operator can search
-            for their own user_id.
-          type: string
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-        transaction_uuid:
-          description: TransactionUuid Unique wallet transaction.
-          type: string
-      type: object
-    caleta.Walletbalance200JSONResponse:
-      properties:
-        balance:
-          description: "Balance We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        status:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Status"
-          description: Status Response status usage:<br/>RS_OK - when transaction was
-            processed correctly or was already processed
-            before.<br/>RS_ERROR_UNKNOWN - use this when you need a generic
-            error code<br/>RS_ERROR_TIMEOUT - when the server was disconnected
-            by timeout<br/>RS_ERROR_INVALID_TOKEN - when token never existed or
-            is not associated to this player.<br/>RS_ERROR_INVALID_GAME - when
-            the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the
-            currency is not active or does not
-            exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user is short of
-            money<br/>RS_ERROR_USER_DISABLED when user is banned or
-            inactive<br/>RS_ERROR_INVALID_SIGNATURE - when signature doesn't
-            match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token exists (this
-            rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX -
-            message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e.
-            when a type should be integer and came as
-            string<br/>RS_ERROR_DUPLICATE_TRANSACTION - when the same
-            transaction_uuid appears but for a different user, round and game,
-            otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST -
-            when doing a 'win' transaction and the 'bet' transaction id doesn't
-            exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win'
-            transaction happens in name of a rolled back transaction (when
-            receiving a 'rollback' replies with
-            'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its
-            limits
-        user:
-          description: User Unique User ID in the Operator�s system. In case of DEMO
-            gameplay, this parameter may be omitted.
-          type: string
-      type: object
-    caleta.WalletbalanceJSONRequestBody:
-      properties:
-        game_code:
-          description: GameCode Unique Game Code on Caleta system. Can be obtained from
-            `/api/game/list` endpoint. This variable intends to replace
-            `game_id`.
-          type: string
-        game_id:
-          description: "GameId Deprecated: Use `game_code` instead.<br/>Unique game ID
-            Caleta system. Can be obtained from `/api/game/list`
-            endpoint.<br/>Note: this value may change from each server (staging,
-            production)"
-          type: integer
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        supplier_user:
-          description: SupplierUser The name of the user in Provider's system (in case
-            Operator needs to find user in Provder's back office or report
-            problem with the user). If value is NULL, the Operator can search
-            for their own user_id.
-          type: string
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-      type: object
-    caleta.Walletbet200JSONResponse:
-      properties:
-        balance:
-          description: "Balance We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        status:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Status"
-          description: Status Response status usage:<br/>RS_OK - when transaction was
-            processed correctly or was already processed
-            before.<br/>RS_ERROR_UNKNOWN - use this when you need a generic
-            error code<br/>RS_ERROR_TIMEOUT - when the server was disconnected
-            by timeout<br/>RS_ERROR_INVALID_TOKEN - when token never existed or
-            is not associated to this player.<br/>RS_ERROR_INVALID_GAME - when
-            the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the
-            currency is not active or does not
-            exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user is short of
-            money<br/>RS_ERROR_USER_DISABLED when user is banned or
-            inactive<br/>RS_ERROR_INVALID_SIGNATURE - when signature doesn't
-            match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token exists (this
-            rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX -
-            message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e.
-            when a type should be integer and came as
-            string<br/>RS_ERROR_DUPLICATE_TRANSACTION - when the same
-            transaction_uuid appears but for a different user, round and game,
-            otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST -
-            when doing a 'win' transaction and the 'bet' transaction id doesn't
-            exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win'
-            transaction happens in name of a rolled back transaction (when
-            receiving a 'rollback' replies with
-            'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its
-            limits
-        user:
-          description: User Unique User ID in the Operator�s system. In case of DEMO
-            gameplay, this parameter may be omitted.
-          type: string
-      type: object
-    caleta.WalletbetJSONRequestBody:
-      properties:
-        amount:
-          description: "Amount We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        bet:
-          description: Bet Field for metadata related to transaction, such as type of bet,
-            value, time, etc. Differs from game to game. Not relevant for
-            transaction processing procedure but could be useful for statistics
-            or activity backtracking.
-          type: string
-        campaign_uuid:
-          description: CampaignUuid Each Free Bet campaign contains an unique identifier
-            on Caleta side. Campaings holds information of game where Free Bet
-            will happen, total of spins, bet value and period of campaign.
-          type: string
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        game_code:
-          description: GameCode Unique Game Code on Caleta system. Can be obtained from
-            `/api/game/list` endpoint. This variable intends to replace
-            `game_id`.
-          type: string
-        game_id:
-          description: "GameId Deprecated: Use `game_code` instead.<br/>Unique game ID
-            Caleta system. Can be obtained from `/api/game/list`
-            endpoint.<br/>Note: this value may change from each server (staging,
-            production)"
-          type: integer
-        is_free:
-          description: IsFree Flag which shows that transaction was generated by a
-            promotional tool (FreeSpins, etc). Usually, these transactions are
-            credited to bonus wallets (if available).
-          type: boolean
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        reward_uuid:
-          description: RewardUuid This holds the uuid of a reward given to a player on
-            Caleta side. Rewards holds information about which campaigns belong,
-            player, quantity left of Free Bets.
-          type: string
-        round:
-          description: Round Game round id. Used to relate all bets and wins in one round.
-            All transactions related to the same round will have the same value
-            in this field. It's unique through whole system.
-          type: string
-        round_closed:
-          description: RoundClosed Denotes when the round is closed
-          type: boolean
-        supplier_user:
-          description: SupplierUser The name of the user in Provider's system (in case
-            Operator needs to find user in Provder's back office or report
-            problem with the user). If value is NULL, the Operator can search
-            for their own user_id.
-          type: string
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-        transaction_uuid:
-          description: TransactionUuid Unique wallet transaction.
-          type: string
-      type: object
-    caleta.Walletcheck200JSONResponse:
-      properties:
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-      type: object
-    caleta.WalletcheckJSONRequestBody:
-      properties:
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-      type: object
-    caleta.Walletrollback200JSONResponse:
-      properties:
-        balance:
-          description: "Balance We use integers to represent the amount of money. To
-            convert real float value to integer we multiply it by 100000.
-            Example: $3.56 must be represented as 356000"
-          type: integer
-        currency:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Currency"
-          description: Currency ISO 4217 currency code. Following enum contains all
-            currencies supported by our system. Existing of currency in this
-            list doesn't mean that all providers support native game play with
-            it. Please contact us to know which provider supports which
-            currencies.
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        status:
-          allOf:
-            - $ref: "#/components/schemas/caleta.Status"
-          description: Status Response status usage:<br/>RS_OK - when transaction was
-            processed correctly or was already processed
-            before.<br/>RS_ERROR_UNKNOWN - use this when you need a generic
-            error code<br/>RS_ERROR_TIMEOUT - when the server was disconnected
-            by timeout<br/>RS_ERROR_INVALID_TOKEN - when token never existed or
-            is not associated to this player.<br/>RS_ERROR_INVALID_GAME - when
-            the game doesn't exist<br/>RS_ERROR_WRONG_CURRENCY - when the
-            currency is not active or does not
-            exist<br/>RS_ERROR_NOT_ENOUGH_MONEY - when user is short of
-            money<br/>RS_ERROR_USER_DISABLED when user is banned or
-            inactive<br/>RS_ERROR_INVALID_SIGNATURE - when signature doesn't
-            match<br/>RS_ERROR_TOKEN_EXPIRED - when a new token exists (this
-            rule applies only for /wallet/bet)<br/>RS_ERROR_WRONG_SYNTAX -
-            message can't be decoded to JSON<br/>RS_ERROR_WRONG_TYPES - i.e.
-            when a type should be integer and came as
-            string<br/>RS_ERROR_DUPLICATE_TRANSACTION - when the same
-            transaction_uuid appears but for a different user, round and game,
-            otherwise returns RS_OK<br/>RS_ERROR_TRANSACTION_DOES_NOT_EXIST -
-            when doing a 'win' transaction and the 'bet' transaction id doesn't
-            exist<br/>RS_ERROR_TRANSACTION_ROLLED_BACK - when a 'win'
-            transaction happens in name of a rolled back transaction (when
-            receiving a 'rollback' replies with
-            'RS_OK'<br/>RS_ERROR_BET_LIMIT_EXCEEDED - when the user exceeded its
-            limits
-        user:
-          description: User Unique User ID in the Operator�s system. In case of DEMO
-            gameplay, this parameter may be omitted.
-          type: string
-      type: object
-    caleta.WalletrollbackJSONRequestBody:
-      properties:
-        game_code:
-          description: GameCode Unique Game Code on Caleta system. Can be obtained from
-            `/api/game/list` endpoint. This variable intends to replace
-            `game_id`.
-          type: string
-        game_id:
-          description: "GameId Deprecated: Use `game_code` instead.<br/>Unique game ID
-            Caleta system. Can be obtained from `/api/game/list`
-            endpoint.<br/>Note: this value may change from each server (staging,
-            production)"
-          type: integer
-        is_free:
-          description: IsFree Flag which shows that transaction was generated by a
-            promotional tool (FreeSpins, etc). Usually, these transactions are
-            credited to bonus wallets (if available).
-          type: boolean
-        reference_transaction_uuid:
-          description: ReferenceTransactionUuid Unique identifier of the transaction that
-            this transaction is referencing. In case of rollback, this field
-            will contain transaction_uuid of the transaction which needs to be
-            rolled back. In case of win, there will be transaction_uuid of the
-            bet to which this win is related.
-          type: string
-        request_uuid:
-          description: RequestUuid Standard 16-byte UUID. This id can be seen as network
-            layer action. An id of an action that is generated for each our call
-            to Operator. Used to sync Hub88 and Operator sides for debugging
-            purposes. Operator has to respond with the same request_uuid as the
-            one that was received in request.
-          type: string
-        round:
-          description: Round Game round id. Used to relate all bets and wins in one round.
-            All transactions related to the same round will have the same value
-            in this field. It's unique through whole system.
-          type: string
-        round_closed:
-          description: RoundClosed Denotes when the round is closed
-          type: boolean
-        token:
-          description: Token Operator's back end generates a token associated with the
-            User, game, his or her current currency and maybe other parameters
-            depending on the Operator's preferences. The token acts as an ID
-            parameter for the game session. It is important that the currency is
-            not changed during the current game session. If the User changes the
-            currency or display unit, the Operator's backend needs to generate a
-            new token and re-open the game with new token. In case of DEMO
-            gameplay, this parameter may be omitted.<br/>A token should be valid
-            for all bet transactions until a new one is generated, expired
-            tokens should continue be valid for Win/Rollback transactions if is
-            related to a previous existing bet.
-          type: string
-        transaction_uuid:
-          description: TransactionUuid Unique wallet transaction.
-          type: string
-        user:
-          description: User Unique User ID in the Operator�s system. In case of DEMO
-            gameplay, this parameter may be omitted.
-          type: string
-      type: object
-    evolution.BalanceRequest:
-      properties:
-        currency:
-          type: string
-        game: {}
-        sid:
-          type: string
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - currency
-        - sid
-        - userId
-      type: object
-    evolution.CancelRequest:
-      properties:
-        currency:
-          type: string
-        game:
-          $ref: "#/components/schemas/evolution.Game"
-        sid:
-          type: string
-        transaction:
-          $ref: "#/components/schemas/evolution.Transaction"
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - currency
-        - game
-        - sid
-        - userId
-      type: object
-    evolution.CheckRequest:
-      properties:
-        channel:
-          properties:
-            type:
-              type: string
-          type: object
-        sid:
-          type: string
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - sid
-        - userId
-      type: object
-    evolution.CheckResponse:
-      properties:
-        sid:
-          type: string
-        status:
-          type: string
-        uuid:
-          type: string
-      type: object
-    evolution.CreditRequest:
-      properties:
-        currency:
-          type: string
-        game:
-          $ref: "#/components/schemas/evolution.Game"
-        sid:
-          type: string
-        transaction:
-          $ref: "#/components/schemas/evolution.Transaction"
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - currency
-        - game
-        - sid
-        - transaction
-        - userId
-      type: object
-    evolution.DebitRequest:
-      properties:
-        currency:
-          type: string
-        game:
-          $ref: "#/components/schemas/evolution.Game"
-        sid:
-          type: string
-        transaction:
-          $ref: "#/components/schemas/evolution.Transaction"
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - currency
-        - game
-        - sid
-        - transaction
-        - userId
-      type: object
-    evolution.Game:
-      properties:
-        details:
-          $ref: "#/components/schemas/evolution.GameDetails"
-        id:
-          type: string
-        type:
-          type: string
-      type: object
-    evolution.GameDetails:
-      properties:
-        table:
-          $ref: "#/components/schemas/evolution.GameTable"
-      type: object
-    evolution.GameTable:
-      properties:
-        id:
-          type: string
-        vid:
-          type: string
-      type: object
-    evolution.PromoPayoutRequest:
-      properties:
-        currency:
-          type: string
-        game:
-          $ref: "#/components/schemas/evolution.Game"
-        promoTransaction:
-          $ref: "#/components/schemas/evolution.PromoTransaction"
-        sid:
-          type: string
-        userId:
-          type: string
-        uuid:
-          type: string
-      required:
-        - currency
-        - game
-        - sid
-        - userId
-      type: object
-    evolution.PromoTransaction:
-      properties:
-        amount:
-          type: number
-        id:
-          type: string
-        remainingRounds:
-          type: integer
-        type:
-          type: string
-        voucherId:
-          type: string
-      type: object
-    evolution.StandardResponse:
-      properties:
-        balance:
-          type: number
-        bonus:
-          type: number
-        retransmission:
-          type: boolean
-        status:
-          type: string
-        uuid:
-          type: string
-      required:
-        - balance
-        - status
-      type: object
-    evolution.Transaction:
-      properties:
-        amount:
-          type: number
-        id:
-          type: string
-        refId:
-          type: string
-      type: object
-    redtiger.AuthRequest:
-      properties:
-        affiliate:
-          maxLength: 255
-          type: string
-        casino:
-          maxLength: 50
-          type: string
-        channel:
-          maxLength: 8
-          type: string
-        currency:
-          maxLength: 8
-          type: string
-        extras:
-          type: string
-        ip:
-          type: string
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-        userId:
-          maxLength: 36
-          type: string
-      required:
-        - token
-      type: object
-    redtiger.AuthResponse:
-      properties:
-        balance:
-          $ref: "#/components/schemas/redtiger.Balance"
-        casino:
-          maxLength: 50
-          type: string
-        country:
-          type: string
-        currency:
-          maxLength: 8
-          type: string
-        language:
-          maxLength: 6
-          type: string
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-        userId:
-          maxLength: 32
-          type: string
-      type: object
-    redtiger.AuthResponseWrapper:
-      properties:
-        error:
-          $ref: "#/components/schemas/redtiger.Error"
-        result:
-          $ref: "#/components/schemas/redtiger.AuthResponse"
-        success:
-          type: boolean
-      type: object
-    redtiger.Balance:
-      properties:
-        bonus:
-          type: number
-        cash:
-          type: number
-      type: object
-    redtiger.Error:
-      properties:
-        code:
-          $ref: "#/components/schemas/redtiger.RTErrorCode"
-        message:
-          type: string
-      type: object
-    redtiger.ErrorResponse:
-      properties:
-        error:
-          $ref: "#/components/schemas/redtiger.Error"
-        success:
-          type: boolean
-      type: object
-    redtiger.Game:
-      properties:
-        key:
-          maxLength: 128
-          type: string
-        type:
-          type: string
-        version:
-          maxLength: 128
-          type: string
-      type: object
-    redtiger.Jackpot:
-      properties:
-        contribution:
-          type: string
-        group:
-          maxLength: 100
-          type: string
-        pots:
-          items:
-            type: string
-          type: array
-      type: object
-    redtiger.PayoutDetails:
-      properties:
-        game:
-          type: number
-        jackpot:
-          type: number
-      type: object
-    redtiger.PayoutRequest:
-      properties:
-        casino:
-          maxLength: 50
-          type: string
-        currency:
-          maxLength: 8
-          type: string
-        game:
-          $ref: "#/components/schemas/redtiger.Game"
-        ip:
-          type: string
-        jackpot:
-          $ref: "#/components/schemas/redtiger.Jackpot"
-        promo:
-          $ref: "#/components/schemas/redtiger.Promo"
-        retry:
-          type: boolean
-        round:
-          $ref: "#/components/schemas/redtiger.Round"
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-        transaction:
-          $ref: "#/components/schemas/redtiger.TransactionPayout"
-        userId:
-          maxLength: 36
-          type: string
-      required:
-        - token
-      type: object
-    redtiger.PayoutResponse:
-      properties:
-        balance:
-          $ref: "#/components/schemas/redtiger.Balance"
-        currency:
-          maxLength: 8
-          type: string
-        id:
-          type: string
-        payout:
-          $ref: "#/components/schemas/redtiger.Balance"
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-      type: object
-    redtiger.PayoutResponseWrapper:
-      properties:
-        error:
-          $ref: "#/components/schemas/redtiger.Error"
-        result:
-          $ref: "#/components/schemas/redtiger.PayoutResponse"
-        success:
-          type: boolean
-      type: object
-    redtiger.Promo:
-      properties:
-        campaignCode:
-          maxLength: 64
-          type: string
-        campaignId:
-          type: integer
-        instanceCode:
-          maxLength: 64
-          type: string
-        instanceId:
-          type: integer
-        type:
-          type: string
-      type: object
-    redtiger.RTErrorCode:
-      enum:
-        - 100
-        - 200
-        - 201
-        - 301
-        - 302
-        - 303
-        - 304
-        - 305
-        - 306
-        - 400
-        - 401
-        - 500
-        - 501
-      type: integer
-      x-enum-varnames:
-        - APIAuthError
-        - InvalidInput
-        - GenericError
-        - NotAuthorized
-        - UserNotFound
-        - BannedUser
-        - InsufficientFunds
-        - InvalidUserCurrency
-        - UserLimitedPlaying
-        - TransactionNotFound
-        - DuplicateTransaction
-        - InternalServerError
-        - UnderMaintenanceMode
-    redtiger.RefundRequest:
-      properties:
-        casino:
-          maxLength: 50
-          type: string
-        currency:
-          maxLength: 8
-          type: string
-        game:
-          $ref: "#/components/schemas/redtiger.Game"
-        ip:
-          type: string
-        promo:
-          $ref: "#/components/schemas/redtiger.Promo"
-        round:
-          $ref: "#/components/schemas/redtiger.Round"
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-        transaction:
-          $ref: "#/components/schemas/redtiger.TransactionStake"
-        userId:
-          maxLength: 36
-          type: string
-      required:
-        - token
-      type: object
-    redtiger.RefundResponseWrapper:
-      properties:
-        balance:
-          $ref: "#/components/schemas/redtiger.Balance"
-        currency:
-          type: string
-        error:
-          $ref: "#/components/schemas/redtiger.Error"
-        result:
-          $ref: "#/components/schemas/redtiger.RefundResult"
-        success:
-          type: boolean
-      type: object
-    redtiger.RefundResult:
-      properties:
-        id:
-          type: string
-        stake:
-          $ref: "#/components/schemas/redtiger.Balance"
-        token:
-          type: string
-      type: object
-    redtiger.Round:
-      properties:
-        ends:
-          type: boolean
-        id:
-          maxLength: 32
-          type: string
-        starts:
-          type: boolean
-      type: object
-    redtiger.Sources:
-      properties:
-        features:
-          type: number
-        jackpot:
-          additionalProperties:
-            type: number
-          type: object
-        lines:
-          type: number
-      type: object
-    redtiger.StakeDetails:
-      properties:
-        game:
-          type: number
-        jackpot:
-          type: number
-      type: object
-    redtiger.StakeRequest:
-      properties:
-        casino:
-          maxLength: 50
-          type: string
-        currency:
-          maxLength: 8
-          type: string
-        game:
-          $ref: "#/components/schemas/redtiger.Game"
-        ip:
-          type: string
-        promo:
-          $ref: "#/components/schemas/redtiger.Promo"
-        round:
-          $ref: "#/components/schemas/redtiger.Round"
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-        transaction:
-          $ref: "#/components/schemas/redtiger.TransactionStake"
-        userId:
-          maxLength: 36
-          type: string
-      required:
-        - token
-      type: object
-    redtiger.StakeResponse:
-      properties:
-        balance:
-          $ref: "#/components/schemas/redtiger.Balance"
-        currency:
-          maxLength: 8
-          type: string
-        id:
-          type: string
-        stake:
-          $ref: "#/components/schemas/redtiger.Balance"
-        token:
-          maxLength: 128
-          minLength: 32
-          type: string
-      type: object
-    redtiger.StakeResponseWrapper:
-      properties:
-        error:
-          $ref: "#/components/schemas/redtiger.Error"
-        result:
-          $ref: "#/components/schemas/redtiger.StakeResponse"
-        success:
-          type: boolean
-      type: object
-    redtiger.TransactionPayout:
-      properties:
-        details:
-          $ref: "#/components/schemas/redtiger.PayoutDetails"
-        id:
-          maxLength: 32
-          type: string
-        payout:
-          minimum: 0
-          type: number
-        payoutPromo:
-          minimum: 0
-          type: number
-        sources:
-          $ref: "#/components/schemas/redtiger.Sources"
-      type: object
-    redtiger.TransactionStake:
-      properties:
-        details:
-          $ref: "#/components/schemas/redtiger.StakeDetails"
-        id:
-          maxLength: 32
-          type: string
-        stake:
-          type: number
-        stakePromo:
-          type: number
-      type: object
+      - Red Tiger
+schemes:
+- http
+swagger: "2.0"
