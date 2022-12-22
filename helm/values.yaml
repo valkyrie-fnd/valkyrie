@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: localhost:5000
+  repository: docker.io/valkyriefnd
   image: valkyrie
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
