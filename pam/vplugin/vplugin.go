@@ -37,7 +37,7 @@ func RegisterGobs() {
 	gob.RegisterName("pam.GameRoundResponse", pam.GameRoundResponse{})
 
 	gob.RegisterName("pam.Amount", pam.Amount{})
-	gob.RegisterName("vplugin.PluginInitConfig", PluginInitConfig{})
+	gob.Register(map[string]interface{}{})
 }
 
 type VPlugin struct {
