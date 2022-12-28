@@ -9,7 +9,7 @@ Caleta will provide:
 - `verification_key`
 
 Caleta will request:
-- An url for your Valkyrie deployment
+- A url for your Valkyrie deployment
 - Your public key for your `signing_key` for verifying request signatures
 
 ```yaml
