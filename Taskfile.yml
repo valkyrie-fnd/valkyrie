@@ -212,7 +212,7 @@ tasks:
       SRC_REPO:
         sh: git ls-remote --get-url | sed 's/\.git$//g'
     cmds:
-      - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
+      - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --tag "{{.DOCKER_REPO}}/{{.NAME}}:latest" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
   
   docker-push:
     desc: push docker image
@@ -223,6 +223,7 @@ tasks:
       TAG: '{{ default "latest" .VERSION }}'
     cmds:
       - docker push "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}"
+      - docker push "{{.DOCKER_REPO}}/{{.NAME}}:latest"
 
   helm-package:
     desc: package helm chart
