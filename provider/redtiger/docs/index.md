@@ -1,24 +1,30 @@
-### Games
-
 [Red Tiger](https://www.redtiger.com/) offers leading games in the slot space.
 
 ### Red Tiger API
 
-See Red Tigers API (https://dev.redtigergaming.com/#!/) for details on Red Tiger eco system.
+Contact Red Tiger to see their API and details on Red Tiger eco system.
 
+:::note
+Requires login to access
+:::
 ### Valkyrie integration
 
-Integrate your gaming lobby and wallet system (often enough referred to as "PAM") to Valkyrie and you will be able to access all games offered by Red Tiger!
+Integrate your gaming lobby and wallet system to Valkyrie and you will be able to access games offered by Red Tiger.
 
-You can either integrate directly to the [Valkyrie standardized gaming API](/docs/wallet/valkyrie-pam-api)  or implement a proprietary integration to Valkyrie. If you choose proprietary option, you can either add the solution to the valkyrie repo, or make use of the vplugin option.
+Contact Red Tiger in order to setup an agreement and get access to their developer portal to see operator specific configuration.
 
-### Configuration
+### Required configuration
+
+Red Tiger will provide the following configuration.
+- `url` - Will be available at the settings page of Red Tigers developer portal.
+- `api_key` - Api key available in the developer portal.
+- `recon_token` - Reconciliation token used in some cases to resolve failed requests. Found in developer portal
 
 ```yaml
 providers:
   - name: Red Tiger
-    url: 'https://redtiger' # see your settings page at https://dev.redtigergaming.com to see your operator specific url
+    url: 'https://redtiger'
     auth:
-      api_key: ${RED_TIGER_API_KEY} # Red tiger api key. Found in https://dev.redtigergaming.com
-      recon_token:  ${RECON_TOKEN} # Reconciliation token. See https://dev.redtigergaming.com
+      api_key: ${RED_TIGER_API_KEY}
+      recon_token:  ${RECON_TOKEN}
 ```
