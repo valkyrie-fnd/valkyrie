@@ -1,6 +1,7 @@
 apiVersion: v2
 name: valkyrie-chart
 description: A Helm chart for running Valkyrie in Kubernetes
+home: https://valkyrie.bet
 
 # A chart can be either an 'application' or a 'library' chart.
 #
