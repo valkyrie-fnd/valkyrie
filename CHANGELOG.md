@@ -16,6 +16,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Removed
 
+
+## [0.4.0] - 2023-01-10
+
+### Added
+- Add zerolog adapter for hclog
+- Add latest tag to built image
+
+### Changed
+- Changed swagger package location
+- Changed Caleta swagger documentation
+- Changed helm repository
+- Changed plugin config
+### Removed
 ## [0.3.0] - 2022-12-20
 
 ### Added
