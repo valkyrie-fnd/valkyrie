@@ -40,6 +40,8 @@ var pathPing = []byte("/ping")
 
 // Adds request and response to log
 func requestResponseLogging(c *fiber.Ctx) error {
+	log.Ctx(c.UserContext()).Debug().Func(LogHTTPRequest(c.Request())).Msg("http server request")
+
 	err := c.Next()
 
 	// Ignore ping
@@ -47,7 +49,11 @@ func requestResponseLogging(c *fiber.Ctx) error {
 		return nil
 	}
 
-	log.Ctx(c.UserContext()).Debug().Func(LogHTTPEvent(c.Request(), c.Response(), err)).Msg("http incoming")
+	if err != nil {
+		log.Ctx(c.UserContext()).Error().Func(LogHTTPResponse(c.Response(), err)).Msg("http server response")
+	} else {
+		log.Ctx(c.UserContext()).Debug().Func(LogHTTPResponse(c.Response(), nil)).Msg("http server response")
+	}
 
 	return err
 }

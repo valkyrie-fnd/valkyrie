@@ -47,21 +47,51 @@ func TestAddLoggingContext(t *testing.T) {
 	assert.Contains(t, captor.String(), "test")
 }
 
-func TestHTTPEventContentLengthNegative(t *testing.T) {
+func TestLogHTTPRequest(t *testing.T) {
 	captor := strings.Builder{}
 	logger := zerolog.New(&captor)
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
-	response := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(response)
-	response.SetBodyString("foo")
-	response.Header.SetContentLength(-2)
+	request.SetBodyString("bar")
+	request.Header.SetContentType("text/plain")
+
+	logger.Debug().Func(LogHTTPRequest(request)).Send()
+
+	assert.Contains(t, captor.String(), "\"request\":\"bar\"")
+}
+
+func TestHTTPRequestContentLengthNegative(t *testing.T) {
+	captor := strings.Builder{}
+	logger := zerolog.New(&captor)
+	request := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
 	request.SetBodyString("bar")
 	request.Header.SetContentLength(-2)
 
-	logger.Debug().Func(LogHTTPEvent(request, response, nil)).Send()
+	logger.Debug().Func(LogHTTPRequest(request)).Send()
 
-	assert.Equal(t, "{\"level\":\"debug\",\"httpRequest\":{\"requestUrl\":\"http:///\",\"requestMethod\":\"GET\",\"status\":200,\"protocol\":\"HTTP/1.1\",\"requestHeaders\":{},\"requestSize\":-2,\"responseHeaders\":{\"Content-Type\":\"text/plain; charset=utf-8\"},\"responseSize\":-2}}\n", captor.String())
+	assert.Contains(t, captor.String(), "\"requestSize\":-2")
+}
+
+func TestLogHTTPResponse(t *testing.T) {
+	captor := strings.Builder{}
+	logger := zerolog.New(&captor)
+	response := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	response.SetBodyString("foo")
+	response.Header.SetContentType("text/plain")
+
+	logger.Debug().Func(LogHTTPResponse(response, nil)).Send()
+
+	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
+}
+
+func Test_isContentTypeJson(t *testing.T) {
+	assert.True(t, isContentTypeJSON([]byte(fiber.MIMEApplicationJSON)))
+	assert.True(t, isContentTypeJSON([]byte("application/vnd.kafka.v2+json")))
+
+	assert.False(t, isContentTypeJSON([]byte(fiber.MIMEApplicationXML)))
+	assert.False(t, isContentTypeJSON([]byte(fiber.MIMETextPlain)))
 }
 
 func BenchmarkHandler(b *testing.B) {
