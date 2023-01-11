@@ -4,7 +4,6 @@ package vplugin
 
 import (
 	"encoding/gob"
-	"errors"
 	"net/rpc"
 	"time"
 
@@ -40,15 +39,15 @@ func RegisterGobs() {
 	gob.Register(map[string]interface{}{})
 }
 
-type VPlugin struct {
+type VPluginRPC struct {
 	client *rpc.Client
 }
 
-func (vp *VPlugin) Init(cfg PluginInitConfig) error {
+func (vp *VPluginRPC) Init(cfg PluginInitConfig) error {
 	return callWithLogging(vp.client, "Plugin.Init", cfg, new(interface{}))
 }
 
-func (vp *VPlugin) GetSession(req pam.GetSessionRequest) *pam.SessionResponse {
+func (vp *VPluginRPC) GetSession(req pam.GetSessionRequest) *pam.SessionResponse {
 	var response pam.SessionResponse
 	err := callWithLogging(vp.client, "Plugin.GetSession", req, &response)
 	if err != nil {
@@ -58,7 +57,7 @@ func (vp *VPlugin) GetSession(req pam.GetSessionRequest) *pam.SessionResponse {
 	return &response
 }
 
-func (vp *VPlugin) RefreshSession(req pam.RefreshSessionRequest) *pam.SessionResponse {
+func (vp *VPluginRPC) RefreshSession(req pam.RefreshSessionRequest) *pam.SessionResponse {
 	var response pam.SessionResponse
 	err := callWithLogging(vp.client, "Plugin.RefreshSession", req, &response)
 	if err != nil {
@@ -68,7 +67,7 @@ func (vp *VPlugin) RefreshSession(req pam.RefreshSessionRequest) *pam.SessionRes
 	return &response
 }
 
-func (vp *VPlugin) GetBalance(req pam.GetBalanceRequest) *pam.BalanceResponse {
+func (vp *VPluginRPC) GetBalance(req pam.GetBalanceRequest) *pam.BalanceResponse {
 	var response pam.BalanceResponse
 	err := callWithLogging(vp.client, "Plugin.GetBalance", req, &response)
 	if err != nil {
@@ -78,7 +77,7 @@ func (vp *VPlugin) GetBalance(req pam.GetBalanceRequest) *pam.BalanceResponse {
 	return &response
 }
 
-func (vp *VPlugin) GetTransactions(req pam.GetTransactionsRequest) *pam.GetTransactionsResponse {
+func (vp *VPluginRPC) GetTransactions(req pam.GetTransactionsRequest) *pam.GetTransactionsResponse {
 	var response pam.GetTransactionsResponse
 	err := callWithLogging(vp.client, "Plugin.GetTransactions", req, &response)
 	if err != nil {
@@ -88,7 +87,7 @@ func (vp *VPlugin) GetTransactions(req pam.GetTransactionsRequest) *pam.GetTrans
 	return &response
 }
 
-func (vp *VPlugin) AddTransaction(req pam.AddTransactionRequest) *pam.AddTransactionResponse {
+func (vp *VPluginRPC) AddTransaction(req pam.AddTransactionRequest) *pam.AddTransactionResponse {
 	var response pam.AddTransactionResponse
 	err := callWithLogging(vp.client, "Plugin.AddTransaction", req, &response)
 	if err != nil {
@@ -98,7 +97,7 @@ func (vp *VPlugin) AddTransaction(req pam.AddTransactionRequest) *pam.AddTransac
 	return &response
 }
 
-func (vp *VPlugin) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundResponse {
+func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundResponse {
 	var response pam.GameRoundResponse
 	err := callWithLogging(vp.client, "Plugin.GetGameRound", req, &response)
 	if err != nil {
@@ -108,14 +107,17 @@ func (vp *VPlugin) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRespo
 	return &response
 }
 
-// Server func is required by plugin but implemented at the receiving side
+type VPlugin struct {
+	Impl PAM
+}
+
 func (p *VPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
-	return nil, errors.New("not for use in host mode")
+	return &VPluginRPCServer{Impl: p.Impl}, nil
 }
 
 // Client func is part of plugin.Plugin interface
 func (VPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &VPlugin{client: c}, nil
+	return &VPluginRPC{client: c}, nil
 }
 
 func callWithLogging(rpc *rpc.Client, method string, params any, response any) error {
