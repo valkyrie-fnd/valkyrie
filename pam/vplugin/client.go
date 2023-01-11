@@ -33,11 +33,11 @@ func init() {
 		})
 }
 
-type PAMPlugin struct {
+type PluginPAM struct {
 	plugin PAM
 }
 
-func Create(ctx context.Context, cfg map[string]any) (*PAMPlugin, error) {
+func Create(ctx context.Context, cfg map[string]any) (*PluginPAM, error) {
 	config, err := pam.GetConfig[pluginConfig](cfg)
 	if err != nil {
 		return nil, err
@@ -53,10 +53,10 @@ func Create(ctx context.Context, cfg map[string]any) (*PAMPlugin, error) {
 		return nil, err
 	}
 
-	return &PAMPlugin{plugin: plugin}, nil
+	return &PluginPAM{plugin: plugin}, nil
 }
 
-func (vp *PAMPlugin) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, error) {
+func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, error) {
 	_, req, err := rm()
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (vp *PAMPlugin) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	return resp.Session, nil
 }
 
-func (vp *PAMPlugin) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Session, error) {
+func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Session, error) {
 	_, req, err := rm()
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (vp *PAMPlugin) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 	return resp.Session, nil
 }
 
-func (vp *PAMPlugin) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, error) {
+func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, error) {
 	_, req, err := rm()
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (vp *PAMPlugin) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 	return resp.Balance, nil
 }
 
-func (vp *PAMPlugin) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam.Transaction, error) {
+func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam.Transaction, error) {
 	_, req, err := rm()
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (vp *PAMPlugin) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 	return *resp.Transactions, nil
 }
 
-func (vp *PAMPlugin) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.TransactionResult, error) {
+func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.TransactionResult, error) {
 	_, req, err := rm(pam.SixDecimalRounder)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (vp *PAMPlugin) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 	return resp.TransactionResult, nil
 }
 
-func (vp *PAMPlugin) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRound, error) {
+func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRound, error) {
 	_, req, err := rm()
 	if err != nil {
 		return nil, err
