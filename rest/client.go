@@ -229,12 +229,13 @@ func (c Client) postOrPut(
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
-	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
+	log.Ctx(ctx).Debug().Func(ops.LogHTTPRequest(req)).Msg("http client request")
 
+	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
 	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPEvent(req, resp, err)).Msg("http outgoing")
+		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
 	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPEvent(req, resp, err)).Msg("http outgoing")
+		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
 	}
 	ops.TraceHTTPAttributes(span, req, resp, err)
 
@@ -285,12 +286,13 @@ func (c Client) get(
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
-	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
+	log.Ctx(ctx).Debug().Func(ops.LogHTTPRequest(req)).Msg("http client request")
 
+	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
 	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPEvent(req, resp, err)).Msg("http outgoing")
+		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
 	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPEvent(req, resp, err)).Msg("http outgoing")
+		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
 	}
 	ops.TraceHTTPAttributes(span, req, resp, err)
 
