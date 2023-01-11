@@ -17,4 +17,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@master
         with:
-          args: "{{ EVENT_PAYLOAD.pull_request.user.login }} wants **${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}** to review PR: `{{ EVENT_PAYLOAD.pull_request.title }}` {{ EVENT_PAYLOAD.pull_request.html_url }}"
+          args: "{{ EVENT_PAYLOAD.pull_request.user.login }} wants **${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}** to review PR: `{{ EVENT_PAYLOAD.pull_request.title }}` <{{ EVENT_PAYLOAD.pull_request.html_url }}>"
