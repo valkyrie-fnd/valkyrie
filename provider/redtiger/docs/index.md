@@ -2,7 +2,7 @@
 
 ### Red Tiger API
 
-Contact Red Tiger to see their API and details on Red Tiger eco system.
+Contact Red Tiger to see their API and details on Red Tiger ecosystem.
 
 :::note
 Requires login to access
@@ -16,9 +16,9 @@ Contact Red Tiger in order to setup an agreement and get access to their develop
 ### Required configuration
 
 Red Tiger will provide the following configuration.
-- `url` - Will be available at the settings page of Red Tigers developer portal.
-- `api_key` - Api key available in the developer portal.
-- `recon_token` - Reconciliation token used in some cases to resolve failed requests. Found in developer portal
+- `url` - Will be available at the settings page of Red Tigers developer portal
+- `api_key` - Api key available in the developer portal
+- `recon_token` - Reconciliation token used in some cases to resolve failed requests. Found in developer portal.
 
 ```yaml
 providers:
