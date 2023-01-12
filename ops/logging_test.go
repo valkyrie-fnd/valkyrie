@@ -50,38 +50,49 @@ func TestAddLoggingContext(t *testing.T) {
 func TestLogHTTPRequest(t *testing.T) {
 	captor := strings.Builder{}
 	logger := zerolog.New(&captor)
+
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
-	request.SetBodyString("bar")
-	request.Header.SetContentType("text/plain")
+	request.Header.SetUserAgent("bar")
 
 	logger.Debug().Func(LogHTTPRequest(request)).Send()
 
-	assert.Contains(t, captor.String(), "\"request\":\"bar\"")
+	assert.Contains(t, captor.String(), "\"userAgent\":\"bar\"")
 }
 
 func TestHTTPRequestContentLengthNegative(t *testing.T) {
 	captor := strings.Builder{}
 	logger := zerolog.New(&captor)
+
+	response := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	response.SetBodyString("foo")
+	response.Header.SetContentLength(-2)
+
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
 	request.SetBodyString("bar")
 	request.Header.SetContentLength(-2)
 
-	logger.Debug().Func(LogHTTPRequest(request)).Send()
+	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
 
 	assert.Contains(t, captor.String(), "\"requestSize\":-2")
+	assert.Contains(t, captor.String(), "\"responseSize\":-2")
 }
 
 func TestLogHTTPResponse(t *testing.T) {
 	captor := strings.Builder{}
 	logger := zerolog.New(&captor)
+
 	response := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(response)
 	response.SetBodyString("foo")
 	response.Header.SetContentType("text/plain")
 
-	logger.Debug().Func(LogHTTPResponse(response, nil)).Send()
+	request := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+
+	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
 
 	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
 }

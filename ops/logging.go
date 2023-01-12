@@ -25,82 +25,88 @@ func AddLoggingContext(c userContextProvider, key, value string) {
 // LogHTTPRequest return a function that adds request data to the zerolog Event
 func LogHTTPRequest(req *fasthttp.Request) func(event *zerolog.Event) {
 	return func(event *zerolog.Event) {
-		// Google cloud structured logging recognize the following fields:
+		event.Bytes("requestUrl", req.URI().FullURI()).
+			Bytes("requestMethod", req.Header.Method()).
+			Bytes("protocol", req.Header.Protocol()).
+			Bytes("userAgent", req.Header.UserAgent())
+	}
+}
+
+// LogHTTPResponse return a function that adds request and response data to the zerolog Event
+func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) func(event *zerolog.Event) {
+	return func(event *zerolog.Event) {
+		event.Err(err)
+
+		// Google cloud structured logging recognize special payload fields below, which
+		// allows for automatic highlighting in UI.
 		// https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
 		requestDict := zerolog.Dict()
 
-		// Standard http request fields
-		requestDict.Bytes("requestUrl", req.URI().FullURI()).
-			Bytes("requestMethod", req.Header.Method()).
-			Bytes("protocol", req.Header.Protocol())
+		LogHTTPRequest(req)(requestDict)
 
-		// Request headers
-		requestHeaders := zerolog.Dict()
-		if contentType := req.Header.ContentType(); contentType != nil {
-			requestHeaders.Bytes("Content-Type", contentType)
-		}
-		if contentEncoding := req.Header.ContentEncoding(); contentEncoding != nil {
-			requestHeaders.Bytes("Content-Encoding", contentEncoding)
-		}
-		requestDict.Dict("requestHeaders", requestHeaders)
+		logRequestHeaders(req, requestDict)
+		logRequestBody(req, requestDict)
 
-		// Request body
-		if body := req.Body(); body != nil {
-			// content is encoded, don't bother decompressing
-			if encoding := req.Header.ContentEncoding(); encoding != nil {
-				requestDict.Bytes("request", encoding)
-			} else if contentType := req.Header.ContentType(); isContentTypeLogged(contentType) {
-				if isContentTypeJSON(contentType) {
-					requestDict.RawJSON("request", body)
-				} else {
-					requestDict.Bytes("request", body)
-				}
-			}
-			requestDict.Int("requestSize", req.Header.ContentLength())
-		}
+		logResponseHeaders(resp, requestDict)
+		logResponseBody(resp, requestDict)
 
 		event.Dict("httpRequest", requestDict)
 	}
 }
 
-// LogHTTPResponse return a function that adds response data to the zerolog Event
-func LogHTTPResponse(resp *fasthttp.Response, err error) func(event *zerolog.Event) {
-	return func(event *zerolog.Event) {
-		event.Err(err)
-
-		// Google cloud structured logging recognize the following fields:
-		// https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
-		responseDict := zerolog.Dict()
-
-		// Standard http response fields
-		responseDict.Int("status", resp.StatusCode())
-
-		// Response headers
-		responseHeaders := zerolog.Dict()
-		if contentType := resp.Header.ContentType(); contentType != nil {
-			responseHeaders.Bytes("Content-Type", contentType)
-		}
-		if contentEncoding := resp.Header.ContentEncoding(); contentEncoding != nil {
-			responseHeaders.Bytes("Content-Encoding", contentEncoding)
-		}
-		responseDict.Dict("responseHeaders", responseHeaders)
-
-		// Response body
-		if body := resp.Body(); body != nil {
-			// content is encoded, don't bother decompressing
-			if encoding := resp.Header.ContentEncoding(); encoding != nil {
-				responseDict.Bytes("response", encoding)
-			} else if contentType := resp.Header.ContentType(); isContentTypeLogged(contentType) {
-				if isContentTypeJSON(contentType) {
-					responseDict.RawJSON("response", body)
-				} else {
-					responseDict.Bytes("response", body)
-				}
-			}
-			responseDict.Int("responseSize", resp.Header.ContentLength())
-		}
-		event.Dict("httpResponse", responseDict)
+func logRequestHeaders(req *fasthttp.Request, requestDict *zerolog.Event) {
+	// Request headers
+	requestHeaders := zerolog.Dict()
+	if contentType := req.Header.ContentType(); len(contentType) > 0 {
+		requestHeaders.Bytes("Content-Type", contentType)
 	}
+	if contentEncoding := req.Header.ContentEncoding(); len(contentEncoding) > 0 {
+		requestHeaders.Bytes("Content-Encoding", contentEncoding)
+	}
+	requestDict.Dict("requestHeaders", requestHeaders)
+}
+
+func logRequestBody(req *fasthttp.Request, requestDict *zerolog.Event) {
+	if body := req.Body(); body != nil {
+		// content is encoded, don't bother decompressing
+		if encoding := req.Header.ContentEncoding(); len(encoding) > 0 {
+			requestDict.Bytes("request", encoding)
+		} else if contentType := req.Header.ContentType(); isContentTypeLogged(contentType) {
+			if isContentTypeJSON(contentType) {
+				requestDict.RawJSON("request", body)
+			} else {
+				requestDict.Bytes("request", body)
+			}
+		}
+		requestDict.Int("requestSize", req.Header.ContentLength())
+	}
+}
+
+func logResponseBody(resp *fasthttp.Response, requestDict *zerolog.Event) {
+	if body := resp.Body(); body != nil {
+		// content is encoded, don't bother decompressing
+		if encoding := resp.Header.ContentEncoding(); len(encoding) > 0 {
+			requestDict.Bytes("response", encoding)
+		} else if contentType := resp.Header.ContentType(); isContentTypeLogged(contentType) {
+			if isContentTypeJSON(contentType) {
+				requestDict.RawJSON("response", body)
+			} else {
+				requestDict.Bytes("response", body)
+			}
+		}
+		requestDict.Int("responseSize", resp.Header.ContentLength())
+	}
+}
+
+func logResponseHeaders(resp *fasthttp.Response, requestDict *zerolog.Event) {
+	responseHeaders := zerolog.Dict()
+	if contentType := resp.Header.ContentType(); len(contentType) > 0 {
+		responseHeaders.Bytes("Content-Type", contentType)
+	}
+	if contentEncoding := resp.Header.ContentEncoding(); len(contentEncoding) > 0 {
+		responseHeaders.Bytes("Content-Encoding", contentEncoding)
+	}
+	requestDict.Dict("responseHeaders", responseHeaders)
 }
 
 var loggedContentTypes = map[string]struct{}{
