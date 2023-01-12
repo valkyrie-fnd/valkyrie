@@ -97,6 +97,23 @@ func TestLogHTTPResponse(t *testing.T) {
 	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
 }
 
+func TestLogHTTPResponseSkipEmptyContentType(t *testing.T) {
+	captor := strings.Builder{}
+	logger := zerolog.New(&captor)
+
+	response := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	response.Header.SetContentType("")
+
+	request := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+	request.Header.SetContentType("")
+
+	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
+
+	assert.NotContains(t, captor.String(), "\"Content-Type\":\"\"")
+}
+
 func Test_isContentTypeJson(t *testing.T) {
 	assert.True(t, isContentTypeJSON([]byte(fiber.MIMEApplicationJSON)))
 	assert.True(t, isContentTypeJSON([]byte("application/vnd.kafka.v2+json")))
