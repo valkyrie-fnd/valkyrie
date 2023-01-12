@@ -4,13 +4,13 @@
 As always, contact the provider before you begin in order to get hold of URLs, keys and parameters. 
 
 Caleta will provide:
-- `url` - Base url used for request toward caleta.
-- `operator_id` - Your operator id in Caleta system.
-- `verification_key` - Public key provided by Caleta to verify their requests.
+- `url` - Base url used for request toward caleta
+- `operator_id` - Your operator id in Caleta system
+- `verification_key` - Public key provided by Caleta to verify their requests
 
 Caleta will request:
-- A url for your Valkyrie deployment.
-- Your public key for your `signing_key` that is used for verifying request signatures.
+- A url for your Valkyrie deployment
+- Your public key for your `signing_key` that is used for verifying request signatures
 
 ```yaml
 providers:
