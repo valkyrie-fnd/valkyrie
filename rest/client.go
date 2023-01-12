@@ -233,9 +233,9 @@ func (c Client) postOrPut(
 
 	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
 	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
+		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
 	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
+		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
 	}
 	ops.TraceHTTPAttributes(span, req, resp, err)
 
@@ -290,9 +290,9 @@ func (c Client) get(
 
 	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
 	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
+		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
 	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(resp, err)).Msg("http client response")
+		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
 	}
 	ops.TraceHTTPAttributes(span, req, resp, err)
 

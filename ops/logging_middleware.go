@@ -49,9 +49,9 @@ func requestResponseLogging(c *fiber.Ctx) error {
 
 	if !bytes.HasSuffix(path, pathPing) {
 		if err != nil {
-			log.Ctx(c.UserContext()).Error().Func(LogHTTPResponse(c.Response(), err)).Msg("http server response")
+			log.Ctx(c.UserContext()).Error().Func(LogHTTPResponse(c.Request(), c.Response(), err)).Msg("http server response")
 		} else {
-			log.Ctx(c.UserContext()).Debug().Func(LogHTTPResponse(c.Response(), nil)).Msg("http server response")
+			log.Ctx(c.UserContext()).Debug().Func(LogHTTPResponse(c.Request(), c.Response(), nil)).Msg("http server response")
 		}
 	}
 
