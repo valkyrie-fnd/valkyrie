@@ -29,6 +29,9 @@ func LogHTTPRequest(req *fasthttp.Request) func(event *zerolog.Event) {
 			Bytes("requestMethod", req.Header.Method()).
 			Bytes("protocol", req.Header.Protocol()).
 			Bytes("userAgent", req.Header.UserAgent())
+
+		logRequestHeaders(req, event)
+		logRequestBody(req, event)
 	}
 }
 
@@ -43,9 +46,6 @@ func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) 
 		requestDict := zerolog.Dict()
 
 		LogHTTPRequest(req)(requestDict)
-
-		logRequestHeaders(req, requestDict)
-		logRequestBody(req, requestDict)
 
 		logResponseHeaders(resp, requestDict)
 		logResponseBody(resp, requestDict)
