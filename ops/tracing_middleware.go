@@ -1,6 +1,7 @@
 package ops
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,15 +24,31 @@ import (
 
 // TracingMiddleware adds tracing
 func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
+	if err := ConfigureTracing(cfg); err != nil {
+		return
+	}
+
+	for _, app := range apps {
+		app.Use(filterPath("/ping", otelfiber.Middleware(cfg.ServiceName)))
+	}
+
+	if cfg.Exporter == Google {
+		for _, app := range apps {
+			app.Use(googleTraceLogging(cfg.GoogleProjectID))
+		}
+	}
+}
+
+func ConfigureTracing(cfg *TracingConfig) error {
 	// No config - no setup
 	if *cfg == noTracingConfig {
-		return
+		return errors.New("no tracing config")
 	}
 
 	exp, err := createProviderExporter(cfg)
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to setup tracing provider")
-		return
+		return err
 	}
 
 	// Always be sure to batch in production.
@@ -51,15 +68,7 @@ func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
-	for _, app := range apps {
-		app.Use(filterPath("/ping", otelfiber.Middleware(cfg.ServiceName)))
-	}
-
-	if cfg.Exporter == Google {
-		for _, app := range apps {
-			app.Use(googleTraceLogging(cfg.GoogleProjectID))
-		}
-	}
+	return nil
 }
 
 func googleTraceLogging(projectID string) fiber.Handler {
