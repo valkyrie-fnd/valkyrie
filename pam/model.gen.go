@@ -441,6 +441,12 @@ type TransactionType string
 // CorrelationId defines model for correlationId.
 type CorrelationId = string
 
+// Traceparent defines model for traceparent.
+type Traceparent = string
+
+// Tracestate defines model for tracestate.
+type Tracestate = string
+
 // Unauthorized defines model for Unauthorized.
 type Unauthorized struct {
 	// Error Error details describing why PAM rejected the request
@@ -464,6 +470,12 @@ type GetSessionParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // RefreshSessionParams defines parameters for RefreshSession.
@@ -476,6 +488,12 @@ type RefreshSessionParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // GetBalanceParams defines parameters for GetBalance.
@@ -488,6 +506,12 @@ type GetBalanceParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // GetGameRoundParams defines parameters for GetGameRound.
@@ -500,6 +524,12 @@ type GetGameRoundParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // GetTransactionsParams defines parameters for GetTransactions.
@@ -514,6 +544,12 @@ type GetTransactionsParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // AddTransactionParams defines parameters for AddTransaction.
@@ -526,6 +562,12 @@ type AddTransactionParams struct {
 
 	// XCorrelationID Header for correlating requests between the services for debugging purposes and request tracing. The value will originate from the game providers that support request identification. Otherwise Valkyrie will generate a value.
 	XCorrelationID CorrelationId `json:"X-Correlation-ID"`
+
+	// Traceparent Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
+	Traceparent *Traceparent `json:"traceparent,omitempty"`
+
+	// Tracestate Extends traceparent with vendor-specific data represented by a set of name/value pairs. Further specified in https://www.w3.org/TR/trace-context
+	Tracestate *Tracestate `json:"tracestate,omitempty"`
 }
 
 // AddTransactionJSONRequestBody defines body for AddTransaction for application/json ContentType.

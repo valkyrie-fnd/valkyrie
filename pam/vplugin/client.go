@@ -2,8 +2,21 @@ package vplugin
 
 import (
 	"context"
+	"fmt"
 
+	"go.opentelemetry.io/otel"
+	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+	"go.opentelemetry.io/otel/trace"
+
+	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/ops"
 	"github.com/valkyrie-fnd/valkyrie/pam"
+)
+
+const (
+	tracerName = "vplugin-client"
+	RPCSystem  = "net/rpc"
+	RPCService = "vplugin.PluginPAM"
 )
 
 // PamClient Interface describing available PAM operations. The implementing plugins
@@ -29,7 +42,7 @@ type PAM interface {
 func init() {
 	pam.ClientFactory().
 		Register("vplugin", func(args pam.ClientArgs) (pam.PamClient, error) {
-			return Create(args.Context, args.Config)
+			return Create(args.Context, getPamConf(args))
 		})
 }
 
@@ -37,7 +50,7 @@ type PluginPAM struct {
 	plugin PAM
 }
 
-func Create(ctx context.Context, cfg map[string]any) (*PluginPAM, error) {
+func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
 	config, err := pam.GetConfig[pluginConfig](cfg)
 	if err != nil {
 		return nil, err
@@ -57,10 +70,15 @@ func Create(ctx context.Context, cfg map[string]any) (*PluginPAM, error) {
 }
 
 func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, error) {
-	_, req, err := rm()
+	ctx, req, err := rm()
 	if err != nil {
 		return nil, err
 	}
+
+	ctx, span := startTrace(ctx, "GetSession")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	resp := vp.plugin.GetSession(req)
 
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
@@ -71,10 +89,15 @@ func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 }
 
 func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Session, error) {
-	_, req, err := rm()
+	ctx, req, err := rm()
 	if err != nil {
 		return nil, err
 	}
+
+	ctx, span := startTrace(ctx, "RefreshSession")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	resp := vp.plugin.RefreshSession(req)
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
@@ -83,7 +106,12 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 }
 
 func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, error) {
-	_, req, err := rm()
+	ctx, req, err := rm()
+
+	ctx, span := startTrace(ctx, "GetBalance")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +123,12 @@ func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 }
 
 func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam.Transaction, error) {
-	_, req, err := rm()
+	ctx, req, err := rm()
+
+	ctx, span := startTrace(ctx, "GetTransactions")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	if err != nil {
 		return nil, err
 	}
@@ -107,10 +140,15 @@ func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 }
 
 func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.TransactionResult, error) {
-	_, req, err := rm(pam.SixDecimalRounder)
+	ctx, req, err := rm(pam.SixDecimalRounder)
 	if err != nil {
 		return nil, err
 	}
+
+	ctx, span := startTrace(ctx, "AddTransaction")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	resp := vp.plugin.AddTransaction(*req)
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
 		if resp.TransactionResult != nil {
@@ -122,13 +160,55 @@ func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 }
 
 func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRound, error) {
-	_, req, err := rm()
+	ctx, req, err := rm()
 	if err != nil {
 		return nil, err
 	}
+
+	ctx, span := startTrace(ctx, "GetGameRound")
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
+	defer span.End()
+
 	resp := vp.plugin.GetGameRound(req)
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
 		return nil, err
 	}
 	return resp.Gameround, nil
+}
+
+// getPamConf adds logging and tracing configuration to PamConf if missing.
+func getPamConf(args pam.ClientArgs) configs.PamConf {
+	cfg := args.Config
+
+	if _, found := cfg["logging"]; !found {
+		cfg["logging"] = args.LogConfig
+	}
+
+	if _, found := cfg["tracing"]; !found {
+		cfg["tracing"] = args.TraceConfig
+	}
+
+	return cfg
+}
+
+func getTracingFromContext(ctx context.Context) (traceparent *pam.Traceparent, tracestate *pam.Tracestate) {
+	tracingHeaders := ops.GetTracingHeaders(ctx)
+
+	if value, found := tracingHeaders["traceparent"]; found {
+		traceparent = &value
+	}
+
+	if value, found := tracingHeaders["tracestate"]; found {
+		tracestate = &value
+	}
+
+	return traceparent, tracestate
+}
+
+func startTrace(ctx context.Context, fnName string) (context.Context, trace.Span) {
+	return otel.Tracer(tracerName).Start(ctx, fmt.Sprintf("%s/%s", RPCService, fnName), trace.WithAttributes(
+		semconv.RPCMethodKey.String(fnName),
+		semconv.RPCSystemKey.String(RPCSystem),
+		semconv.RPCServiceKey.String(RPCService),
+	))
 }

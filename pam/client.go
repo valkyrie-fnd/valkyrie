@@ -1,6 +1,8 @@
 package pam
 
-import "context"
+import (
+	"context"
+)
 
 // RefreshSessionRequest bundles everything needed to make a request
 type RefreshSessionRequest struct {
@@ -9,28 +11,28 @@ type RefreshSessionRequest struct {
 
 // GetBalanceRequest bundles everything needed to make a request
 type GetBalanceRequest struct {
-	PlayerID PlayerId
 	Params   GetBalanceParams
+	PlayerID PlayerId
 }
 
 // GetTransactionsRequest bundles everything needed to make a request
 type GetTransactionsRequest struct {
-	PlayerID PlayerId
 	Params   GetTransactionsParams
+	PlayerID PlayerId
 }
 
 // AddTransactionRequest bundles everything needed to make a request
 type AddTransactionRequest struct {
-	PlayerID PlayerId
 	Params   AddTransactionParams
 	Body     AddTransactionJSONRequestBody
+	PlayerID PlayerId
 }
 
 // GetGameRoundRequest bundles everything needed to make a request
 type GetGameRoundRequest struct {
-	PlayerID        PlayerId
 	ProviderRoundID ProviderRoundId
 	Params          GetGameRoundParams
+	PlayerID        PlayerId
 }
 
 // GetSessionRequest bundles everything needed to make a get session request

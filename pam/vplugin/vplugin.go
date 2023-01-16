@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
@@ -31,11 +32,15 @@ func RegisterGobs() {
 	gob.RegisterName("pam.Session", pam.SessionResponse{})
 	gob.RegisterName("pam.Balance", pam.BalanceResponse{})
 
-	gob.RegisterName("GetTransactionsResponse", pam.GetTransactionsResponse{})
+	gob.RegisterName("pam.GetTransactionsResponse", pam.GetTransactionsResponse{})
 	gob.RegisterName("pam.AddTransactionResponse", pam.AddTransactionResponse{})
 	gob.RegisterName("pam.GameRoundResponse", pam.GameRoundResponse{})
 
 	gob.RegisterName("pam.Amount", pam.Amount{})
+
+	gob.RegisterName("configs.LogConfig", configs.LogConfig{})
+	gob.RegisterName("configs.TraceConfig", configs.TraceConfig{})
+
 	gob.Register(map[string]interface{}{})
 }
 
@@ -116,7 +121,7 @@ func (p *VPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
 }
 
 // Client func is part of plugin.Plugin interface
-func (VPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
+func (VPlugin) Client(_ *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
 	return &VPluginRPC{client: c}, nil
 }
 
