@@ -75,7 +75,7 @@ func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 		return nil, err
 	}
 
-	ctx, span := startTrace(ctx, "GetSession")
+	ctx, span := startSpan(ctx, "GetSession")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -94,7 +94,7 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 		return nil, err
 	}
 
-	ctx, span := startTrace(ctx, "RefreshSession")
+	ctx, span := startSpan(ctx, "RefreshSession")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -108,7 +108,7 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, error) {
 	ctx, req, err := rm()
 
-	ctx, span := startTrace(ctx, "GetBalance")
+	ctx, span := startSpan(ctx, "GetBalance")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -125,7 +125,7 @@ func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam.Transaction, error) {
 	ctx, req, err := rm()
 
-	ctx, span := startTrace(ctx, "GetTransactions")
+	ctx, span := startSpan(ctx, "GetTransactions")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -145,7 +145,7 @@ func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 		return nil, err
 	}
 
-	ctx, span := startTrace(ctx, "AddTransaction")
+	ctx, span := startSpan(ctx, "AddTransaction")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -165,7 +165,7 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 		return nil, err
 	}
 
-	ctx, span := startTrace(ctx, "GetGameRound")
+	ctx, span := startSpan(ctx, "GetGameRound")
 	defer span.End()
 	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
@@ -206,7 +206,6 @@ func getTracingFromContext(ctx context.Context) (traceparent *pam.Traceparent, t
 }
 
 func startSpan(ctx context.Context, fnName string) (context.Context, trace.Span) {
-``` maybe 🤷 
 	// attributes from https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/rpc.md#common-remote-procedure-call-conventions
 	return otel.Tracer(tracerName).Start(ctx, fmt.Sprintf("%s/%s", RPCService, fnName), trace.WithAttributes(
 		semconv.RPCMethodKey.String(fnName),
