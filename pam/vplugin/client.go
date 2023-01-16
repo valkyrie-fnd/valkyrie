@@ -76,8 +76,8 @@ func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	}
 
 	ctx, span := startTrace(ctx, "GetSession")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	resp := vp.plugin.GetSession(req)
 
@@ -95,8 +95,8 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 	}
 
 	ctx, span := startTrace(ctx, "RefreshSession")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	resp := vp.plugin.RefreshSession(req)
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
@@ -109,8 +109,8 @@ func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 	ctx, req, err := rm()
 
 	ctx, span := startTrace(ctx, "GetBalance")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	if err != nil {
 		return nil, err
@@ -126,8 +126,8 @@ func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 	ctx, req, err := rm()
 
 	ctx, span := startTrace(ctx, "GetTransactions")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	if err != nil {
 		return nil, err
@@ -146,8 +146,8 @@ func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 	}
 
 	ctx, span := startTrace(ctx, "AddTransaction")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	resp := vp.plugin.AddTransaction(*req)
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
@@ -166,8 +166,8 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	}
 
 	ctx, span := startTrace(ctx, "GetGameRound")
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 	defer span.End()
+	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
 
 	resp := vp.plugin.GetGameRound(req)
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
