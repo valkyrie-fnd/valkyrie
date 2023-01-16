@@ -47,6 +47,8 @@ func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) 
 
 		LogHTTPRequest(req)(requestDict)
 
+		requestDict.Int("status", resp.StatusCode())
+
 		logResponseHeaders(resp, requestDict)
 		logResponseBody(resp, requestDict)
 
