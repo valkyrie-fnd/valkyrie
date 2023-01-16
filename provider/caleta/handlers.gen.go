@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/four-fingers/oapi-codegen/pkg/runtime"
 	"github.com/gofiber/fiber/v2"
@@ -94,6 +95,19 @@ func (siw *ServerInterfaceWrapper) Walletbet(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
+	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
+	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
+		var XMsgTimestamp time.Time
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Msg-Timestamp: %w", err).Error())
+		}
+
+		params.XMsgTimestamp = &XMsgTimestamp
+
+	}
+
 	return siw.Handler.Walletbet(c, params)
 }
 
@@ -152,6 +166,19 @@ func (siw *ServerInterfaceWrapper) Walletrollback(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
+	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
+	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
+		var XMsgTimestamp time.Time
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Msg-Timestamp: %w", err).Error())
+		}
+
+		params.XMsgTimestamp = &XMsgTimestamp
+
+	}
+
 	return siw.Handler.Walletrollback(c, params)
 }
 
@@ -179,6 +206,19 @@ func (siw *ServerInterfaceWrapper) Transactionwin(c *fiber.Ctx) error {
 	} else {
 		err = fmt.Errorf("Header parameter X-Auth-Signature is required, but not found: %w", err)
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
+	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
+		var XMsgTimestamp time.Time
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Msg-Timestamp: %w", err).Error())
+		}
+
+		params.XMsgTimestamp = &XMsgTimestamp
+
 	}
 
 	return siw.Handler.Transactionwin(c, params)

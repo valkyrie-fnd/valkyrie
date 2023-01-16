@@ -16,7 +16,7 @@ func fromPamAmount(a pam.Amount) *int {
 	return &i
 }
 
-func toPamAmount(i *int) pam.Amount {
-	amt := decimal.NewFromInt(int64(*i)).Div(dMulti)
+func toPamAmount(i int) pam.Amount {
+	amt := decimal.NewFromInt(int64(i)).Div(dMulti)
 	return pam.Amount(amt)
 }
