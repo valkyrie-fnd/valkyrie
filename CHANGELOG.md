@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 
 - Split request/response logging into separate log statements
+- Only use swagger when using "dev" build tag
 
 ### Removed
 
