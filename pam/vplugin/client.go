@@ -205,7 +205,8 @@ func getTracingFromContext(ctx context.Context) (traceparent *pam.Traceparent, t
 	return traceparent, tracestate
 }
 
-func startTrace(ctx context.Context, fnName string) (context.Context, trace.Span) {
+func startSpan(ctx context.Context, fnName string) (context.Context, trace.Span) {
+``` maybe 🤷 
 	// attributes from https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/rpc.md#common-remote-procedure-call-conventions
 	return otel.Tracer(tracerName).Start(ctx, fmt.Sprintf("%s/%s", RPCService, fnName), trace.WithAttributes(
 		semconv.RPCMethodKey.String(fnName),
