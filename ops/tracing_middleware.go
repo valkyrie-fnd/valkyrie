@@ -1,6 +1,7 @@
 package ops
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -41,7 +42,7 @@ func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
 func ConfigureTracing(cfg *TracingConfig) error {
 	// No config - no setup
 	if *cfg == noTracingConfig {
-		return nil
+		return errors.New("no tracing config")
 	}
 
 	exp, err := createProviderExporter(cfg)
