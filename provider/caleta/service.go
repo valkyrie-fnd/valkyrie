@@ -34,7 +34,7 @@ func (s *ProviderService) Walletbalance(ctx context.Context, request Walletbalan
 		errStatus := getCErrorStatus(err)
 		return Walletbalance200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
-	balance, err := s.GetBalance(balanceRequestMapper(ctx, *request.Body))
+	balance, err := s.GetBalance(balanceRequestMapper(ctx, request.Body))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletbalance200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
@@ -90,9 +90,9 @@ func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetReques
 	}
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree {
-		tranRes, err = s.AddTransaction(promoBetTransactionMapper(ctx, *request.Body))
+		tranRes, err = s.AddTransaction(promoBetTransactionMapper(ctx, &request))
 	} else {
-		tranRes, err = s.AddTransaction(betTransactionMapper(ctx, *request.Body))
+		tranRes, err = s.AddTransaction(betTransactionMapper(ctx, &request))
 	}
 	if err != nil {
 		errStatus := getCErrorStatus(err)
@@ -129,7 +129,7 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 	var requestMapper pam.AddTransactionRequestMapper
 	if request.Body.IsFree {
 		// Check that Bet-transaction Exist. For Promo-transactions this check needs to be done here
-		transactions, tErr := s.GetTransactions(getTransactionsMapper(ctx, *request.Body))
+		transactions, tErr := s.GetTransactions(getTransactionsMapper(ctx, request.Body))
 		if tErr != nil {
 			return Transactionwin200JSONResponse{Status: RSERRORTRANSACTIONDOESNOTEXIST, RequestUuid: request.Body.RequestUuid}, nil
 		}
@@ -141,9 +141,9 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 			}
 		}
 
-		requestMapper = promoWinTransactionMapper(ctx, *request.Body)
+		requestMapper = promoWinTransactionMapper(ctx, &request)
 	} else {
-		requestMapper = winTransactionMapper(ctx, *request.Body)
+		requestMapper = winTransactionMapper(ctx, &request)
 	}
 	tranRes, err = s.AddTransaction(requestMapper)
 	if err != nil {
@@ -179,9 +179,9 @@ func (s *ProviderService) Walletrollback(ctx context.Context, request Walletroll
 	}
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree != nil && *request.Body.IsFree {
-		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, *request.Body, session, pam.PROMOCANCEL))
+		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.PROMOCANCEL))
 	} else {
-		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, *request.Body, session, pam.CANCEL))
+		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.CANCEL))
 	}
 	if err != nil {
 		errStatus := getCErrorStatus(err)

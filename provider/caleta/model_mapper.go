@@ -9,7 +9,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-func balanceRequestMapper(ctx context.Context, r WalletbalanceJSONRequestBody) pam.GetBalanceRequestMapper {
+func balanceRequestMapper(ctx context.Context, r *WalletbalanceJSONRequestBody) pam.GetBalanceRequestMapper {
 	return func() (context.Context, pam.GetBalanceRequest, error) {
 		return ctx, pam.GetBalanceRequest{
 			PlayerID: r.SupplierUser,
@@ -46,133 +46,141 @@ func refreshSessionMapper(ctx context.Context, token, requestID string) pam.Refr
 	}
 }
 
-func betTransactionMapper(ctx context.Context, r WalletbetJSONRequestBody) pam.AddTransactionRequestMapper {
+func valueOrNow(t *time.Time) time.Time {
+	if t == nil {
+		return time.Now().UTC()
+	} else {
+		return *t
+	}
+}
+
+func betTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
-		amt := toPamAmount(&r.Amount)
+		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
-			PlayerID: r.SupplierUser,
+			PlayerID: r.Body.SupplierUser,
 			Params: pam.AddTransactionParams{
 				Provider:       ProviderName,
-				XPlayerToken:   r.Token,
-				XCorrelationID: r.RequestUuid,
+				XPlayerToken:   r.Body.Token,
+				XCorrelationID: r.Body.RequestUuid,
 			},
 			Body: pam.AddTransactionJSONRequestBody{
 				CashAmount:            amt,
-				Currency:              string(r.Currency),
-				IsGameOver:            &r.RoundClosed,
+				Currency:              string(r.Body.Currency),
+				IsGameOver:            &r.Body.RoundClosed,
 				Provider:              ProviderName,
-				ProviderGameId:        &r.GameCode,
-				ProviderRoundId:       &r.Round,
-				ProviderTransactionId: r.TransactionUuid,
-				ProviderBetRef:        &r.TransactionUuid,
-				TransactionDateTime:   time.Now(),
+				ProviderGameId:        &r.Body.GameCode,
+				ProviderRoundId:       &r.Body.Round,
+				ProviderTransactionId: r.Body.TransactionUuid,
+				ProviderBetRef:        &r.Body.TransactionUuid,
+				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.WITHDRAW,
 			},
 		}, nil
 	}
 }
-func promoBetTransactionMapper(ctx context.Context, r WalletbetJSONRequestBody) pam.AddTransactionRequestMapper {
+func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
-		amt := toPamAmount(&r.Amount)
+		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
-			PlayerID: r.SupplierUser,
+			PlayerID: r.Body.SupplierUser,
 			Params: pam.AddTransactionParams{
 				Provider:       ProviderName,
-				XPlayerToken:   r.Token,
-				XCorrelationID: r.RequestUuid,
+				XPlayerToken:   r.Body.Token,
+				XCorrelationID: r.Body.RequestUuid,
 			},
 			Body: pam.AddTransactionJSONRequestBody{
 				PromoAmount:           amt,
-				Currency:              string(r.Currency),
-				IsGameOver:            &r.RoundClosed,
+				Currency:              string(r.Body.Currency),
+				IsGameOver:            &r.Body.RoundClosed,
 				Provider:              ProviderName,
-				ProviderGameId:        &r.GameCode,
-				ProviderRoundId:       &r.Round,
-				ProviderTransactionId: r.TransactionUuid,
-				ProviderBetRef:        &r.TransactionUuid,
-				TransactionDateTime:   time.Now(),
+				ProviderGameId:        &r.Body.GameCode,
+				ProviderRoundId:       &r.Body.Round,
+				ProviderTransactionId: r.Body.TransactionUuid,
+				ProviderBetRef:        &r.Body.TransactionUuid,
+				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMOWITHDRAW,
 			},
 		}, nil
 	}
 }
 
-func winTransactionMapper(ctx context.Context, r WalletWinBody) pam.AddTransactionRequestMapper {
+func winTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
-		amt := toPamAmount(&r.Amount)
+		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
-			PlayerID: r.SupplierUser,
+			PlayerID: r.Body.SupplierUser,
 			Params: pam.AddTransactionParams{
 				Provider:       ProviderName,
-				XPlayerToken:   r.Token,
-				XCorrelationID: r.RequestUuid,
+				XPlayerToken:   r.Body.Token,
+				XCorrelationID: r.Body.RequestUuid,
 			},
 			Body: pam.AddTransactionJSONRequestBody{
 				CashAmount:            amt,
-				Currency:              string(r.Currency),
-				IsGameOver:            &r.RoundClosed,
+				Currency:              string(r.Body.Currency),
+				IsGameOver:            &r.Body.RoundClosed,
 				Provider:              ProviderName,
-				ProviderGameId:        &r.GameCode,
-				ProviderRoundId:       &r.Round,
-				ProviderTransactionId: r.TransactionUuid,
-				ProviderBetRef:        &r.ReferenceTransactionUuid,
-				TransactionDateTime:   time.Now(),
+				ProviderGameId:        &r.Body.GameCode,
+				ProviderRoundId:       &r.Body.Round,
+				ProviderTransactionId: r.Body.TransactionUuid,
+				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
+				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.DEPOSIT,
 			},
 		}, nil
 	}
 }
-func promoWinTransactionMapper(ctx context.Context, r WalletWinBody) pam.AddTransactionRequestMapper {
+func promoWinTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
-		amt := toPamAmount(&r.Amount)
+		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
-			PlayerID: r.SupplierUser,
+			PlayerID: r.Body.SupplierUser,
 			Params: pam.AddTransactionParams{
 				Provider:       ProviderName,
-				XPlayerToken:   r.Token,
-				XCorrelationID: r.RequestUuid,
+				XPlayerToken:   r.Body.Token,
+				XCorrelationID: r.Body.RequestUuid,
 			},
 			Body: pam.AddTransactionJSONRequestBody{
 				PromoAmount:           amt,
-				Currency:              string(r.Currency),
-				IsGameOver:            &r.RoundClosed,
+				Currency:              string(r.Body.Currency),
+				IsGameOver:            &r.Body.RoundClosed,
 				Provider:              ProviderName,
-				ProviderGameId:        &r.GameCode,
-				ProviderRoundId:       &r.Round,
-				ProviderTransactionId: r.TransactionUuid,
-				ProviderBetRef:        &r.ReferenceTransactionUuid,
-				TransactionDateTime:   time.Now(),
+				ProviderGameId:        &r.Body.GameCode,
+				ProviderRoundId:       &r.Body.Round,
+				ProviderTransactionId: r.Body.TransactionUuid,
+				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
+				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMODEPOSIT,
 			},
 		}, nil
 	}
 }
 
-func cancelTransactionMapper(ctx context.Context, r WalletrollbackJSONRequestBody, session *pam.Session, tt pam.TransactionType) pam.AddTransactionRequestMapper {
+func cancelTransactionMapper(ctx context.Context, r *WalletrollbackRequestObject, session *pam.Session, tt pam.TransactionType) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		return ctx, &pam.AddTransactionRequest{
-			PlayerID: utils.OrZeroValue(r.User),
+			PlayerID: utils.OrZeroValue(r.Body.User),
 			Params: pam.AddTransactionParams{
 				Provider:       ProviderName,
-				XPlayerToken:   r.Token,
-				XCorrelationID: r.RequestUuid,
+				XPlayerToken:   r.Body.Token,
+				XCorrelationID: r.Body.RequestUuid,
 			},
 			Body: pam.AddTransactionJSONRequestBody{
 				Currency:              session.Currency,
-				IsGameOver:            &r.RoundClosed,
+				IsGameOver:            &r.Body.RoundClosed,
 				Provider:              ProviderName,
-				ProviderGameId:        &r.GameCode,
-				ProviderRoundId:       &r.Round,
-				ProviderTransactionId: r.TransactionUuid,
-				ProviderBetRef:        &r.ReferenceTransactionUuid,
-				TransactionDateTime:   time.Now(),
+				ProviderGameId:        &r.Body.GameCode,
+				ProviderRoundId:       &r.Body.Round,
+				ProviderTransactionId: r.Body.TransactionUuid,
+				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
+				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       tt,
 			},
 		}, nil
 	}
 }
 
-func getTransactionsMapper(ctx context.Context, r WalletWinBody) pam.GetTransactionsRequestMapper {
+func getTransactionsMapper(ctx context.Context, r *WalletWinBody) pam.GetTransactionsRequestMapper {
 	return func() (context.Context, pam.GetTransactionsRequest, error) {
 		return ctx, pam.GetTransactionsRequest{
 			PlayerID: r.SupplierUser,

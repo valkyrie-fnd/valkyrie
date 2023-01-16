@@ -322,6 +322,16 @@ paths:
         schema:
           type: string
         example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      - name: X-Msg-Timestamp
+        in: header
+        description: Event or transaction timestamp in UTC
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+        example: 2023-01-12 19:09:58.894142+00:00
       requestBody:
         content:
           application/json:
@@ -355,6 +365,16 @@ paths:
         schema:
           type: string
         example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      - name: X-Msg-Timestamp
+        in: header
+        description: Event or transaction timestamp in UTC
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+        example: 2023-01-12 19:09:58.894142+00:00
       requestBody:
         content:
           application/json:
@@ -388,6 +408,16 @@ paths:
         schema:
           type: string
         example: jYqkWYGLL2lpd5Qb1FiX4O7+hfyPKN1Q==
+      - name: X-Msg-Timestamp
+        in: header
+        description: Event or transaction timestamp in UTC
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+        example: 2023-01-12 19:09:58.894142+00:00
       requestBody:
         content:
           application/json:
