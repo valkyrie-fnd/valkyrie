@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 
 # include .env files using dotenv
-dotenv: ['.env', '.env.local']
+dotenv: [".env", ".env.local"]
 
-# When doing interpolation of variables, Task will look for the below. 
+# When doing interpolation of variables, Task will look for the below.
 # They are listed below in order of importance (i.e. most important first):
 #
 # * Variables declared in the task definition
@@ -12,7 +12,7 @@ dotenv: ['.env', '.env.local']
 # * Variables of the inclusion of the Taskfile (when the task is included)
 # * Global variables (those declared in the vars: option in the Taskfile)
 # * Environment variables
-vars: 
+vars:
   NAME: valkyrie
   BUILD_DIR: build
   VERSION:
@@ -21,8 +21,8 @@ vars:
   # workaround to use built-in windows commands
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
 
-# https://taskfile.dev/usage/#watch-tasks  
-interval: '500ms'
+# https://taskfile.dev/usage/#watch-tasks
+interval: "500ms"
 
 tasks:
   default:
@@ -69,17 +69,17 @@ tasks:
     preconditions:
       - sh: "command -v golangci-lint"
         msg: "Please install golangci-lint first: https://golangci-lint.run/usage/install/"
-        
+
   lint-yaml:
     desc: lint yaml files
     cmds:
       - docker run --rm -it -v $(pwd):/data cytopia/yamllint -f parsable $(git ls-files '*.yml' '*.yaml')
-  
+
   lint-docker:
     desc: lint Dockerfile
     cmds:
       - docker run --rm -i hadolint/hadolint hadolint - < ./Dockerfile
-  
+
   test:
     desc: run all tests
     sources:
@@ -94,23 +94,25 @@ tasks:
     cmds:
       - go test -cover -covermode=count -coverprofile=profile.cov ./...
       - go tool cover -func profile.cov
-      - defer: '{{.SHELL}} rm profile.cov'
+      - defer: "{{.SHELL}} rm profile.cov"
 
   run:
     desc: run the application locally
     aliases:
       - run-local
     cmds:
-      - go run main.go -config configs/testdata/valkyrie_config.test.yml
-  
+      - go run -tags=dev main.go -config configs/testdata/valkyrie_config.test.yml
+
   pre-build:
     internal: true
     run: once
+    vars:
+      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
-      - mkdir -p {{.BUILD_DIR}}
+      - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}"
 
   build:
-    desc: build binary
+    desc: build binary. Use cli args to build dev variant "-- -tags=dev"
     aliases: [build-local]
     deps:
       - pre-build
@@ -120,36 +122,36 @@ tasks:
     generates:
       - "{{.BUILD_DIR}}/{{.NAME}}"
     cmds:
-      - "{{.BUILD_CMD}} -o {{.BUILD_DIR}}/{{.NAME}}"
+      - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}"
 
   build-linux:
-    desc: build linux binary
+    desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - pre-build
     cmds:
       - mkdir -p {{.BUILD_DIR}}/linux-amd64
-      - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
+      - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
 
   build-windows:
-    desc: build windows binary
+    desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - pre-build
     cmds:
-      - mkdir -p {{.BUILD_DIR}}/windows-amd64
-      - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
-        
+      - "{{.SHELL}} mkdir -fo -p {{.BUILD_DIR}}/windows-amd64"
+      - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
+
   build-osx:
-    desc: build OSX binary
+    desc: build OSX binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - pre-build
     cmds:
       - mkdir -p {{.BUILD_DIR}}/darwin-amd64
-      - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
+      - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
       - mkdir -p {{.BUILD_DIR}}/darwin-arm64
-      - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
+      - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
 
   build-all:
-    desc: build for all supported platforms
+    desc: build for all supported platforms. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - build-linux
       - build-windows
@@ -185,25 +187,25 @@ tasks:
       - package-linux
       - package-windows
       - package-osx
-        
+
   changelog:
     desc: print latest changes in CHANGELOG.md
     cmds:
       - bash .github/tools/changelog.sh {{.VERSION}}
-  
+
   clean:
     desc: clean project
     vars:
       FORCE: '{{if eq .OS "Windows_NT"}}-fo{{else}}-f{{end}}'
     cmds:
-      - '{{.SHELL}} rm -r {{.FORCE}} {{.BUILD_DIR}}'
+      - "{{.SHELL}} rm -r {{.FORCE}} {{.BUILD_DIR}}"
       - go clean
-        
+
   release:
     desc: create a release
     cmds:
-      - '{{.SHELL}} cat .github/RELEASING.md' # print instructions, as releases are not automated
-        
+      - "{{.SHELL}} cat .github/RELEASING.md" # print instructions, as releases are not automated
+
   docker-build:
     desc: build a docker image
     vars:
@@ -213,7 +215,7 @@ tasks:
         sh: git ls-remote --get-url | sed 's/\.git$//g'
     cmds:
       - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --tag "{{.DOCKER_REPO}}/{{.NAME}}:latest" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
-  
+
   docker-push:
     desc: push docker image
     deps:
@@ -233,7 +235,7 @@ tasks:
     preconditions:
       - sh: "command -v helm"
         msg: "Please install helm first: https://helm.sh/docs/intro/install/"
-        
+
   helm-push:
     desc: push helm chart to registry
     dir: helm
@@ -262,7 +264,7 @@ tasks:
     cmds:
       - go install github.com/PaulXu-cn/go-mod-graph-chart/gmchart@latest
       - go mod graph | gmchart
-  
+
   licenses:
     desc: list project dependency licenses
     cmds:
