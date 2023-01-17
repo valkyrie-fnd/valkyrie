@@ -13,6 +13,7 @@ import (
 var dummyAmtReader pam.AmountRounder = func(amt pam.Amt) (*pam.Amount, error) { return utils.Ptr(pam.Amount(amt)), nil }
 
 var now = time.Now().UTC()
+var nowMsgTst = MsgTimestamp(time.Now().UTC())
 
 type dateAssert func(*testing.T, time.Time, time.Time) bool
 
@@ -35,7 +36,7 @@ func Test_betTransactionMapper(t *testing.T) {
 			name: "basic",
 			request: &WalletbetRequestObject{
 				Params: WalletbetParams{
-					XMsgTimestamp: &now,
+					XMsgTimestamp: &nowMsgTst,
 				},
 				Body: &WalletBetBody{
 					Amount:          1,
@@ -127,7 +128,7 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 			name: "basic",
 			request: &WalletbetRequestObject{
 				Params: WalletbetParams{
-					XMsgTimestamp: &now,
+					XMsgTimestamp: &nowMsgTst,
 				},
 				Body: &WalletBetBody{
 					Amount:          1,
@@ -219,7 +220,7 @@ func Test_winTransactionMapper(t *testing.T) {
 			name: "basic",
 			request: &TransactionwinRequestObject{
 				Params: TransactionwinParams{
-					XMsgTimestamp: &now,
+					XMsgTimestamp: &nowMsgTst,
 				},
 				Body: &WalletWinBody{
 					Amount:                   1,
@@ -313,7 +314,7 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 			name: "basic",
 			request: &TransactionwinRequestObject{
 				Params: TransactionwinParams{
-					XMsgTimestamp: &now,
+					XMsgTimestamp: &nowMsgTst,
 				},
 				Body: &WalletWinBody{
 					Amount:                   1,
@@ -408,7 +409,7 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			name: "basic",
 			request: &WalletrollbackRequestObject{
 				Params: WalletrollbackParams{
-					XMsgTimestamp: &now,
+					XMsgTimestamp: &nowMsgTst,
 				},
 				Body: &WalletRollbackBody{
 					GameCode:                 "a",

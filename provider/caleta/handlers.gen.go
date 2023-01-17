@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/four-fingers/oapi-codegen/pkg/runtime"
 	"github.com/gofiber/fiber/v2"
@@ -97,7 +96,7 @@ func (siw *ServerInterfaceWrapper) Walletbet(c *fiber.Ctx) error {
 
 	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
 	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
-		var XMsgTimestamp time.Time
+		var XMsgTimestamp MsgTimestamp
 
 		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
 		if err != nil {
@@ -168,7 +167,7 @@ func (siw *ServerInterfaceWrapper) Walletrollback(c *fiber.Ctx) error {
 
 	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
 	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
-		var XMsgTimestamp time.Time
+		var XMsgTimestamp MsgTimestamp
 
 		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
 		if err != nil {
@@ -210,7 +209,7 @@ func (siw *ServerInterfaceWrapper) Transactionwin(c *fiber.Ctx) error {
 
 	// ------------- Optional header parameter "X-Msg-Timestamp" -------------
 	if value, found := headers[http.CanonicalHeaderKey("X-Msg-Timestamp")]; found {
-		var XMsgTimestamp time.Time
+		var XMsgTimestamp MsgTimestamp
 
 		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Msg-Timestamp", runtime.ParamLocationHeader, value, &XMsgTimestamp)
 		if err != nil {

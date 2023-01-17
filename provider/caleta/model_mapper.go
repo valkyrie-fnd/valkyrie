@@ -46,11 +46,11 @@ func refreshSessionMapper(ctx context.Context, token, requestID string) pam.Refr
 	}
 }
 
-func valueOrNow(t *time.Time) time.Time {
+func valueOrNow(t *MsgTimestamp) time.Time {
 	if t == nil {
 		return time.Now().UTC()
 	} else {
-		return *t
+		return t.toTime()
 	}
 }
 
