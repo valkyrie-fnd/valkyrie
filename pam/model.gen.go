@@ -105,6 +105,9 @@ type BaseResponse struct {
 	Status StatusCode `json:"status"`
 }
 
+// BetCode metadata about what kind of bet/transaction it is
+type BetCode = string
+
 // BucketReference Jackpot bucket reference, arbitrary use
 type BucketReference = string
 
@@ -373,6 +376,9 @@ type Tip struct {
 
 // Transaction defines model for Transaction.
 type Transaction struct {
+	// BetCode metadata about what kind of bet/transaction it is
+	BetCode *BetCode `json:"betCode,omitempty"`
+
 	// BonusAmount Amount in some currency, rounded to 6 decimal places
 	BonusAmount Amount `json:"bonusAmount"`
 

@@ -291,7 +291,7 @@ components:
       description: Describes the position of the incoming request in its trace graph. Further specified in https://www.w3.org/TR/trace-context
       in: header
       required: false
-      schema: 
+      schema:
         type: string
     tracestate:
       name: tracestate
@@ -357,6 +357,10 @@ components:
         * `PROMODEPOSIT` - payout from promo and similar offerings programs
         * `PROMOWITHDRAW` - buyin to promo and similar offerings programs
         * `PROMOCANCEL` - reverting a previous promo transaction
+    BetCode:
+      type: string
+      description: metadata about what kind of bet/transaction it is
+      example: Spin
     Amount:
       type: number
       description: Amount in some currency, rounded to 6 decimal places
@@ -556,6 +560,8 @@ components:
           $ref: "#/components/schemas/ProviderGameId"
         providerRoundId:
           $ref: "#/components/schemas/ProviderRoundId"
+        betCode:
+          $ref: "#/components/schemas/BetCode"
         isGameOver:
           type: boolean
         promos:
