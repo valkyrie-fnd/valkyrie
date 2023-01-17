@@ -13,7 +13,7 @@ import (
 var dummyAmtReader pam.AmountRounder = func(amt pam.Amt) (*pam.Amount, error) { return utils.Ptr(pam.Amount(amt)), nil }
 
 var now = time.Now().UTC()
-var nowMsgTst = MsgTimestamp(time.Now().UTC())
+var nowMsgTst = MsgTimestamp(now)
 
 type dateAssert func(*testing.T, time.Time, time.Time) bool
 
