@@ -18,7 +18,6 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/ops"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/routes"
-	"github.com/valkyrie-fnd/valkyrie/swagger"
 
 	_ "github.com/valkyrie-fnd/valkyrie/pam/genericpam" // init generic pam
 	_ "github.com/valkyrie-fnd/valkyrie/pam/vplugin"    // init pam plugins
@@ -93,11 +92,10 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 	}
 
 	// Swagger
-	err = swagger.ConfigureSwagger(v.config, v.provider, v.operator)
+	err = configureSwagger(v)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to configure swagger")
 	}
-
 	return v
 }
 

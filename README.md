@@ -30,6 +30,13 @@ You can then run Valkyrie using:
 ./valkyrie -config path/to/config.yml
 ```
 
+### Swagger
+To include swagger ui to view all exposed endpoints in valkyrie you can use the build tag `dev`
+
+```shell
+go build -tags=dev
+```
+
 ### Custom tasks
 
 Valkyrie uses [Task](https://taskfile.dev/) as a task runner, to get the tool please refer to its [installation](https://taskfile.dev/installation/) page.
