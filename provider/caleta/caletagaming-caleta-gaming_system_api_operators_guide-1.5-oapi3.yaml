@@ -599,7 +599,6 @@ components:
       description: Event or transaction timestamp in UTC
       x-go-type: caletaDate
       type: string
-      format: date-time
       example: 2023-01-17 08:13:17.985795+00:00
     BalanceResponse:
       required:
