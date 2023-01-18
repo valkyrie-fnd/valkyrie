@@ -11,7 +11,6 @@ import (
 
 const (
 	ProviderName = "Caleta"
-	basePath     = "/caleta"
 )
 
 func init() {
@@ -42,7 +41,7 @@ func NewProviderRouter(config configs.ProviderConf, service StrictServerInterfac
 	})
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: middlewares,
 	}, nil
@@ -77,11 +76,18 @@ func NewOperatorRouter(config configs.ProviderConf, _ rest.HTTPClientJSONInterfa
 			Method:      "POST",
 			HandlerFunc: controller.GameLaunchEndpoint,
 		},
+		{
+			Path:   "/api/v1/gamerounds/:gameRoundId/render",
+			Method: "Get",
+			HandlerFunc: func(c *fiber.Ctx) error {
+				return nil
+			},
+		},
 	}
 
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: []fiber.Handler{},
 	}, nil

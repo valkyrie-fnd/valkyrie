@@ -51,12 +51,12 @@ func ProviderRoutes(a *fiber.App, configs []configs.ProviderConf, pam pam.PamCli
 }
 
 // OperatorRoutes Init the operator side routes
-func OperatorRoutes(a *fiber.App, configs []configs.ProviderConf, client rest.HTTPClientJSONInterface) error {
+func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HTTPClientJSONInterface) error {
 	// Create subgroup and registry
-	registry := provider.NewRegistry(a, "/operator")
+	registry := provider.NewRegistry(a, config.OperatorBasePath)
 
 	// Register all configured providers
-	for _, c := range configs {
+	for _, c := range config.Providers {
 		operatorRouter, err := provider.OperatorFactory().
 			Build(c.Name, provider.OperatorArgs{
 				Config: c,

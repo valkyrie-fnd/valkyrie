@@ -88,7 +88,7 @@ func Test_OperatorRoutes(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(tt *testing.T) {
 			app := fiber.New()
-			err := OperatorRoutes(app, []configs.ProviderConf{test.conf}, nil)
+			err := OperatorRoutes(app, &configs.ValkyrieConfig{Providers: []configs.ProviderConf{test.conf}}, nil)
 			assert.NoError(tt, err)
 			assert.Equal(tt, test.wantHandlers, int(app.HandlersCount()))
 		})
