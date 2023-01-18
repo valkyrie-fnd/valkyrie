@@ -11,12 +11,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Removed
+
+## [0.5.0] - 2023-01-18
+
+### Added
+
 - Add Vplugin server
 - Add BetCode to Transaction in pam api specification
+- Added default cpu and memory requests in helm chart
+- Added support for "X-Msg-Timestamp"-header for Caleta provider
+- Added tracing propagation to vplugin
+
 ### Changed
 
 - Split request/response logging into separate log statements
 - Only use swagger when using "dev" build tag
+- vplugin consistently configured using snake case keys
 
 ### Removed
 
