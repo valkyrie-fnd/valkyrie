@@ -99,8 +99,8 @@ github.com/gofiber/contrib/otelfiber v0.0.0-20230110211841-e15f0399e374 h1:JD5me
 github.com/gofiber/contrib/otelfiber v0.0.0-20230110211841-e15f0399e374/go.mod h1:Mp6BwgaEeAglRcGKkm2IDNDBCAjKe2/xcRw/SGKH6cA=
 github.com/gofiber/fiber/v2 v2.38.1/go.mod h1:t0NlbaXzuGH7I+7M4paE848fNWInZ7mfxI/Er1fTth8=
 github.com/gofiber/fiber/v2 v2.40.1/go.mod h1:Gko04sLksnHbzLSRBFWPFdzM9Ws9pRxvvIaohJK1dsk=
-github.com/gofiber/fiber/v2 v2.41.0 h1:YhNoUS/OTjEz+/WLYuQ01xI7RXgKEFnGBKMagAu5f0M=
-github.com/gofiber/fiber/v2 v2.41.0/go.mod h1:RdebcCuCRFp4W6hr3968/XxwJVg0K+jr9/Ae0PFzZ0Q=
+github.com/gofiber/fiber/v2 v2.41.1-0.20230115125653-8a605c67d131 h1:mfYg96/PphPDDIfF1rzGINF1IKgbr7AOSNdkakAlTrk=
+github.com/gofiber/fiber/v2 v2.41.1-0.20230115125653-8a605c67d131/go.mod h1:KmJ535cuEOpJVOqXb8FQD9Li43yC8WMrUYZ61+2sZ8I=
 github.com/gofiber/swagger v0.1.8 h1:Ut8gecn/nf62HGexuxaju30pVLF7UL1HZXHTq9EA7QI=
 github.com/gofiber/swagger v0.1.8/go.mod h1:9LPuXJldC8uGFtpxb3JQqhSjhyP1p5id+0GvRU8eUUw=
 github.com/golang-jwt/jwt v3.2.2+incompatible/go.mod h1:8pz2t5EyA70fFQQSrl6XZXzqecmYZeUEB8OUGHkxJ+I=
