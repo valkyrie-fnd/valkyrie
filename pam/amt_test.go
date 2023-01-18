@@ -119,6 +119,13 @@ func TestAmount_Add(t *testing.T) {
 	assert.True(t, amountEqual(amount, floatAmount(3.0)), "values should be equal")
 }
 
+func TestAmount_Sub(t *testing.T) {
+	amount := floatAmount(1.5)
+	amount = amount.Sub(floatAmount(1.5))
+
+	assert.True(t, amountEqual(amount, floatAmount(0.0)), "values should be equal")
+}
+
 func floatAmount(val float64) Amount {
 	return Amount(decimal.NewFromFloat(val))
 }

@@ -38,6 +38,10 @@ func (m *Amount) Add(v Amount) Amount {
 	return Amount(decimal.Decimal(*m).Add(decimal.Decimal(v)))
 }
 
+func (m *Amount) Sub(v Amount) Amount {
+	return Amount(decimal.Decimal(*m).Sub(decimal.Decimal(v)))
+}
+
 // MarshalJSON provides custom marshall of the Amount type
 func (m Amount) MarshalJSON() ([]byte, error) {
 	return []byte(decimal.Decimal(m).StringFixed(decimalPlaces)), nil
