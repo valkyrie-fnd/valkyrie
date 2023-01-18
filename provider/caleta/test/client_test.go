@@ -14,6 +14,10 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/provider/caleta/auth"
 )
 
+var emptyMap = make(map[string]string)
+
+var nowTimestamp = map[string]string{"X-Msg-Timestamp": time.Now().UTC().Format(caleta.TimestampFormat)}
+
 // RGI client
 type RGIClient struct {
 	providerURL string
@@ -93,7 +97,7 @@ func (api *RGIClient) Check() (*caleta.InlineResponse2001, error) {
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/check")
-	resp, err := postJSON[caleta.WalletCheckBody, caleta.InlineResponse2001](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletCheckBody, caleta.InlineResponse2001](url, body, api.timeout, api.signer, emptyMap)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +119,7 @@ func (api *RGIClient) Balance(gameCode string) (*caleta.BalanceResponse, error) 
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/balance")
-	resp, err := postJSON[caleta.WalletBalanceBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletBalanceBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, emptyMap)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +155,7 @@ func (api *RGIClient) Bet(gameCode, currency, round, transactionID string, amoun
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/bet")
-	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +185,7 @@ func (api *RGIClient) PromoBet(gameCode, currency, round, transactionID string, 
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/bet")
-	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +222,7 @@ func (api *RGIClient) Win(gameCode, currency, round, refTransactionID, transacti
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/win")
-	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +254,7 @@ func (api *RGIClient) PromoWin(gameCode, currency, round, refTransactionID, tran
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/win")
-	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +282,7 @@ func (api *RGIClient) Rollback(gameCode, round, refTransactionID, transactionID 
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/rollback")
-	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +309,7 @@ func (api *RGIClient) PromoRollback(gameCode, round, refTransactionID, transacti
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/rollback")
-	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer)
+	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
 	if err != nil {
 		return nil, err
 	}
@@ -315,7 +319,9 @@ func (api *RGIClient) PromoRollback(gameCode, round, refTransactionID, transacti
 	return resp, nil
 }
 
-func postJSON[Body any, Response any](url string, body Body, timeout time.Duration, signer auth.Signer) (*Response, error) {
+func postJSON[Body any, Response any](url string, body Body, timeout time.Duration, signer auth.Signer,
+	additionalHeaders map[string]string) (*Response, error) {
+
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -331,6 +337,10 @@ func postJSON[Body any, Response any](url string, body Body, timeout time.Durati
 		Body(bodyBytes).
 		SetBytesV("X-Auth-Signature", sign).
 		Timeout(timeout)
+
+	for k, v := range additionalHeaders {
+		a = a.Set(k, v)
+	}
 
 	var resp Response
 
