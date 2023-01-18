@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 - Add Vplugin server
+- Add BetCode to Transaction in pam api specification
 ### Changed
 
 - Split request/response logging into separate log statements
