@@ -75,6 +75,7 @@ func betTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.Ad
 				ProviderBetRef:        &r.Body.TransactionUuid,
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.WITHDRAW,
+				BetCode:               r.Body.Bet,
 			},
 		}, nil
 	}
@@ -100,6 +101,7 @@ func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject) p
 				ProviderBetRef:        &r.Body.TransactionUuid,
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMOWITHDRAW,
+				BetCode:               r.Body.Bet,
 			},
 		}, nil
 	}
@@ -126,6 +128,7 @@ func winTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) p
 				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.DEPOSIT,
+				BetCode:               r.Body.Bet,
 			},
 		}, nil
 	}
@@ -151,6 +154,7 @@ func promoWinTransactionMapper(ctx context.Context, r *TransactionwinRequestObje
 				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMODEPOSIT,
+				BetCode:               r.Body.Bet,
 			},
 		}, nil
 	}
