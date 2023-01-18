@@ -12,7 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/goccy/go-json v0.10.0
 	github.com/gofiber/contrib/otelfiber v0.0.0-20230110211841-e15f0399e374
-	github.com/gofiber/fiber/v2 v2.41.0
+	github.com/gofiber/fiber/v2 v2.41.1-0.20230115125653-8a605c67d131
 	github.com/gofiber/swagger v0.1.8
 	github.com/google/go-querystring v1.1.0
 	github.com/google/uuid v1.3.0
