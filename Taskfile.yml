@@ -134,10 +134,12 @@ tasks:
 
   build-windows:
     desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
+    vars:
+      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     deps:
       - pre-build
     cmds:
-      - "{{.SHELL}} mkdir -fo -p {{.BUILD_DIR}}/windows-amd64"
+      - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/windows-amd64"
       - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
 
   build-osx:
