@@ -16,7 +16,14 @@ import (
 
 var emptyMap = make(map[string]string)
 
-var nowTimestamp = map[string]string{"X-Msg-Timestamp": time.Now().UTC().Format(caleta.TimestampFormat)}
+var nowTimestamp = func() map[string]string {
+	return map[string]string{"X-Msg-Timestamp": time.Now().UTC().Format(caleta.TimestampFormat)}
+}
+
+const (
+	RoundOpen   caleta.RoundClosed = false
+	RoundClosed caleta.RoundClosed = true
+)
 
 // RGI client
 type RGIClient struct {
@@ -155,7 +162,7 @@ func (api *RGIClient) Bet(gameCode, currency, round, transactionID string, amoun
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/bet")
-	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +192,7 @@ func (api *RGIClient) PromoBet(gameCode, currency, round, transactionID string, 
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/bet")
-	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletBetBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +229,7 @@ func (api *RGIClient) Win(gameCode, currency, round, refTransactionID, transacti
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/win")
-	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +261,7 @@ func (api *RGIClient) PromoWin(gameCode, currency, round, refTransactionID, tran
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/win")
-	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletWinBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +273,7 @@ func (api *RGIClient) PromoWin(gameCode, currency, round, refTransactionID, tran
 
 // Called when there is need to roll back the effect of the referenced transaction.
 // Operator is expected to find referenced transaction, roll back its effects and return the player's new balance.
-func (api *RGIClient) Rollback(gameCode, round, refTransactionID, transactionID string) (*caleta.BalanceResponse, error) {
+func (api *RGIClient) Rollback(gameCode, round, refTransactionID, transactionID string, roundStatus caleta.RoundClosed) (*caleta.BalanceResponse, error) {
 
 	body := caleta.WalletRollbackBody{
 		//GameId:                   nil,
@@ -275,14 +282,14 @@ func (api *RGIClient) Rollback(gameCode, round, refTransactionID, transactionID 
 		ReferenceTransactionUuid: refTransactionID,
 		RequestUuid:              uuid(),
 		Round:                    round,
-		RoundClosed:              false,
+		RoundClosed:              roundStatus,
 		User:                     &api.userID,
 		Token:                    api.session,
 		TransactionUuid:          transactionID,
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/rollback")
-	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +299,7 @@ func (api *RGIClient) Rollback(gameCode, round, refTransactionID, transactionID 
 	return resp, nil
 }
 
-func (api *RGIClient) PromoRollback(gameCode, round, refTransactionID, transactionID string) (*caleta.BalanceResponse, error) {
+func (api *RGIClient) PromoRollback(gameCode, round, refTransactionID, transactionID string, roundStatus caleta.RoundClosed) (*caleta.BalanceResponse, error) {
 
 	// Promo differs slightly from regular non-promo body, setting IsFree
 	body := caleta.WalletRollbackBody{
@@ -302,14 +309,14 @@ func (api *RGIClient) PromoRollback(gameCode, round, refTransactionID, transacti
 		ReferenceTransactionUuid: refTransactionID,
 		RequestUuid:              uuid(),
 		Round:                    round,
-		RoundClosed:              false,
+		RoundClosed:              roundStatus,
 		User:                     &api.userID,
 		Token:                    api.session,
 		TransactionUuid:          transactionID,
 	}
 
 	url := fmt.Sprintf("%s%s", api.providerURL, "/wallet/rollback")
-	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp)
+	resp, err := postJSON[caleta.WalletRollbackBody, caleta.BalanceResponse](url, body, api.timeout, api.signer, nowTimestamp())
 	if err != nil {
 		return nil, err
 	}

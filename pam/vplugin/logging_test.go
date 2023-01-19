@@ -12,7 +12,11 @@ import (
 
 func TestZerologAdapter(t *testing.T) {
 	captor := strings.Builder{}
-	log.Logger = log.Logger.Output(&captor)
+	log.Logger = log.Logger.Level(zerolog.TraceLevel).Output(&captor)
+	defer func() {
+		// switch back to INFO after test, so we don't slow others down
+		log.Logger = log.Logger.Level(zerolog.InfoLevel)
+	}()
 	adapter := NewZerologAdapter()
 
 	tests := []struct {
