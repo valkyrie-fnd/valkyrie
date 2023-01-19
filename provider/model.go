@@ -35,6 +35,7 @@ type GameLaunchResponse struct {
 	GameURL string `json:"gameUrl"`
 }
 
-type GameLaunchService interface {
+type ProviderService interface {
 	GameLaunch(*fiber.Ctx, *GameLaunchRequest, *GameLaunchHeaders) (string, error)
+	GetGameRound(*fiber.Ctx, string) (string, error)
 }

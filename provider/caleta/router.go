@@ -62,13 +62,14 @@ func getProviderMiddlewares(auth AuthConf) ([]fiber.Handler, error) {
 	return middlewares, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, _ rest.HTTPClientJSONInterface) (*provider.Router, error) {
-	service, err := NewStaticURLGameLaunchService(config)
+func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
+	service, err := NewCaletaService(config, httpClient)
 	if err != nil {
 		return nil, err
 	}
 
 	controller := provider.NewGameLaunchController(service)
+	grCtrl := provider.NewGameRoundController(service)
 
 	routes := []provider.Route{
 		{
@@ -77,11 +78,9 @@ func NewOperatorRouter(config configs.ProviderConf, _ rest.HTTPClientJSONInterfa
 			HandlerFunc: controller.GameLaunchEndpoint,
 		},
 		{
-			Path:   "/api/v1/gamerounds/:gameRoundId/render",
-			Method: "Get",
-			HandlerFunc: func(c *fiber.Ctx) error {
-				return nil
-			},
+			Path:        "/api/v1/gamerounds/:gameRoundId/render",
+			Method:      "GET",
+			HandlerFunc: grCtrl.GetGameRoundEndpoint,
 		},
 	}
 
