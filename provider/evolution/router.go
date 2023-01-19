@@ -91,7 +91,7 @@ func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJS
 		return nil, err
 	}
 	glController := provider.NewGameLaunchController(
-		GameLaunchService{
+		EvoService{
 			Auth:   auth,
 			Conf:   &config,
 			Client: httpClient,

@@ -16,13 +16,13 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
-type GameLaunchService struct {
+type EvoService struct {
 	Client rest.HTTPClientJSONInterface
 	Conf   *configs.ProviderConf
 	Auth   AuthConf
 }
 
-func (service GameLaunchService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchRequest,
+func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchRequest,
 	h *provider.GameLaunchHeaders) (string, error) {
 	configJSON, err := json.Marshal(g.LaunchConfig)
 	if err != nil {
@@ -63,7 +63,11 @@ func (service GameLaunchService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaun
 	return gameURL, nil
 }
 
-func (service GameLaunchService) makeAuthCall(ctx context.Context, request UserAuthenticationRequest) (*UserAuthenticationResponse, error) {
+func (service EvoService) GetGameRound(*fiber.Ctx, string) (string, error) {
+	return "", fmt.Errorf("Not available")
+}
+
+func (service EvoService) makeAuthCall(ctx context.Context, request UserAuthenticationRequest) (*UserAuthenticationResponse, error) {
 	authURL := fmt.Sprintf("%s/ua/v1/%s/%s", service.Conf.URL, service.Auth.CasinoKey, service.Auth.CasinoToken)
 	resp := &UserAuthenticationResponse{}
 	req := &rest.HTTPRequest{

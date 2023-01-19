@@ -79,7 +79,7 @@ var gameLaunchTests = []GLTestData{
 func TestGameLaunch(t *testing.T) {
 	for _, test := range gameLaunchTests {
 		t.Run(test.name, func(t *testing.T) {
-			sut := GameLaunchService{test.conf}
+			sut := RedTigerService{test.conf}
 			result, err := sut.GameLaunch(nil, test.req, test.headers)
 			if test.e != nil {
 				assert.EqualError(t, err, test.e.Error())

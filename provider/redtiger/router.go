@@ -92,7 +92,7 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 // NewOperatorRouter Routes operator calls to execute actions toward the provider
 func NewOperatorRouter(config configs.ProviderConf) *provider.Router {
 	glController := provider.NewGameLaunchController(
-		GameLaunchService{
+		RedTigerService{
 			Conf: &config,
 		})
 	routes := []provider.Route{

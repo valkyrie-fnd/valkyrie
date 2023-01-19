@@ -12,13 +12,13 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/provider"
 )
 
-type GameLaunchService struct {
+type RedTigerService struct {
 	Conf *configs.ProviderConf
 }
 
 var validate = validator.New()
 
-func (service GameLaunchService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRequest,
+func (service RedTigerService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRequest,
 	h *provider.GameLaunchHeaders) (string, error) {
 	if h.SessionKey == "" {
 		return "", fmt.Errorf("Missing SessionKey")
@@ -50,7 +50,9 @@ func (service GameLaunchService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunch
 		launchConfQuery.Encode())
 	return url, nil
 }
-
+func (service RedTigerService) GetGameRound(*fiber.Ctx, string) (string, error) {
+	return "", fmt.Errorf("Not available")
+}
 func getLaunchConfig(conf map[string]interface{}) (*rtGameLaunchConfig, error) {
 	var launchConfig rtGameLaunchConfig
 	cfg := &mapstructure.DecoderConfig{
