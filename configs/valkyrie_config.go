@@ -70,6 +70,8 @@ type ProviderConf struct {
 	URL string `yaml:"url"`
 	// BasePath used to distinguish endpoints exposed by Valkyrie
 	BasePath string `yaml:"base_path"`
+	// ProviderSpecific Any other config specific to each provider
+	ProviderSpecific map[string]any `yaml:"provider_specific,omitempty"`
 }
 
 // PamConf Configured information for the used Player Account Manager/wallet
