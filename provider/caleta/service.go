@@ -19,7 +19,7 @@ func NewService(pamClient pam.PamClient) *ProviderService {
 
 // @Id           CaletaBalance
 // @Summary      Balance
-// @Description  Wallet balance
+// @Description  Should return wallet balance for current player.
 // @Tags         Caleta
 // @Accept       json
 // @Produce      json
@@ -51,7 +51,7 @@ func (s *ProviderService) Walletbalance(ctx context.Context, request Walletbalan
 
 // @Id           CaletaCheck
 // @Summary      Check
-// @Description  Wallet check
+// @Description  OPTIONAL - Change the initial token received for a new one that will be used on wallet transactions.
 // @Tags         Caleta
 // @Accept       json
 // @Produce      json
@@ -73,7 +73,7 @@ func (s *ProviderService) Walletcheck(ctx context.Context, request WalletcheckRe
 
 // @Id           CaletaBet
 // @Summary      Bet
-// @Description  Wallet bet
+// @Description  Called when the user places a bet (debit).
 // @Tags         Caleta
 // @Accept       json
 // @Produce      json
@@ -110,7 +110,7 @@ func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetReques
 
 // @Id           CaletaWin
 // @Summary      Win
-// @Description  Wallet win
+// @Description  Called when the user wins (credit).
 // @Tags         Caleta
 // @Accept       json
 // @Produce      json
@@ -162,7 +162,7 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 
 // @Id           CaletaRollback
 // @Summary      Rollback
-// @Description  Wallet rollback
+// @Description  Called when there is need to roll back the effect of the referenced transaction.
 // @Tags         Caleta
 // @Accept       json
 // @Produce      json
