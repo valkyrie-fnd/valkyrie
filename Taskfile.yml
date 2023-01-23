@@ -286,7 +286,7 @@ tasks:
       - go install github.com/google/go-licenses@latest
       - go-licenses report .
 
-  dependency:binmap:
+  binmap:
     desc: treemap breakdown of binary
     deps:
       - build
