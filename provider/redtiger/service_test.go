@@ -42,7 +42,7 @@ func TestAuth(t *testing.T) {
 			AuthRequest{},
 			nil,
 			&ErrorResponse{Success: false, Error: Error{
-				Message: "Failed to Auth: Code: 2, Msg: fail",
+				Message: "Not authorized",
 				Code:    301,
 			}},
 		},
@@ -417,6 +417,26 @@ func TestStake(t *testing.T) {
 			assert.Equal(tt, test.want, resp)
 			assert.Equal(tt, test.wantErr, err)
 		})
+	}
+}
+
+// Test_UnknownUserResponse verifies that potential IDOR issues are not propagated by Valkyrie. It's assumed
+// that PAM's handle that properly but lets make sure it actually works. Ergo: unknown user issues should
+// result in invalid session and nothing else.
+func Test_UnknownUserResponse(t *testing.T) {
+	pamStub := pamStub{}
+	svc := NewService(&pamStub)
+	testCases := []pam.ValkErrorCode{pam.ValkErrOpUserNotFound, pam.ValkErrOpSessionNotFound}
+	for _, tt := range testCases {
+
+		pamStub.refreshSessionFn = func() (*pam.Session, error) {
+			return nil, pam.ErrorWrapper("a", tt, assert.AnError)
+		}
+
+		svc.Auth(AuthRequest{})
+		_, err := svc.Auth(AuthRequest{})
+		assert.NotNil(t, err)
+		assert.Equalf(t, NotAuthorized, err.Error.Code, "expected NotAuthorized on %s", tt)
 	}
 }
 
