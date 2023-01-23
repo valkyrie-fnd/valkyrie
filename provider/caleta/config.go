@@ -1,8 +1,6 @@
 package caleta
 
 import (
-	"fmt"
-
 	"github.com/mitchellh/mapstructure"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
@@ -40,12 +38,20 @@ func getAuthConf(c configs.ProviderConf) (AuthConf, error) {
 // getCaletaConf parse provide specific configuration
 func getCaletaConf(c configs.ProviderConf) (caletaConf, error) {
 	var cc caletaConf
-	err := mapstructure.Decode(c.ProviderSpecific, &cc)
-	if err != nil {
-		return cc, err
-	}
-	if cc.GameLaunchType != Static && cc.GameLaunchType != Request {
-		return cc, fmt.Errorf("Invalid Gamelaunch type: %s", cc.GameLaunchType)
+	if c.ProviderSpecific != nil {
+		err := mapstructure.Decode(c.ProviderSpecific, &cc)
+		if err != nil {
+			return cc, err
+		}
+		if cc.GameLaunchType != Static && cc.GameLaunchType != Request {
+			// Default to Static
+			cc.GameLaunchType = Static
+		}
+	} else {
+		// Default to Static
+		cc = caletaConf{
+			GameLaunchType: Static,
+		}
 	}
 	return cc, nil
 }

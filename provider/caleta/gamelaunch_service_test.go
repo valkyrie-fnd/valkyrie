@@ -25,6 +25,9 @@ var (
 			"operator_id": "oid",
 			"signing_key": testingPrivateKey,
 		},
+		ProviderSpecific: map[string]any{
+			"game_launch_type": "request",
+		},
 	}
 	request = &provider.GameLaunchRequest{
 		Currency:       "USD",
@@ -64,7 +67,7 @@ func TestStaticUrlGameLaunch(t *testing.T) {
 					"operator_id": "valkyrie",
 				},
 				ProviderSpecific: map[string]any{
-					"game_launch_type": "Static",
+					"game_launch_type": "static",
 				},
 			},
 			args: args{
@@ -146,6 +149,9 @@ func TestRequestingGameLaunch(t *testing.T) {
 			},
 			config: configs.ProviderConf{
 				URL: "http://caleta-test",
+				ProviderSpecific: map[string]any{
+					"game_launch_type": "request",
+				},
 				Auth: map[string]any{
 					"operator_id": "oid",
 				},

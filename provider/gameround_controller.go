@@ -1,6 +1,11 @@
 package provider
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"errors"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/valkyrie-fnd/valkyrie/rest"
+)
 
 type GameRoundController struct {
 	ps ProviderService
@@ -9,13 +14,19 @@ type GameRoundController struct {
 func NewGameRoundController(s ProviderService) *GameRoundController {
 	return &GameRoundController{s}
 }
+
+// GetGameRoundEndpoint Returns redirect status with provider url for game round rendering
 func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	gameRoundID := c.Params("gameRoundId")
-	// locale := c.Query("locale")
 	res, err := ctrl.ps.GetGameRound(c, gameRoundID)
 	if err != nil {
-		// handle error
+		herr := &rest.HTTPError{}
+		if errors.As(err, herr) {
+			return c.Status(herr.Code).SendString(herr.Error())
+		}
 		return err
 	}
-	return c.SendString(res)
+
+	c.Response().Header.Add("Location", res)
+	return c.SendStatus(fiber.StatusMovedPermanently)
 }
