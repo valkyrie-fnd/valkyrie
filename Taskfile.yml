@@ -15,8 +15,9 @@ dotenv: [".env", ".env.local"]
 vars:
   NAME: valkyrie
   BUILD_DIR: build
-  VERSION:
+  GIT_VERSION:
     sh: bash .github/tools/version.sh
+  VERSION: '{{ coalesce .VERSION .GIT_VERSION }}' # pick first non-empty version
   BUILD_CMD: CGO_ENABLED=0 go build -ldflags="-w -s -X main.appVersion={{.VERSION}}"
   # workaround to use built-in windows commands
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
@@ -27,7 +28,7 @@ interval: "500ms"
 tasks:
   default:
     desc: default task
-    cmds: # run the task sequentially
+    cmds: # run the tasks sequentially
       - task: tidy
       - task: gen
       - task: lint
@@ -60,7 +61,7 @@ tasks:
   lint:
     desc: run linters configured by .golangci.yml
     aliases:
-      - lint-go
+      - lint:go
     sources:
       - ./**/*.go
       - go.mod
@@ -70,12 +71,12 @@ tasks:
       - sh: "command -v golangci-lint"
         msg: "Please install golangci-lint first: https://golangci-lint.run/usage/install/"
 
-  lint-yaml:
+  lint:yaml:
     desc: lint yaml files
     cmds:
       - docker run --rm -it -v $(pwd):/data cytopia/yamllint -f parsable $(git ls-files '*.yml' '*.yaml')
 
-  lint-docker:
+  lint:docker:
     desc: lint Dockerfile
     cmds:
       - docker run --rm -i hadolint/hadolint hadolint - < ./Dockerfile
@@ -99,11 +100,11 @@ tasks:
   run:
     desc: run the application locally
     aliases:
-      - run-local
+      - run:local
     cmds:
       - go run -tags=dev main.go -config configs/testdata/valkyrie_config.test.yml
 
-  pre-build:
+  build:prepare:
     internal: true
     run: once
     vars:
@@ -113,9 +114,9 @@ tasks:
 
   build:
     desc: build binary. Use cli args to build dev variant "-- -tags=dev"
-    aliases: [build-local]
+    aliases: [build:local]
     deps:
-      - pre-build
+      - build:prepare
     sources:
       - ./**/*.go
       - go.mod
@@ -124,71 +125,82 @@ tasks:
     cmds:
       - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}"
 
-  build-linux:
+  build:linux:
     desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
-      - pre-build
+      - build:prepare
     cmds:
       - mkdir -p {{.BUILD_DIR}}/linux-amd64
       - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
 
-  build-windows:
+  build:windows:
     desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
     vars:
       FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     deps:
-      - pre-build
+      - build:prepare
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/windows-amd64"
       - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
 
-  build-osx:
+  build:osx:
     desc: build OSX binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
-      - pre-build
+      - build:prepare
+      - build:osx:amd64
+      - build:osx:arm64
+
+  build:osx:amd64:
+    desc: build OSX amd64 binary
+    internal: true
     cmds:
       - mkdir -p {{.BUILD_DIR}}/darwin-amd64
       - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
+
+  build:osx:arm64:
+    desc: build OSX arm64 binary
+    internal: true
+    cmds:
       - mkdir -p {{.BUILD_DIR}}/darwin-arm64
       - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
 
-  build-all:
+  build:all:
     desc: build for all supported platforms. Use cli args to build dev variant "-- -tags=dev"
     deps:
-      - build-linux
-      - build-windows
-      - build-osx
+      - build:linux
+      - build:windows
+      - build:osx
 
-  package-linux:
+  package:linux:
     desc: package linux binary
     deps:
-      - build-linux
+      - build:linux
     cmds:
       - cp scripts/* {{.BUILD_DIR}}/linux-amd64
       - cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/linux-amd64/config.yml
       - tar -C {{.BUILD_DIR}}/linux-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-linux-amd64.tar.gz {{.NAME}} svc.sh valkyrie.service.template config.yml
 
-  package-windows:
+  package:windows:
     desc: package windows binary
     deps:
-      - build-windows
+      - build:windows
     cmds:
       - zip {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-windows-amd64.zip {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
 
-  package-osx:
+  package:osx:
     desc: package osx binary
     deps:
-      - build-osx
+      - build:osx
     cmds:
       - tar -C {{.BUILD_DIR}}/darwin-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-amd64.tar.gz {{.NAME}}
       - tar -C {{.BUILD_DIR}}/darwin-arm64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-arm64.tar.gz {{.NAME}}
 
-  package-all:
+  package:all:
     desc: package all binaries
     deps:
-      - package-linux
-      - package-windows
-      - package-osx
+      - package:linux
+      - package:windows
+      - package:osx
 
   changelog:
     desc: print latest changes in CHANGELOG.md
@@ -208,7 +220,7 @@ tasks:
     cmds:
       - "{{.SHELL}} cat .github/RELEASING.md" # print instructions, as releases are not automated
 
-  docker-build:
+  docker:build:
     desc: build a docker image
     vars:
       DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
@@ -218,10 +230,10 @@ tasks:
     cmds:
       - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --tag "{{.DOCKER_REPO}}/{{.NAME}}:latest" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
 
-  docker-push:
+  docker:push:
     desc: push docker image
     deps:
-      - docker-build
+      - docker:build
     vars:
       DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
       TAG: '{{ default "latest" .VERSION }}'
@@ -229,7 +241,7 @@ tasks:
       - docker push "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}"
       - docker push "{{.DOCKER_REPO}}/{{.NAME}}:latest"
 
-  helm-package:
+  helm:package:
     desc: package helm chart
     dir: helm
     cmds:
@@ -238,11 +250,11 @@ tasks:
       - sh: "command -v helm"
         msg: "Please install helm first: https://helm.sh/docs/intro/install/"
 
-  helm-push:
+  helm:push:
     desc: push helm chart to registry
     dir: helm
     deps:
-      - helm-package
+      - helm:package
     cmds:
       - helm push $(ls valkyrie-*.tgz) "oci://{{.HELM_REPO}}"
     preconditions:
@@ -286,3 +298,9 @@ tasks:
     desc: run benchmarks
     cmds:
       - go test -bench=. -benchmem ./...
+
+  version:
+    desc: print project version
+    silent: true
+    cmds:
+      - echo {{.VERSION}}
