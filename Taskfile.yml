@@ -30,6 +30,7 @@ tasks:
     desc: default task
     cmds: # run the tasks sequentially
       - task: tidy
+      - task: dependency:vulncheck
       - task: gen
       - task: lint
       - task: test
@@ -90,7 +91,7 @@ tasks:
       - go install gotest.tools/gotestsum@latest
       - gotestsum
 
-  coverage:
+  test:coverage:
     desc: run all tests with code coverage
     cmds:
       - go test -cover -covermode=count -coverprofile=profile.cov ./...
@@ -268,18 +269,18 @@ tasks:
       - echo 'documentation served from http://localhost:8080/'
       - godoc -http=localhost:8080
 
-  outdated:
+  dependency:outdated:
     desc: list directly dependent modules that can be upgraded
     cmds:
       - go list -u -m $(go list -m -f '{{`{{.Indirect}} {{.}}`}}' all | grep '^false' | cut -d ' ' -f2) | grep '\['
 
-  graph:
+  dependency:graph:
     desc: graph of upstream modules with gmchart
     cmds:
       - go install github.com/PaulXu-cn/go-mod-graph-chart/gmchart@latest
       - go mod graph | gmchart
 
-  licenses:
+  dependency:licenses:
     desc: list project dependency licenses
     cmds:
       - go install github.com/google/go-licenses@latest
@@ -294,7 +295,14 @@ tasks:
       - go tool nm -size ./build/valkyrie | go-binsize-treemap > ./build/binsize.svg
       - open ./build/binsize.svg
 
-  bench:
+  dependency:vulncheck:
+    desc: analyze dependencies for known vulnerabilities
+    sources:
+      - ./go.mod
+    cmds:
+      - go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+  test:bench:
     desc: run benchmarks
     cmds:
       - go test -bench=. -benchmem ./...
