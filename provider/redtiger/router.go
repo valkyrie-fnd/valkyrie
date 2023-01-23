@@ -9,7 +9,6 @@ import (
 
 const (
 	ProviderName = "Red Tiger"
-	basePath     = "/redtiger"
 )
 
 func init() {
@@ -81,7 +80,7 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 	}
 	return &provider.Router{
 		Name:     ProviderName,
-		BasePath: basePath,
+		BasePath: config.BasePath,
 		Routes:   routes,
 		Middlewares: []fiber.Handler{
 			validateAPIKey(auth.APIKey),
@@ -105,7 +104,7 @@ func NewOperatorRouter(config configs.ProviderConf) *provider.Router {
 
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: []fiber.Handler{},
 	}

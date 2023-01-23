@@ -19,20 +19,16 @@ import (
 	_ "github.com/valkyrie-fnd/valkyrie/provider/redtiger"
 )
 
-const (
-	basePath = "/providers"
-)
-
 // ProviderRoutes Init the provider routes
-func ProviderRoutes(a *fiber.App, configs []configs.ProviderConf, pam pam.PamClient) error {
+func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
 	// Create providers subgroup and registry
-	registry := provider.NewRegistry(a, basePath)
+	registry := provider.NewRegistry(a, config.ProviderBasePath)
 
 	// Register all configured providers
-	for _, c := range configs {
+	for _, c := range config.Providers {
 		providerRouter, err := provider.ProviderFactory().
 			Build(c.Name, provider.ProviderArgs{
 				Config: c,

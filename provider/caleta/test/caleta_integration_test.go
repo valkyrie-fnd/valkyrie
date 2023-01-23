@@ -36,7 +36,8 @@ func TestSuite(t *testing.T) {
 
 	providerConfigFn := func(ds datastore.ExtendedDatastore) configs.ProviderConf {
 		return configs.ProviderConf{
-			Name: caleta.ProviderName,
+			Name:     caleta.ProviderName,
+			BasePath: "/caleta",
 			Auth: map[string]any{
 				"verification_key": string(caletaPublicPEM),
 				"operator_id":      "valkyrie",

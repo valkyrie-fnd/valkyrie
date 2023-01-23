@@ -11,7 +11,6 @@ import (
 const (
 	ProviderName      = "Evolution"
 	apiTokenParamName = "authToken"
-	basePath          = "/evolution"
 )
 
 func init() {
@@ -77,7 +76,7 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 
 	return &provider.Router{
 		Name:     ProviderName,
-		BasePath: basePath,
+		BasePath: config.BasePath,
 		Routes:   routes,
 		Middlewares: []fiber.Handler{
 			NewAPITokenValidator(apiTokenParamName, auth.APIKey),
@@ -107,7 +106,7 @@ func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJS
 
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: []fiber.Handler{},
 	}, nil

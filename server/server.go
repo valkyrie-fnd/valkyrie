@@ -84,7 +84,7 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 	}
 
 	// Provider routes.
-	if err = routes.ProviderRoutes(v.provider, cfg.Providers, pamClient); err != nil {
+	if err = routes.ProviderRoutes(v.provider, cfg, pamClient); err != nil {
 		log.Fatal().Err(err).Msg("Unable to setup the intended provider routes")
 	}
 	if err = routes.OperatorRoutes(v.operator, cfg, httpClient); err != nil {

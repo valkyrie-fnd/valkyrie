@@ -355,19 +355,22 @@ func TestValkConfigFile(t *testing.T) {
 		},
 		Providers: []ProviderConf{
 			{
-				Name: "Evolution",
-				URL:  "https://evo-url",
-				Auth: map[string]any{"api_key": "evo-api-key", "casino_token": "evo-casino-token", "casino_key": "evo-casino-key"},
+				Name:     "Evolution",
+				URL:      "https://evo-url",
+				BasePath: "/evolution",
+				Auth:     map[string]any{"api_key": "evo-api-key", "casino_token": "evo-casino-token", "casino_key": "evo-casino-key"},
 			},
 			{
-				Name: "Red Tiger",
-				URL:  "https://rt-url",
-				Auth: map[string]any{"api_key": "rt-api-key", "recon_token": "rt-recon-token"},
+				Name:     "Red Tiger",
+				URL:      "https://rt-url",
+				BasePath: "/redtiger",
+				Auth:     map[string]any{"api_key": "rt-api-key", "recon_token": "rt-recon-token"},
 			},
 			{
-				Name: "Caleta",
-				URL:  "https://caleta-url",
-				Auth: map[string]any{"verification_key": verificationKey, "signing_key": signingKey, "operator_id": "caleta-operator-id"},
+				Name:     "Caleta",
+				URL:      "https://caleta-url",
+				BasePath: "/caleta",
+				Auth:     map[string]any{"verification_key": verificationKey, "signing_key": signingKey, "operator_id": "caleta-operator-id"},
 			},
 		},
 		HTTPServer: HTTPServerConfig{

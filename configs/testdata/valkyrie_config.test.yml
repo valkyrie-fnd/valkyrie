@@ -25,17 +25,20 @@ pam: # player account management
 providers:
   - name: Evolution # Name of provider
     url: "https://evo-url" # url used for gameLaunch
+    base_path: "/evolution"
     auth: # auth is specific to each provider check /provider/{providerName}/config.go
       casino_key: evo-casino-key # Some providers require a casino identifier if for example you have multiple casinos with the same provider
       api_key: evo-api-key
       casino_token: evo-casino-token
   - name: Red Tiger
     url: "https://rt-url"
+    base_path: "/redtiger"
     auth: # auth is specific to each provider
       api_key: rt-api-key
       recon_token: rt-recon-token
   - name: Caleta
     url: "https://caleta-url"
+    base_path: "/caleta"
     auth:
       verification_key: |
         -----BEGIN PUBLIC KEY-----
