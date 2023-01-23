@@ -22,7 +22,7 @@ func (service *ProviderService) WithContext(ctx context.Context) Service {
 
 // @Id           EvoCheck
 // @Summary      Check
-// @Description  Should be used for additional validation of redirected user and sid
+// @Description  Should be used for additional validation of redirected user and sid.
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json
@@ -55,7 +55,7 @@ func (service *ProviderService) Check(req CheckRequest) (*CheckResponse, error) 
 
 // @Id           EvoBalance
 // @Summary      Balance
-// @Description  Used to get user’s balance
+// @Description  Used to get user’s balance.
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json
@@ -82,7 +82,7 @@ func (service *ProviderService) Balance(req BalanceRequest) (*StandardResponse, 
 
 // @Id           EvoDebit
 // @Summary      Debit
-// @Description  Used to debit from account (place bets)
+// @Description  Used to debit from account (place bets).
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json
@@ -121,7 +121,7 @@ func (service *ProviderService) Debit(req DebitRequest) (*StandardResponse, erro
 
 // @Id           EvoCredit
 // @Summary      Credit
-// @Description  Used to credit user’s account (settle bets)
+// @Description  Used to credit user’s account (settle bets).
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json
@@ -189,7 +189,7 @@ func (service *ProviderService) Credit(req CreditRequest) (*StandardResponse, er
 
 // @Id           EvoCancel
 // @Summary      Cancel
-// @Description  Used to cancel user’s bet
+// @Description  Used to cancel user’s bet.
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json
@@ -257,7 +257,7 @@ func (service *ProviderService) Cancel(req CancelRequest) (*StandardResponse, er
 
 // @Id           EvoPromoPayout
 // @Summary      PromoPayout
-// @Description  Used to communicate promotional payout transactions
+// @Description  Used to communicate promotional payout transactions.
 // @Tags         Evolution
 // @Accept       json
 // @Produce      json

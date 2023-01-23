@@ -18,7 +18,7 @@ const docTemplateprovider = `{
     "paths": {
         "/providers/caleta/wallet/balance": {
             "post": {
-                "description": "Wallet balance",
+                "description": "Should return wallet balance for current player.",
                 "consumes": [
                     "application/json"
                 ],
@@ -66,7 +66,7 @@ const docTemplateprovider = `{
         },
         "/providers/caleta/wallet/bet": {
             "post": {
-                "description": "Wallet bet",
+                "description": "Called when the user places a bet (debit).",
                 "consumes": [
                     "application/json"
                 ],
@@ -114,7 +114,7 @@ const docTemplateprovider = `{
         },
         "/providers/caleta/wallet/check": {
             "post": {
-                "description": "Wallet check",
+                "description": "OPTIONAL - Change the initial token received for a new one that will be used on wallet transactions.",
                 "consumes": [
                     "application/json"
                 ],
@@ -162,7 +162,7 @@ const docTemplateprovider = `{
         },
         "/providers/caleta/wallet/rollback": {
             "post": {
-                "description": "Wallet rollback",
+                "description": "Called when there is need to roll back the effect of the referenced transaction.",
                 "consumes": [
                     "application/json"
                 ],
@@ -210,7 +210,7 @@ const docTemplateprovider = `{
         },
         "/providers/caleta/wallet/win": {
             "post": {
-                "description": "Wallet win",
+                "description": "Called when the user wins (credit).",
                 "consumes": [
                     "application/json"
                 ],
@@ -258,7 +258,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/balance": {
             "post": {
-                "description": "Used to get user’s balance",
+                "description": "Used to get user’s balance.",
                 "consumes": [
                     "application/json"
                 ],
@@ -312,7 +312,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/cancel": {
             "post": {
-                "description": "Used to cancel user’s bet",
+                "description": "Used to cancel user’s bet.",
                 "consumes": [
                     "application/json"
                 ],
@@ -366,7 +366,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/check": {
             "post": {
-                "description": "Should be used for additional validation of redirected user and sid",
+                "description": "Should be used for additional validation of redirected user and sid.",
                 "consumes": [
                     "application/json"
                 ],
@@ -420,7 +420,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/credit": {
             "post": {
-                "description": "Used to credit user’s account (settle bets)",
+                "description": "Used to credit user’s account (settle bets).",
                 "consumes": [
                     "application/json"
                 ],
@@ -474,7 +474,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/debit": {
             "post": {
-                "description": "Used to debit from account (place bets)",
+                "description": "Used to debit from account (place bets).",
                 "consumes": [
                     "application/json"
                 ],
@@ -528,7 +528,7 @@ const docTemplateprovider = `{
         },
         "/providers/evolution/promo_payout": {
             "post": {
-                "description": "Used to communicate promotional payout transactions",
+                "description": "Used to communicate promotional payout transactions.",
                 "consumes": [
                     "application/json"
                 ],
@@ -582,7 +582,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/auth": {
             "post": {
-                "description": "Authenticate",
+                "description": "Authenticate toward Red tiger.",
                 "consumes": [
                     "application/json"
                 ],
@@ -630,7 +630,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/payout": {
             "post": {
-                "description": "Payout",
+                "description": "When a bet settles with a payout (credit).",
                 "consumes": [
                     "application/json"
                 ],
@@ -678,7 +678,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/promo/buyin": {
             "post": {
-                "description": "PromoBuyin",
+                "description": "Promotion buyin, request the same as stake/bet.",
                 "consumes": [
                     "application/json"
                 ],
@@ -726,7 +726,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/promo/refund": {
             "post": {
-                "description": "PromoRefund",
+                "description": "Refund promotion buyin.",
                 "consumes": [
                     "application/json"
                 ],
@@ -774,7 +774,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/promo/settle": {
             "post": {
-                "description": "PromoSettle",
+                "description": "Promotion settlement for a placed buyin.",
                 "consumes": [
                     "application/json"
                 ],
@@ -822,7 +822,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/refund": {
             "post": {
-                "description": "Refund",
+                "description": "Used to refund a placed bet.",
                 "consumes": [
                     "application/json"
                 ],
@@ -870,7 +870,7 @@ const docTemplateprovider = `{
         },
         "/providers/redtiger/stake": {
             "post": {
-                "description": "Stake",
+                "description": "When a bet has been placed (debit).",
                 "consumes": [
                     "application/json"
                 ],
