@@ -313,6 +313,22 @@ logging:
 			HTTPClient: defaultHTTPClientConfig,
 		},
 	},
+	{
+		name:        "Operator and provider base path set",
+		envFilePath: "",
+		yamlData: `
+provider_base_path: "/providers"
+operator_base_path: "/operator"
+`,
+		want: &ValkyrieConfig{
+			OperatorBasePath: "/operator",
+			ProviderBasePath: "/providers",
+			Logging:          defaultLogConfig,
+			Tracing:          defaultTraceConfig,
+			HTTPServer:       defaultHTTPServerConfig,
+			HTTPClient:       defaultHTTPClientConfig,
+		},
+	},
 }
 
 func TestValkConfig(t *testing.T) {

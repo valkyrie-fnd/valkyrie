@@ -129,6 +129,6 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 
 func TestGameRoundRender(t *testing.T) {
 	sut := EvoService{}
-	_, err := sut.GetGameRound(nil, "")
+	_, err := sut.GetGameRoundRender(nil, "")
 	assert.EqualError(t, err, "Not available")
 }

@@ -21,7 +21,7 @@ func Test_Requesting_Gameround_Render_Page(t *testing.T) {
 	}})
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, _ := sut.GetGameRound(ctx, "gameRoundId")
+	res, _ := sut.GetGameRoundRender(ctx, "gameRoundId")
 	assert.Equal(t, "successUrl", res)
 }
 
@@ -31,7 +31,7 @@ func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
 	}})
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, err := sut.GetGameRound(ctx, "gameRoundId")
+	res, err := sut.GetGameRoundRender(ctx, "gameRoundId")
 	assert.Equal(t, "", res)
 	assert.EqualError(t, err, "HTTP 500: url missing from response")
 }
@@ -42,7 +42,7 @@ func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {
 	}})
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, err := sut.GetGameRound(ctx, "gameRoundId")
+	res, err := sut.GetGameRoundRender(ctx, "gameRoundId")
 	assert.Equal(t, "", res)
 	assert.EqualError(t, err, "Some network error")
 }

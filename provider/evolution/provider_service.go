@@ -63,7 +63,7 @@ func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchReque
 	return gameURL, nil
 }
 
-func (service EvoService) GetGameRound(*fiber.Ctx, string) (string, error) {
+func (service EvoService) GetGameRoundRender(*fiber.Ctx, string) (string, error) {
 	return "", fmt.Errorf("Not available")
 }
 

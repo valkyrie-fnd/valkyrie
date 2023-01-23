@@ -4,10 +4,11 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
-func (service *caletaService) GetGameRound(ctx *fiber.Ctx, gameRoundID string) (string, error) {
+func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundID string) (string, error) {
 	body := GameroundJSONRequestBody{
 		Round:      &gameRoundID,
 		OperatorId: service.authConfig.OperatorID,
@@ -19,6 +20,7 @@ func (service *caletaService) GetGameRound(ctx *fiber.Ctx, gameRoundID string) (
 	}
 	err := service.headerSigner.sign(body, req.Headers)
 	if err != nil {
+		log.Ctx(ctx.UserContext()).Error().Err(err).Msg("Failed to sign request")
 		return "", rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 

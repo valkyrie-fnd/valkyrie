@@ -18,7 +18,7 @@ func NewGameRoundController(s ProviderService) *GameRoundController {
 // GetGameRoundEndpoint Returns redirect status with provider url for game round rendering
 func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	gameRoundID := c.Params("gameRoundId")
-	res, err := ctrl.ps.GetGameRound(c, gameRoundID)
+	res, err := ctrl.ps.GetGameRoundRender(c, gameRoundID)
 	if err != nil {
 		herr := &rest.HTTPError{}
 		if errors.As(err, herr) {
