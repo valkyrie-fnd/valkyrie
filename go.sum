@@ -260,8 +260,8 @@ github.com/ugorji/go v1.2.7/go.mod h1:nF9osbDWLy6bDVv/Rtoh6QgnvNDpmCalQV5urGCCS6
 github.com/ugorji/go/codec v1.1.7/go.mod h1:Ax+UKWsSmolVDwsd+7N3ZtXu+yMGCf907BLYF3GoBXY=
 github.com/ugorji/go/codec v1.2.7/go.mod h1:WGN1fab3R1fzQlVQTkfxVtIBhWDRqOviHU95kRgeqEY=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
-github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20221216135627-4e9518342113 h1:bxmzapb6aUh8g5xlklhDk2hZCm4LiE+Q4b5DmUXfrek=
-github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20221216135627-4e9518342113/go.mod h1:ge/vTHXKcN6RlXgh+RoJXtHr94hseSe8UOVsKJz91Lg=
+github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230123132124-8f5b164801be h1:yVDW5A3X42H5s4znXKT9JH0M2BIvw4xgtZQ0EXzZWAI=
+github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230123132124-8f5b164801be/go.mod h1:ge/vTHXKcN6RlXgh+RoJXtHr94hseSe8UOVsKJz91Lg=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.40.0/go.mod h1:t/G+3rLek+CyY9bnIE+YlMRddxVAAGjhxndDB4i4C0I=
