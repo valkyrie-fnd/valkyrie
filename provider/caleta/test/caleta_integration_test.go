@@ -525,7 +525,7 @@ func (s *CaletaIntegrationTestSuite) Test_Rollback() {
 	s.Assert().Equal(bet.Status, caleta.RSOK)
 	s.Assert().Equal(*bet.Balance/multiplier, initialCashBalance-1)
 
-	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }
@@ -544,7 +544,7 @@ func (s *CaletaIntegrationTestSuite) Test_Rollback_Multiple_Bet() {
 	s.Assert().NoError(err)
 	s.Assert().Equal(bet.Status, caleta.RSOK)
 
-	rollback, err := s.client.Rollback(gameCode, round, firstTransactionID, uuid())
+	rollback, err := s.client.Rollback(gameCode, round, firstTransactionID, uuid(), RoundOpen)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance-1)
 
@@ -556,7 +556,7 @@ func (s *CaletaIntegrationTestSuite) Test_Rollback_Multiple_Bet() {
 func (s *CaletaIntegrationTestSuite) Test_Rollback_Missing_Referenced_Transaction() {
 	// Trying to roll back a non-existing bet transaction.
 	// Caleta prefers that Valkyrie just returns OK and balance (idempotent) in these cases.
-	rollback, err := s.client.Rollback(gameCode, uuid(), uuid(), uuid())
+	rollback, err := s.client.Rollback(gameCode, uuid(), uuid(), uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }
@@ -569,7 +569,7 @@ func (s *CaletaIntegrationTestSuite) Test_Rollback_Then_Win() {
 	s.Assert().Equal(bet.Status, caleta.RSOK)
 	s.Assert().Equal(*bet.Balance/multiplier, initialCashBalance-1)
 
-	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid(), RoundOpen)
 	s.Assert().NoError(err)
 	s.Assert().Equal(rollback.Status, caleta.RSOK)
 	s.Assert().Equal(*rollback.Balance/multiplier, initialCashBalance)
@@ -587,7 +587,7 @@ func (s *CaletaIntegrationTestSuite) Test_PromoRollback() {
 	s.Assert().Equal(bet.Status, caleta.RSOK)
 	s.Assert().Equal(*bet.Balance/multiplier, initialCashBalance)
 
-	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }
@@ -599,7 +599,7 @@ func (s *CaletaIntegrationTestSuite) Test_PromoRollback_Then_Win() {
 	s.Assert().NoError(err)
 	s.assertBalance(bet, initialCashBalance)
 
-	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid(), RoundOpen)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 
@@ -668,7 +668,7 @@ func (s *CaletaIntegrationTestSuite) Test_PromoRollback_Using_Expired_Session() 
 
 	s.client.setSession(session) // use old session
 
-	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }
@@ -727,7 +727,7 @@ func (s *CaletaIntegrationTestSuite) Test_Rollback_Not_Blocked() {
 
 	s.Require().NoError(s.client.BlockAccount(currency))
 
-	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.Rollback(gameCode, round, transactionID, uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }
@@ -741,7 +741,7 @@ func (s *CaletaIntegrationTestSuite) Test_PromoRollback_Not_Blocked() {
 
 	s.Require().NoError(s.client.BlockAccount(currency))
 
-	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid())
+	rollback, err := s.client.PromoRollback(gameCode, round, transactionID, uuid(), RoundClosed)
 	s.Assert().NoError(err)
 	s.assertBalance(rollback, initialCashBalance)
 }

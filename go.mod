@@ -24,7 +24,7 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.9
-	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20221216135627-4e9518342113
+	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230123132124-8f5b164801be
 	github.com/valyala/fasthttp v1.44.0
 	go.opentelemetry.io/otel v1.11.2
 	go.opentelemetry.io/otel/exporters/jaeger v1.11.2

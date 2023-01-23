@@ -1415,7 +1415,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Wallet balance
+      description: Should return wallet balance for current player.
       operationId: CaletaBalance
       parameters:
       - description: Request body
@@ -1447,7 +1447,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Wallet bet
+      description: Called when the user places a bet (debit).
       operationId: CaletaBet
       parameters:
       - description: Request body
@@ -1479,7 +1479,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Wallet check
+      description: OPTIONAL - Change the initial token received for a new one that
+        will be used on wallet transactions.
       operationId: CaletaCheck
       parameters:
       - description: Request body
@@ -1511,7 +1512,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Wallet rollback
+      description: Called when there is need to roll back the effect of the referenced
+        transaction.
       operationId: CaletaRollback
       parameters:
       - description: Request body
@@ -1543,7 +1545,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Wallet win
+      description: Called when the user wins (credit).
       operationId: CaletaWin
       parameters:
       - description: Request body
@@ -1575,7 +1577,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to get user’s balance
+      description: Used to get user’s balance.
       operationId: EvoBalance
       parameters:
       - description: Request body
@@ -1611,7 +1613,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to cancel user’s bet
+      description: Used to cancel user’s bet.
       operationId: EvoCancel
       parameters:
       - description: Request body
@@ -1648,7 +1650,7 @@ paths:
       consumes:
       - application/json
       description: Should be used for additional validation of redirected user and
-        sid
+        sid.
       operationId: EvoCheck
       parameters:
       - description: Request body
@@ -1684,7 +1686,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to credit user’s account (settle bets)
+      description: Used to credit user’s account (settle bets).
       operationId: EvoCredit
       parameters:
       - description: Request body
@@ -1720,7 +1722,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to debit from account (place bets)
+      description: Used to debit from account (place bets).
       operationId: EvoDebit
       parameters:
       - description: Request body
@@ -1756,7 +1758,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to communicate promotional payout transactions
+      description: Used to communicate promotional payout transactions.
       operationId: EvoPromoPayout
       parameters:
       - description: Request body
@@ -1792,7 +1794,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate
+      description: Authenticate toward Red tiger.
       operationId: RTAuth
       parameters:
       - description: Request body
@@ -1824,7 +1826,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Payout
+      description: When a bet settles with a payout (credit).
       operationId: RTPayout
       parameters:
       - description: Request body
@@ -1856,7 +1858,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: PromoBuyin
+      description: Promotion buyin, request the same as stake/bet.
       operationId: RTPromoBuyin
       parameters:
       - description: Request body
@@ -1888,7 +1890,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: PromoRefund
+      description: Refund promotion buyin.
       operationId: RTPromoRefund
       parameters:
       - description: Request body
@@ -1920,7 +1922,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: PromoSettle
+      description: Promotion settlement for a placed buyin.
       operationId: RTPromoSettle
       parameters:
       - description: Request body
@@ -1952,7 +1954,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Refund
+      description: Used to refund a placed bet.
       operationId: RTRefund
       parameters:
       - description: Request body
@@ -1984,7 +1986,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Stake
+      description: When a bet has been placed (debit).
       operationId: RTStake
       parameters:
       - description: Request body

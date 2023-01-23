@@ -25,7 +25,7 @@ func (s *ProviderService) WithContext(ctx context.Context) Service {
 // Auth implements Service
 // @Id           RTAuth
 // @Summary      Auth
-// @Description  Authenticate
+// @Description  Authenticate toward Red tiger.
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -75,7 +75,7 @@ func (s *ProviderService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorRes
 // Payout implements Service
 // @Id           RTPayout
 // @Summary      Payout
-// @Description  Payout
+// @Description  When a bet settles with a payout (credit).
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -92,7 +92,7 @@ func (s *ProviderService) Payout(req PayoutRequest) (*PayoutResponseWrapper, *Er
 // Stake implements Service
 // @Id           RTStake
 // @Summary      Stake
-// @Description  Stake
+// @Description  When a bet has been placed (debit).
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -108,7 +108,7 @@ func (s *ProviderService) Stake(req StakeRequest) (*StakeResponseWrapper, *Error
 // Refund implements Service
 // @Id           RTRefund
 // @Summary      Refund
-// @Description  Refund
+// @Description  Used to refund a placed bet.
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -124,7 +124,7 @@ func (s *ProviderService) Refund(req RefundRequest) (*RefundResponseWrapper, *Er
 // PromoBuyin implements Service
 // @Id           RTPromoBuyin
 // @Summary      PromoBuyin
-// @Description  PromoBuyin
+// @Description  Promotion buyin, request the same as stake/bet.
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -140,7 +140,7 @@ func (s *ProviderService) PromoBuyin(req StakeRequest) (*StakeResponseWrapper, *
 // PromoRefund implements Service
 // @Id           RTPromoRefund
 // @Summary      PromoRefund
-// @Description  PromoRefund
+// @Description  Refund promotion buyin.
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
@@ -156,7 +156,7 @@ func (s *ProviderService) PromoRefund(req RefundRequest) (*RefundResponseWrapper
 // PromoSettle implements Service
 // @Id           RTPromoSettle
 // @Summary      PromoSettle
-// @Description  PromoSettle
+// @Description  Promotion settlement for a placed buyin.
 // @Tags         Red Tiger
 // @Accept       json
 // @Produce      json
