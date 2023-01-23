@@ -78,7 +78,7 @@ func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJS
 			HandlerFunc: controller.GameLaunchEndpoint,
 		},
 		{
-			Path:        "/api/v1/gamerounds/:gameRoundId/render",
+			Path:        "/gamerounds/:gameRoundId/render",
 			Method:      "GET",
 			HandlerFunc: grCtrl.GetGameRoundEndpoint,
 		},
