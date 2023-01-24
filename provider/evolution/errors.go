@@ -48,7 +48,7 @@ var errCodes = map[pam.ValkErrorCode]statusCode{
 	pam.ValkErrOpSessionNotFound: StatusInvalidSID,
 	pam.ValkErrOpCashOverdraft:   StatusInsufficientFunds,
 	pam.ValkErrAuth:              StatusInvalidTokenID,
-	pam.ValkErrOpUserNotFound:    StatusInvalidParameter,
+	pam.ValkErrOpUserNotFound:    StatusInvalidSID,
 	pam.ValkErrAlreadySettled:    StatusBetAlreadySettled,
 	pam.ValkErrBetNotFound:       StatusBetDoesNotExist,
 	pam.ValkErrOpCancelNotFound:  StatusBetDoesNotExist,

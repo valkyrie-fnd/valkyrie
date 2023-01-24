@@ -44,7 +44,7 @@ var errCodes = map[pam.ValkErrorCode]RTErrorCode{
 	pam.ValkErrRefundPromoValue:    InternalServerError,
 	pam.ValkErrCancel:              InternalServerError,
 	pam.ValkErrOpTransCurrency:     InvalidUserCurrency,
-	pam.ValkErrOpUserNotFound:      UserNotFound,
+	pam.ValkErrOpUserNotFound:      NotAuthorized,
 	pam.ValkErrOpAccountNotFound:   UserNotFound,
 	pam.ValkErrOpBonusOverdraft:    InsufficientFunds,
 	pam.ValkErrOpCashOverdraft:     InsufficientFunds,
@@ -65,6 +65,11 @@ func getError(valkError pam.ValkErrorCode) RTErrorCode {
 }
 
 func newRTErrorResponse(msg string, code RTErrorCode) ErrorResponse {
+	// In case of auth errors limit details
+	if code == NotAuthorized {
+		msg = "Not authorized"
+	}
+
 	return ErrorResponse{
 		Success: false,
 		Error: Error{

@@ -108,7 +108,7 @@ func (s *RedTigerIntegrationTestSuite) Test_MAKES_A_BET_WITH_AN_INVALID_USER_ID(
 	resp, err := s.client.Stake(gameID, rnd(), rnd(), toMoney(10.0), toMoney(0.0))
 	s.Require().Error(err, "Request should produce hard error")
 	s.Assert().False(resp.Success)
-	s.Assert().Equal(redtiger.UserNotFound, resp.Error.Code)
+	s.Assert().Equal(redtiger.NotAuthorized, resp.Error.Code)
 }
 
 func (s *RedTigerIntegrationTestSuite) Test_MAKES_A_BET_REQUEST_WITH_AN_INVALID_CURRENCY() {
@@ -232,7 +232,7 @@ func (s *RedTigerIntegrationTestSuite) Test_MAKES_AN_AWARD_REQUEST_WITH_INVALID_
 	resp, err := s.client.Payout(gameID, rnd(), rnd(), toMoney(10.0), toMoney(0.0), toMoney(0.0), toJackpotMoney(0.0))
 	s.Require().Error(err, "Request should produce hard error")
 	s.Assert().False(resp.Success)
-	s.Assert().Equal(redtiger.UserNotFound, resp.Error.Code)
+	s.Assert().Equal(redtiger.NotAuthorized, resp.Error.Code)
 }
 
 func (s *RedTigerIntegrationTestSuite) Test_MAKES_AN_AWARD_REQUEST_WITH_RECON_TOKEN_AND_INVALID_USER_ID() {
@@ -241,7 +241,7 @@ func (s *RedTigerIntegrationTestSuite) Test_MAKES_AN_AWARD_REQUEST_WITH_RECON_TO
 	resp, err := s.client.Payout(gameID, rnd(), rnd(), toMoney(10.0), toMoney(0.0), toMoney(0.0), toJackpotMoney(0.0))
 	s.Require().Error(err, "Request should produce hard error")
 	s.Assert().False(resp.Success)
-	s.Assert().Equal(redtiger.UserNotFound, resp.Error.Code)
+	s.Assert().Equal(redtiger.NotAuthorized, resp.Error.Code)
 }
 
 func (s *RedTigerIntegrationTestSuite) Test_MAKES_AN_AWARD_REQUEST_WITH_INVALID_CURRENCY() {

@@ -378,10 +378,10 @@ func (s *EvolutionIntegrationTestSuite) Test_checkUsingInvalidUserId() {
 	client, initialBalance := s.prepareCase(validUser)
 
 	// Put in requests userId = 'fakeUserId'. Initialize (method check() call).
-	//		Verify response - response must contain status INVALID_PARAMETER.
+	//		Verify response - response must contain status INVALID_SID.
 	_ = client.checkWithAssert(client.reqBase.SID, fakeUser, func(cur *evolution.CheckResponse, err error) {
 		s.Require().NoError(err)
-		s.Assert().Equal("INVALID_PARAMETER", cur.Status, "Check on invalid user id should fail")
+		s.Assert().Equal("INVALID_SID", cur.Status, "Check on invalid user id should fail")
 	})
 
 	// Put in requests correct userId value.  Initialize (method check() call).
@@ -397,10 +397,10 @@ func (s *EvolutionIntegrationTestSuite) Test_checkUsingInvalidUserId() {
 	client.balanceWithAnyAssert(s.statusCodeAssert("OK", "Valid user gets balance"))
 
 	// Put in requests userId = 'fakeUserId'. Place bet.
-	//		Verify response - response must contain status INVALID_PARAMETER. Verify balance.
+	//		Verify response - response must contain status INVALID_SID. Verify balance.
 	client.reqBase.UserID = fakeUser
 	gameRoundID, refID := rnd(), rnd()
-	client.placeBet(10, tableIDTestValue, "", gameRoundID, refID, s.statusCodeAssert("INVALID_PARAMETER"))
+	client.placeBet(10, tableIDTestValue, "", gameRoundID, refID, s.statusCodeAssert("INVALID_SID"))
 
 	// Check balance. Verify response - response must contain status OK. Verify balance.
 	client.reqBase.UserID = validUser
@@ -412,18 +412,18 @@ func (s *EvolutionIntegrationTestSuite) Test_checkUsingInvalidUserId() {
 	transID1 := client.placeBet(10, tableIDTestValue, "", gameRoundID, refID, balanceStatusAssert(s.T(), initialBalance.Balance, -10))
 
 	// Put in requests userId = 'fakeUserId'. Cancel Bet.
-	//		Verify response - response must contain status INVALID_PARAMETER. Verify balance.
+	//		Verify response - response must contain status INVALID_SID. Verify balance.
 	client.reqBase.UserID = fakeUser
-	client.cancelBet(10, tableIDTestValue, gameRoundID, transID1, refID, s.statusCodeAssert("INVALID_PARAMETER"))
+	client.cancelBet(10, tableIDTestValue, gameRoundID, transID1, refID, s.statusCodeAssert("INVALID_SID"))
 
 	// Check balance. Verify response - response must contain status OK. Verify balance.
 	client.reqBase.UserID = validUser
 	client.balanceWithAssert(s.T(), initialBalance.Balance, -10, "Fake user transactions should not affect balance")
 
 	// Put in requests userId = 'fakeUserId'. Credit Bet.
-	//		Verify response - response must contain status INVALID_PARAMETER. Verify balance.
+	//		Verify response - response must contain status INVALID_SID. Verify balance.
 	client.reqBase.UserID = fakeUser
-	client.settleBet(2, tableIDTestValue, gameRoundID, refID, s.statusCodeAssert("INVALID_PARAMETER"))
+	client.settleBet(2, tableIDTestValue, gameRoundID, refID, s.statusCodeAssert("INVALID_SID"))
 
 	// Check balance. Verify response - response must contain status OK. Verify balance.
 	client.reqBase.UserID = validUser

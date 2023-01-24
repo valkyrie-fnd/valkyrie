@@ -60,40 +60,6 @@ func (s *CaletaIntegrationTestSuite) SetupTest() {
 	s.Require().NoError(s.client.SetupSession(currency))
 }
 
-/*
- * C's manual tests are:
- *
- * Test Open Game - Open all games and validate icons, game ids and different languages - not applicable
- * Test Open Demo Game - Open all games and confirm the DEMO version is working fine. - not applicable
- * Test Place Bet - Place bets on different currencies and games. Confirm balance and debit values are ok and check the back office. - check
- * Test Receive Winnings - Test different winnings from different games and situations: Bonus, Free Spins, Extra Balls - check
- * Test Rollback - Forcing a bet to fail by changing the Wallet URL - the system will force a rollback. Caleta RGS only rollback bets, winnings are never rolled back. - check
- * Test Retry - Forcing a Rollback or Win to fail by changing the Wallet URL - the system will try to retry the transaction until succeeding - not applicable
- * Test Bingos: Extra Balls - Play Bingos and test Extra Ball game - the operator must support additional bets inside the same round; rollbacks on extra balls don't invalidate the round, only the failed transaction. - check
- * Acceptance Tests on Client - Exploratory tests on some selected games to confirm game flow is ok. In this phase, we also perform Postman calls, simulating bad-intended users to confirm round will be invalidated. - not applicable
- *
- */
-
-/*
-Errors to test:
-	RSERRORBETLIMITEXCEEDED        Status = "RS_ERROR_BET_LIMIT_EXCEEDED" TODO: not implemented in genericpam (yet)
-	RSERRORDUPLICATETRANSACTION    Status = "RS_ERROR_DUPLICATE_TRANSACTION" - check
-	RSERRORINVALIDGAME             Status = "RS_ERROR_INVALID_GAME" - check
-	RSERRORINVALIDSIGNATURE        Status = "RS_ERROR_INVALID_SIGNATURE" - check
-	RSERRORINVALIDTOKEN            Status = "RS_ERROR_INVALID_TOKEN" - check
-	RSERRORNOTENOUGHMONEY          Status = "RS_ERROR_NOT_ENOUGH_MONEY" - check
-	RSERRORTIMEOUT                 Status = "RS_ERROR_TIMEOUT" TODO: a bit tricky to test
-	RSERRORTOKENEXPIRED            Status = "RS_ERROR_TOKEN_EXPIRED" - check
-	RSERRORTRANSACTIONDOESNOTEXIST Status = "RS_ERROR_TRANSACTION_DOES_NOT_EXIST" - check
-	RSERRORTRANSACTIONROLLEDBACK   Status = "RS_ERROR_TRANSACTION_ROLLED_BACK" - check
-	RSERRORUNKNOWN                 Status = "RS_ERROR_UNKNOWN" - TODO: maybe applicable once we have implementation
-	RSERRORUSERDISABLED            Status = "RS_ERROR_USER_DISABLED" - check
-	RSERRORWRONGCURRENCY           Status = "RS_ERROR_WRONG_CURRENCY" - check
-	RSERRORWRONGSYNTAX             Status = "RS_ERROR_WRONG_SYNTAX" - TODO: doesn't make sense to me, but maybe applicable once we have implementation
-	RSERRORWRONGTYPES              Status = "RS_ERROR_WRONG_TYPES" - TODO: doesn't make sense to me, but maybe applicable once we have implementation
-	RSOK                           Status = "RS_OK" - check
-*/
-
 func (s *CaletaIntegrationTestSuite) Test_Check() {
 	check, err := s.client.Check()
 	s.Assert().NoError(err)

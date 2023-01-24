@@ -87,7 +87,7 @@ var pamToValkError = map[ErrorCode]ValkErrorCode{
 	PAMERRGAMENOTFOUND:          ValkErrOpGameNotFound,
 	PAMERRMISSINGPROVIDER:       ValkErrOpMissingProvider,
 	PAMERRNEGATIVESTAKE:         ValkErrOpNegativeStake,
-	PAMERRPLAYERNOTFOUND:        ValkErrOpUserNotFound,
+	PAMERRPLAYERNOTFOUND:        ValkErrOpSessionNotFound,
 	PAMERRSESSIONEXPIRED:        ValkErrOpSessionExpired,
 	PAMERRSESSIONNOTFOUND:       ValkErrOpSessionNotFound,
 	PAMERRTRANSALREADYCANCELLED: ValkErrOpCancelExists,
