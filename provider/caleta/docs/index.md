@@ -18,6 +18,7 @@ providers:
     url: 'https://Caleta-Base-url'
     auth:
       operator_id: YourCasino
+      base_path: "/caleta"
       verification_key: |
         -----BEGIN PUBLIC KEY-----
         xyz-etc...

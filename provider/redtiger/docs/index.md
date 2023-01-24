@@ -24,6 +24,7 @@ Red Tiger will provide the following configuration.
 providers:
   - name: Red Tiger
     url: 'https://redtiger'
+    base_path: "/redtiger"
     auth:
       api_key: ${RED_TIGER_API_KEY}
       recon_token:  ${RECON_TOKEN}
