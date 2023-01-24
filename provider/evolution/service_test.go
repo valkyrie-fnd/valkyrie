@@ -431,6 +431,28 @@ func TestProviderService_PromoPayout(t *testing.T) {
 	}
 }
 
+// Test_UnknownUserResponse verifies that potential IDOR issues are not propagated by Valkyrie. It's assumed
+// that PAM's handle that properly but lets make sure it actually works. Ergo: unknown user issues should
+// result in invalid session and nothing else.
+func Test_UnknownUserResponse(t *testing.T) {
+	pamStub := pamStub{}
+	svc := NewService(&pamStub)
+	testCases := []pam.ValkErrorCode{pam.ValkErrOpUserNotFound, pam.ValkErrOpSessionNotFound}
+	for _, tt := range testCases {
+
+		pamStub.balanceFn = func() (*pam.Balance, error) {
+			return nil, pam.ErrorWrapper("a", tt, assert.AnError)
+		}
+
+		_, err := svc.Balance(BalanceRequest{})
+		assert.Error(t, err)
+		var pErr ProviderError
+		if assert.ErrorAs(t, err, &pErr) {
+			assert.Equal(t, StatusInvalidSID.code, pErr.response.Status)
+		}
+	}
+}
+
 func createTrans(typ pam.TransactionType, amt float64, pRef string, pTransID string) pam.Transaction {
 	return pam.Transaction{
 		TransactionType:       typ,

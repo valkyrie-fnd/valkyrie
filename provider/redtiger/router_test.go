@@ -222,7 +222,7 @@ func TestDeclineTokenMiddleware(t *testing.T) {
 			"application/json",
 			"recon",
 			401,
-			`{"success":false,"error":{"message":"API authentication error","code":301}}`,
+			`{"success":false,"error":{"message":"Not authorized","code":301}}`,
 		},
 	}
 	router, _ := NewProviderRouter(configs.ProviderConf{
