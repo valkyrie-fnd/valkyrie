@@ -108,7 +108,8 @@ func TestRouteMethod(t *testing.T) {
 		},
 	}
 	router, _ := NewProviderRouter(configs.ProviderConf{
-		Auth: map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		Auth:     map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		BasePath: "/redtiger",
 	}, &NilController{})
 	authHeader := "Basic pelle"
 	app := fiber.New()
@@ -166,7 +167,8 @@ func TestApiKeyMiddleware(t *testing.T) {
 		},
 	}
 	router, _ := NewProviderRouter(configs.ProviderConf{
-		Auth: map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		Auth:     map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		BasePath: "/redtiger",
 	}, &NilController{})
 	app := fiber.New()
 	reg := provider.NewRegistry(app, "/test")
@@ -226,7 +228,8 @@ func TestDeclineTokenMiddleware(t *testing.T) {
 		},
 	}
 	router, _ := NewProviderRouter(configs.ProviderConf{
-		Auth: map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		Auth:     map[string]any{"api_key": "pelle", "recon_token": "recon"},
+		BasePath: "/redtiger",
 	}, &NilController{})
 	app := fiber.New()
 	reg := provider.NewRegistry(app, "/test")

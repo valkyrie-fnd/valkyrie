@@ -70,7 +70,8 @@ func TestNewProviderRouter(t *testing.T) {
 	}
 
 	router, _ := NewProviderRouter(configs.ProviderConf{
-		Auth: map[string]any{"api_key": "pelle"},
+		Auth:     map[string]any{"api_key": "pelle"},
+		BasePath: "/evolution",
 	}, &NilController{})
 	app := fiber.New()
 	reg := provider.NewRegistry(app, "/test")
