@@ -71,7 +71,7 @@ type ProviderConf struct {
 	// URL url to use for example gamelaunch
 	URL string `yaml:"url"`
 	// BasePath used to distinguish endpoints exposed by Valkyrie
-	BasePath string `yaml:"base_path"`
+	BasePath string `yaml:"base_path,omitempty"`
 }
 
 // PamConf Configured information for the used Player Account Manager/wallet
@@ -83,8 +83,8 @@ type ValkyrieConfig struct {
 	Pam              PamConf          `yaml:"pam"`
 	Tracing          TraceConfig      `yaml:"tracing,omitempty"`
 	Providers        []ProviderConf   `yaml:"providers,flow"`
-	OperatorBasePath string           `yaml:"operator_base_path"`
-	ProviderBasePath string           `yaml:"provider_base_path"`
+	OperatorBasePath string           `yaml:"operator_base_path,omitempty"`
+	ProviderBasePath string           `yaml:"provider_base_path,omitempty"`
 	Version          string           `yaml:"-"`
 	Logging          LogConfig        `yaml:"logging,omitempty"`
 	HTTPClient       HTTPClientConfig `yaml:"http_client"`

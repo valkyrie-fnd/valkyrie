@@ -28,5 +28,5 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	}
 
 	c.Response().Header.Add("Location", res)
-	return c.SendStatus(fiber.StatusMovedPermanently)
+	return c.SendStatus(fiber.StatusFound)
 }

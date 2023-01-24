@@ -357,6 +357,8 @@ func TestValkConfigFile(t *testing.T) {
 				Type: "stdout",
 			},
 		},
+		OperatorBasePath: "/operator",
+		ProviderBasePath: "/providers",
 		Tracing: TraceConfig{
 			TraceType:       "stdout",
 			ServiceName:     "traceServiceName",

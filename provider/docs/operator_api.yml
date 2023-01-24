@@ -1,7 +1,8 @@
 openapi: 3.0.0 # swagger doesn't support >= 3.1.0 yet unfortunately
 info:
   title: Valkyrie Operator API
-  description: Valkyrie endpoints for communicating with a provider. Can be used for eg server to server game launch.
+  description: |
+    Valkyrie endpoints for communicating with a provider. Exposed valkyrie endpoints can differ between configured provider modules. Make sure the ones you want to use are implemented.
   version: 0.2.0
   license:
     name: MIT
@@ -48,14 +49,14 @@ paths:
               example: Bad game launch call
   /{provider}/gamerounds/{gameRoundId}/render:
     get:
-      description: Optional. Returns a rendered representation of the specified game round
+      description: Optional. Returns a rendered representation of the specified game round.
       operationId: GameRoundRender
       summary: Render game round
       parameters:
         - in: path
           name: provider
           required: true
-          description: Provider identification string. Depending on configured Valkyrie
+          description: Provider identification string. Depending on configured Valkyrie.
           example: caleta
           schema:
             type: string
@@ -67,7 +68,7 @@ paths:
           schema:
             type: string
       responses:
-        "301":
+        "302":
           description: Redirect to provider specific url with rendered result
         "500":
           description: Something went wrong fetching the rendered page
