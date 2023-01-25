@@ -302,6 +302,11 @@ tasks:
     cmds:
       - go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
+  dependency:list:
+    desc: List all module dependencies
+    cmds:
+      - go list -m -u all
+
   test:bench:
     desc: run benchmarks
     cmds:

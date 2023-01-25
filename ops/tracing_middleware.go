@@ -15,7 +15,6 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
-	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -29,7 +28,7 @@ func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
 	}
 
 	for _, app := range apps {
-		app.Use(filterPath("/ping", otelfiber.Middleware(cfg.ServiceName)))
+		app.Use(filterPath("/ping", otelfiber.Middleware(otelfiber.WithServerName(cfg.ServiceName))))
 	}
 
 	if cfg.Exporter == Google {
@@ -118,10 +117,6 @@ func createProviderExporter(cfg *TracingConfig) (tracesdk.SpanExporter, error) {
 	switch cfg.Exporter {
 	case Jaeger:
 		exp, err = jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.URL)))
-	case Zipkin:
-		exp, err = zipkin.New(
-			cfg.URL,
-		)
 	case Google:
 		exp, err = google.New(google.WithProjectID(cfg.GoogleProjectID))
 	case StdOut:
