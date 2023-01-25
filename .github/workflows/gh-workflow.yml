@@ -54,7 +54,6 @@ jobs:
 
   Push:
     name: Push container and chart to registry
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     needs: [Lint, Test]
     runs-on: ubuntu-latest
     env:
