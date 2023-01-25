@@ -25,17 +25,6 @@ func TestTracing(t *testing.T) {
 			},
 		},
 		{
-			name: "Zipkin config selected",
-			want: &TracingConfig{
-				Exporter: Zipkin,
-				TraceConfig: configs.TraceConfig{
-					TraceType:   "zipkin",
-					URL:         "the.zipkin.host:222/path",
-					ServiceName: "my-service",
-				},
-			},
-		},
-		{
 			name: "Google config selected",
 			want: &TracingConfig{
 				Exporter: Google,

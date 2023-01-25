@@ -9,7 +9,6 @@ import (
 type ExporterType string
 
 const (
-	Zipkin ExporterType = "zipkin"
 	Jaeger ExporterType = "jaeger"
 	Google ExporterType = "googleCloudTrace"
 	StdOut ExporterType = "stdout"
@@ -29,8 +28,6 @@ func Tracing(vTracing configs.TraceConfig) *TracingConfig {
 	cfg := TracingConfig{}
 	cfg.TraceConfig = vTracing
 	switch ExporterType(vTracing.TraceType) {
-	case Zipkin:
-		cfg.Exporter = Zipkin
 	case Jaeger:
 		cfg.Exporter = Jaeger
 	case Google:
