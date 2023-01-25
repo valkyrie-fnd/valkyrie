@@ -17,7 +17,7 @@ logging: {}
 
 # tracing configuration, see https://opentelemetry.io/docs/concepts/what-is-opentelemetry/
 tracing: {}
-#  type: stdout # zipkin, jeager, googleCloudTrace
+#  type: stdout # jeager, googleCloudTrace
 #  service_name: traceServiceName #
 #  url: "https://tracing-server-url"
 #  google_project_id: xyz # if you're using googleCloudTrace

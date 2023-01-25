@@ -80,27 +80,6 @@ tracing:
 		},
 	},
 	{
-		name:        "Yaml with env variables parsed",
-		envFilePath: "testdata/zipkin.env",
-		yamlData: `
-tracing:
-  type: ${TRACING_TYPE}
-  url: ${TRACING_URL}
-  service_name: ${TRACING_SERVICE_NAME}
-`,
-		want: &ValkyrieConfig{
-			Tracing: TraceConfig{
-				TraceType:   "zipkin",
-				URL:         "the.zipkin.host:222/path",
-				ServiceName: "my-service",
-				SampleRatio: 0.01,
-			},
-			Logging:    defaultLogConfig,
-			HTTPServer: defaultHTTPServerConfig,
-			HTTPClient: defaultHTTPClientConfig,
-		},
-	},
-	{
 		name:        "yaml parsed with ",
 		envFilePath: "",
 		yamlData: `
