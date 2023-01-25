@@ -64,29 +64,52 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: 0 # fetch all revision and tags, necessary for .github/tools/version.sh
+      - name: Install Task
+        uses: arduino/setup-task@v1
       - name: Set input version
         if: github.event.inputs.version != ''
         run: |
           [[ ${{ inputs.version }} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
           echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # fetch all revision and tags, necessary for .github/tools/version.sh
-      - name: Log in to the Container registry
+      - name: Calculate version
+        if: github.event.inputs.version == ''
+        run: |
+          echo "VERSION=$(task version)" >> $GITHUB_ENV
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Install Task
-        uses: arduino/setup-task@v1
-      - name: Build and push Docker image to registry
-        run: |-
-          task docker:push
+      - name: Docker meta
+        id: meta_v
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            valkyriefnd/valkyrie
+          # Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=${{ env.VERSION }}
+            type=raw,value=latest
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64/v8
+          push: true
+          tags: ${{ steps.meta_v.outputs.tags }}
+          labels: ${{ steps.meta_v.outputs.labels }}
       - name: Install Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - name: Push chart to registry
         run: |
           task helm:push
-
