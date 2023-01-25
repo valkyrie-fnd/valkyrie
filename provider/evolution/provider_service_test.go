@@ -113,7 +113,7 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service := GameLaunchService{
+			service := EvoService{
 				Auth:   tt.fields.Auth,
 				Conf:   tt.fields.C,
 				Client: tt.fields.Client,
@@ -125,4 +125,10 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 			assert.Equalf(t, tt.want, got, "GameLaunch(%v, %v, %v)", tt.args.ctx, tt.args.g, tt.args.h)
 		})
 	}
+}
+
+func TestGameRoundRender(t *testing.T) {
+	sut := EvoService{}
+	_, err := sut.GetGameRoundRender(nil, "")
+	assert.EqualError(t, err, "Not available")
 }

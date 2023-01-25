@@ -1,8 +1,9 @@
 openapi: 3.0.0 # swagger doesn't support >= 3.1.0 yet unfortunately
 info:
   title: Valkyrie Operator API
-  description: Valkyrie endpoint for launching a game at a provider. Relevant for providers and operators using server to server game launch.
-  version: 0.1.0
+  description: |
+    Valkyrie endpoints for communicating with a provider. Exposed valkyrie endpoints can differ between configured provider modules. Make sure the ones you want to use are implemented.
+  version: 0.2.0
   license:
     name: MIT
     url: https://github.com/valkyrie-fnd/valkyrie/blob/main/LICENSE.md
@@ -10,7 +11,7 @@ servers:
   - url: http://localhost:8084
     description: operator server
 paths:
-  /operator/{provider}/gamelaunch:
+  /{provider}/gamelaunch:
     post:
       description: Launch a provider game through valkyrie
       operationId: GameLaunch
@@ -19,7 +20,7 @@ paths:
         - in: path
           name: provider
           required: true
-          description: Provider identification string
+          description: Provider identification string. Depending on configured Valkyrie
           example: redtiger
           schema:
             type: string
@@ -46,7 +47,31 @@ paths:
               schema:
                 type: string
               example: Bad game launch call
-#components
+  /{provider}/gamerounds/{gameRoundId}/render:
+    get:
+      description: Optional. Returns a rendered representation of the specified game round.
+      operationId: GameRoundRender
+      summary: Render game round
+      parameters:
+        - in: path
+          name: provider
+          required: true
+          description: Provider identification string. Depending on configured Valkyrie.
+          example: caleta
+          schema:
+            type: string
+        - in: path
+          name: gameRoundId
+          required: true
+          description: id of gameround to rendered
+          example: xyz123
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirect to provider specific url with rendered result
+        "500":
+          description: Something went wrong fetching the rendered page
 components:
   parameters:
     sessionToken:

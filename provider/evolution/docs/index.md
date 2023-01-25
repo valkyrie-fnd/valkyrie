@@ -22,6 +22,7 @@ Evolution will provide the following configuration.
 providers:
   - name: Evolution
     url: 'https://Evo-baseurl'
+    base_path: "/evolution"
     auth:
       casino_key: ${EVO_CASINO_KEY}
       api_key: ${EVO_API_KEY}

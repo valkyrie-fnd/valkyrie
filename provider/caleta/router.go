@@ -11,7 +11,6 @@ import (
 
 const (
 	ProviderName = "Caleta"
-	basePath     = "/caleta"
 )
 
 func init() {
@@ -42,7 +41,7 @@ func NewProviderRouter(config configs.ProviderConf, service StrictServerInterfac
 	})
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: middlewares,
 	}, nil
@@ -63,13 +62,14 @@ func getProviderMiddlewares(auth AuthConf) ([]fiber.Handler, error) {
 	return middlewares, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, _ rest.HTTPClientJSONInterface) (*provider.Router, error) {
-	service, err := NewStaticURLGameLaunchService(config)
+func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
+	service, err := NewCaletaService(config, httpClient)
 	if err != nil {
 		return nil, err
 	}
 
 	controller := provider.NewGameLaunchController(service)
+	grCtrl := provider.NewGameRoundController(service)
 
 	routes := []provider.Route{
 		{
@@ -77,11 +77,16 @@ func NewOperatorRouter(config configs.ProviderConf, _ rest.HTTPClientJSONInterfa
 			Method:      "POST",
 			HandlerFunc: controller.GameLaunchEndpoint,
 		},
+		{
+			Path:        "/gamerounds/:gameRoundId/render",
+			Method:      "GET",
+			HandlerFunc: grCtrl.GetGameRoundEndpoint,
+		},
 	}
 
 	return &provider.Router{
 		Name:        ProviderName,
-		BasePath:    basePath,
+		BasePath:    config.BasePath,
 		Routes:      routes,
 		Middlewares: []fiber.Handler{},
 	}, nil
