@@ -18,6 +18,8 @@ Evolution will provide the following configuration.
 - `api_key` - Api key to identify your integration with Evolution
 - `casino_token` - Token used for game launch requests toward evolution backend
 
+`base_path` is used to differentiate between Valkyrie's exposed endpoints for the specific provider.
+
 ```yaml
 providers:
   - name: Evolution
