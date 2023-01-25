@@ -54,6 +54,7 @@ jobs:
 
   Push:
     name: Push container and chart to registry
+    if: github.ref == 'refs/heads/main'
     needs: [Lint, Test]
     runs-on: ubuntu-latest
     env:
