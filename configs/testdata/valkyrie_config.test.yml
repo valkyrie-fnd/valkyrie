@@ -22,20 +22,25 @@ pam: # player account management
   name: generic # check /pam-folder for available PAMs
   api_key: pam-api-key # api key to PAM
   url: "https://pam-url" # base url to PAM
+provider_base_path: "/providers" # Base url used by provider wallet calls to Valkyrie
+operator_base_path: "/operator" # Base url used by operator calls to Valkyrie
 providers:
   - name: Evolution # Name of provider
     url: "https://evo-url" # url used for gameLaunch
+    base_path: "/evolution" # base path to differentiate exposed endpoints between providers
     auth: # auth is specific to each provider check /provider/{providerName}/config.go
       casino_key: evo-casino-key # Some providers require a casino identifier if for example you have multiple casinos with the same provider
       api_key: evo-api-key
       casino_token: evo-casino-token
   - name: Red Tiger
     url: "https://rt-url"
+    base_path: "/redtiger" # base path to differentiate exposed endpoints between providers
     auth: # auth is specific to each provider
       api_key: rt-api-key
       recon_token: rt-recon-token
   - name: Caleta
     url: "https://caleta-url"
+    base_path: "/caleta" # base path to differentiate exposed endpoints between providers
     auth:
       verification_key: |
         -----BEGIN PUBLIC KEY-----

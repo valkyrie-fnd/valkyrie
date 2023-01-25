@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -121,21 +122,24 @@ var gameLaunchTests = []GameLaunchTestData{
 	},
 }
 
-type GameLaunchServiceMock struct {
+type ProviderServiceMock struct {
 	gameLaunchFn func(gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error)
 }
 
-func (gs GameLaunchServiceMock) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error) {
+func (gs ProviderServiceMock) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error) {
 	if gs.gameLaunchFn != nil {
 		return gs.gameLaunchFn(gr, h)
 	}
 	return "", nil
 }
+func (gs ProviderServiceMock) GetGameRoundRender(*fiber.Ctx, string) (string, error) {
+	return "", fmt.Errorf("Not Available")
+}
 
 func TestGameLaunch(t *testing.T) {
 	for _, test := range gameLaunchTests {
 		testApp := fiber.New()
-		ctrl := NewGameLaunchController(GameLaunchServiceMock{test.gameLaunchFn})
+		ctrl := NewGameLaunchController(ProviderServiceMock{test.gameLaunchFn})
 		testApp.Post("/gamelaunch", ctrl.GameLaunchEndpoint)
 		body, _ := json.Marshal(test.req)
 		req := httptest.NewRequest(http.MethodPost, "/gamelaunch", bytes.NewBuffer(body))

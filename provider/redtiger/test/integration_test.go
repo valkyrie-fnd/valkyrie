@@ -37,7 +37,8 @@ func TestSuite(t *testing.T) {
 		apiKey, _ := ds.GetProviderApiKey(redtiger.ProviderName)
 		sessionKey := ds.GetProviderTokens()[redtiger.ProviderName]
 		return configs.ProviderConf{
-			Name: redtiger.ProviderName,
+			Name:     redtiger.ProviderName,
+			BasePath: "/redtiger",
 			Auth: map[string]any{
 				"api_key":     testutils.EnvOrDefault("RT_API_KEY", apiKey.ApiKey),
 				"recon_token": testutils.EnvOrDefault("RT_RECON_TOKEN", sessionKey),

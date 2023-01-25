@@ -3,39 +3,16 @@ package caleta
 import (
 	"fmt"
 
-	"github.com/goccy/go-json"
 	"github.com/google/go-querystring/query"
-	"github.com/rs/zerolog/log"
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
 
-	"github.com/valkyrie-fnd/valkyrie/provider/caleta/auth"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mitchellh/mapstructure"
 
-	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 )
-
-func NewStaticURLGameLaunchService(config configs.ProviderConf) (*staticURLGameLaunchService, error) {
-	authConfig, err := getAuthConf(config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &staticURLGameLaunchService{
-		config:     config,
-		authConfig: authConfig,
-	}, nil
-}
-
-// staticURLGameLaunchService implements the provider.GameLaunchService using Caleta API endpoint GET "open_game".
-// by simply building the expected game url.
-type staticURLGameLaunchService struct {
-	config     configs.ProviderConf
-	authConfig AuthConf
-}
 
 type gameURLQuery struct {
 	Country      Country      `url:"country"`
@@ -50,7 +27,18 @@ type gameURLQuery struct {
 	User         User         `url:"user,omitempty"`
 }
 
-func (service *staticURLGameLaunchService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
+func (service *caletaService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
+	switch service.caletaConfig.GameLaunchType {
+	case Static:
+		return service.staticGameLaunch(ctx, g, h)
+	case Request:
+		return service.requestingGameLaunch(ctx, g, h)
+	default:
+		return "", fmt.Errorf("Invalid Gamelaunch type: %s", service.caletaConfig.GameLaunchType)
+	}
+}
+
+func (service *caletaService) staticGameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
 	q, err := service.getGameURLQuery(g, h)
 	if err != nil {
 		return "", err
@@ -64,7 +52,7 @@ func (service *staticURLGameLaunchService) GameLaunch(_ *fiber.Ctx, g *provider.
 	return fmt.Sprintf("%s/open_game?%s", service.config.URL, values.Encode()), nil
 }
 
-func (service *staticURLGameLaunchService) getGameURLQuery(g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (*gameURLQuery, error) {
+func (service *caletaService) getGameURLQuery(g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (*gameURLQuery, error) {
 	launchConfig, err := getLaunchConfig(g.LaunchConfig)
 	if err != nil {
 		return nil, err
@@ -84,34 +72,7 @@ func (service *staticURLGameLaunchService) getGameURLQuery(g *provider.GameLaunc
 	}, nil
 }
 
-func NewRequestingGameLaunchService(config configs.ProviderConf, client rest.HTTPClientJSONInterface) (*requestingGameLaunchService, error) {
-	authConfig, err := getAuthConf(config)
-	if err != nil {
-		return nil, err
-	}
-
-	hs, err := newHeaderSigner(authConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	return &requestingGameLaunchService{
-		config:       config,
-		client:       client,
-		authConfig:   authConfig,
-		headerSigner: hs,
-	}, nil
-}
-
-// requestingGameLaunchService implements the provider.GameLaunchService using Caleta Games API endpoint POST "/api/game/url"
-type requestingGameLaunchService struct {
-	client       rest.HTTPClientJSONInterface
-	headerSigner headerSigner
-	authConfig   AuthConf
-	config       configs.ProviderConf
-}
-
-func (service *requestingGameLaunchService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
+func (service *caletaService) requestingGameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
 	body, err := service.getGameLaunchBody(g, h)
 	if err != nil {
 		return "", err
@@ -140,7 +101,7 @@ func (service *requestingGameLaunchService) GameLaunch(ctx *fiber.Ctx, g *provid
 	return *resp.Url, nil
 }
 
-func (service *requestingGameLaunchService) getGameLaunchBody(g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (*GameUrlBody, error) {
+func (service *caletaService) getGameLaunchBody(g *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (*GameUrlBody, error) {
 	launchConfig, err := getLaunchConfig(g.LaunchConfig)
 	if err != nil {
 		return nil, err
@@ -173,50 +134,4 @@ func getLaunchConfig(input map[string]interface{}) (*caletaLaunchConfig, error) 
 		return nil, err
 	}
 	return &config, nil
-}
-
-type headerSigner interface {
-	sign(body *GameUrlBody, headers map[string]string) error
-}
-
-func newHeaderSigner(authConfig AuthConf) (headerSigner, error) {
-	if authConfig.SigningKey != "" {
-		sig, err := NewSigner([]byte(authConfig.SigningKey))
-		if err != nil {
-			return nil, err
-		}
-
-		return &authHeaderSigner{
-			signer: sig,
-		}, nil
-	} else {
-		log.Warn().Msg("Missing Caleta provider 'signing_key' config, skipping header signing")
-		return &noopHeaderSigner{}, nil
-	}
-}
-
-type authHeaderSigner struct {
-	signer auth.Signer
-}
-
-func (s *authHeaderSigner) sign(body *GameUrlBody, headers map[string]string) error {
-	byteBody, err := json.Marshal(body)
-	if err != nil {
-		return err
-	}
-
-	signature, err := s.signer.Sign(byteBody)
-	if err != nil {
-		return err
-	}
-
-	headers["X-Auth-Signature"] = string(signature)
-
-	return nil
-}
-
-type noopHeaderSigner struct{}
-
-func (_ *noopHeaderSigner) sign(_ *GameUrlBody, _ map[string]string) error {
-	return nil
 }

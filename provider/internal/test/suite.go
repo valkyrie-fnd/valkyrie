@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/suite"
@@ -72,6 +71,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			Logging: configs.LogConfig{
 				Level: "fatal",
 			},
+			ProviderBasePath: "/providers",
 			Providers: []configs.ProviderConf{
 				s.ProviderConfig,
 			},
@@ -90,9 +90,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 		s.valkyrie.Start()
 
-		providerURLName := strings.ToLower(s.ProviderConfig.Name)
-		providerURLName = strings.ReplaceAll(providerURLName, " ", "")
-		s.ValkyrieURL = fmt.Sprintf(baseURL+"/providers/%s", providerPort, providerURLName)
+		s.ValkyrieURL = fmt.Sprintf(baseURL+"%s%s", providerPort, valkyrieConfig.ProviderBasePath, s.ProviderConfig.BasePath)
 	}
 }
 

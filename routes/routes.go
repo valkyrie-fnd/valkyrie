@@ -19,20 +19,16 @@ import (
 	_ "github.com/valkyrie-fnd/valkyrie/provider/redtiger"
 )
 
-const (
-	basePath = "/providers"
-)
-
 // ProviderRoutes Init the provider routes
-func ProviderRoutes(a *fiber.App, configs []configs.ProviderConf, pam pam.PamClient) error {
+func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
 	// Create providers subgroup and registry
-	registry := provider.NewRegistry(a, basePath)
+	registry := provider.NewRegistry(a, config.ProviderBasePath)
 
 	// Register all configured providers
-	for _, c := range configs {
+	for _, c := range config.Providers {
 		providerRouter, err := provider.ProviderFactory().
 			Build(c.Name, provider.ProviderArgs{
 				Config: c,
@@ -51,12 +47,12 @@ func ProviderRoutes(a *fiber.App, configs []configs.ProviderConf, pam pam.PamCli
 }
 
 // OperatorRoutes Init the operator side routes
-func OperatorRoutes(a *fiber.App, configs []configs.ProviderConf, client rest.HTTPClientJSONInterface) error {
+func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HTTPClientJSONInterface) error {
 	// Create subgroup and registry
-	registry := provider.NewRegistry(a, "/operator")
+	registry := provider.NewRegistry(a, config.OperatorBasePath)
 
 	// Register all configured providers
-	for _, c := range configs {
+	for _, c := range config.Providers {
 		operatorRouter, err := provider.OperatorFactory().
 			Build(c.Name, provider.OperatorArgs{
 				Config: c,

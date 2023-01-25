@@ -11,6 +11,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Added
+- Provider config `base_path`. Base path for endpoints related to this provider.
+- Provider config `provider_specific`. Can be passed to the provider implementation
+- Config `operator_base_path`. General base path for all requests from operator side
+- Config `provider_base_path`. General base path for all request from provider side
+- Game round render endpoint for provider Caleta
 
 ### Changed
 

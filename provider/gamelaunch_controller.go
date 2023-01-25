@@ -10,10 +10,10 @@ import (
 )
 
 type GameLaunchController struct {
-	providerService GameLaunchService
+	ps ProviderService
 }
 
-func NewGameLaunchController(s GameLaunchService) *GameLaunchController {
+func NewGameLaunchController(s ProviderService) *GameLaunchController {
 	return &GameLaunchController{s}
 }
 
@@ -43,7 +43,7 @@ func (ctrl GameLaunchController) GameLaunchEndpoint(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(validationErrorsMap(err))
 	}
 
-	url, err := ctrl.providerService.GameLaunch(ctx, g, h)
+	url, err := ctrl.ps.GameLaunch(ctx, g, h)
 	if err != nil {
 		herr := &rest.HTTPError{}
 		if errors.As(err, herr) {

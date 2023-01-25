@@ -25,6 +25,9 @@ var (
 			"operator_id": "oid",
 			"signing_key": testingPrivateKey,
 		},
+		ProviderSpecific: map[string]any{
+			"game_launch_type": "request",
+		},
 	}
 	request = &provider.GameLaunchRequest{
 		Currency:       "USD",
@@ -63,6 +66,9 @@ func TestStaticUrlGameLaunch(t *testing.T) {
 				Auth: map[string]any{
 					"operator_id": "valkyrie",
 				},
+				ProviderSpecific: map[string]any{
+					"game_launch_type": "static",
+				},
 			},
 			args: args{
 				req:     request,
@@ -75,7 +81,7 @@ func TestStaticUrlGameLaunch(t *testing.T) {
 
 	for _, test := range gameLaunchTests {
 		t.Run(test.name, func(t *testing.T) {
-			s, err := NewStaticURLGameLaunchService(test.config)
+			s, err := NewCaletaService(test.config, mockClient{})
 			assert.NoError(t, err)
 			result, err := s.GameLaunch(nil, test.args.req, test.args.headers)
 			if test.e != nil {
@@ -143,6 +149,9 @@ func TestRequestingGameLaunch(t *testing.T) {
 			},
 			config: configs.ProviderConf{
 				URL: "http://caleta-test",
+				ProviderSpecific: map[string]any{
+					"game_launch_type": "request",
+				},
 				Auth: map[string]any{
 					"operator_id": "oid",
 				},
@@ -190,7 +199,7 @@ func TestRequestingGameLaunch(t *testing.T) {
 			app := fiber.New()
 			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 			defer app.ReleaseCtx(ctx)
-			s, err := NewRequestingGameLaunchService(test.config, mockClient{PostJSONFunc: test.postFn})
+			s, err := NewCaletaService(test.config, mockClient{PostJSONFunc: test.postFn})
 			assert.NoError(t, err)
 			result, err := s.GameLaunch(ctx, test.args.req, test.args.headers)
 			if test.e != nil {
@@ -238,7 +247,7 @@ func Test_getLaunchConfigError(t *testing.T) {
 }
 
 func Test_getGameUrlBody(t *testing.T) {
-	service, _ := NewRequestingGameLaunchService(providerConf, nil)
+	service, _ := NewCaletaService(providerConf, nil)
 	body, err := service.getGameLaunchBody(request, headers)
 	assert.NoError(t, err)
 
