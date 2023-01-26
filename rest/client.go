@@ -185,7 +185,7 @@ func (c Client) post(
 	parseFn responseParseFn,
 	headers map[string]string,
 	query map[string]string) error {
-	return c.postOrPut(ctx, uri, bodyFn, parseFn, fasthttp.MethodPost, headers, query)
+	return c.handle(ctx, uri, bodyFn, parseFn, fasthttp.MethodPost, headers, query)
 }
 
 func (c Client) put(
@@ -195,10 +195,27 @@ func (c Client) put(
 	parseFn responseParseFn,
 	headers map[string]string,
 	query map[string]string) error {
-	return c.postOrPut(ctx, uri, bodyFn, parseFn, fasthttp.MethodPut, headers, query)
+	return c.handle(ctx, uri, bodyFn, parseFn, fasthttp.MethodPut, headers, query)
 }
 
-func (c Client) postOrPut(
+func (c Client) get(
+	ctx context.Context,
+	uri string,
+	parseFn responseParseFn,
+	headers map[string]string,
+	query map[string]string) error {
+	return c.handle(ctx, uri, nil, parseFn, fasthttp.MethodGet, headers, query)
+}
+
+const maxRetries = 1
+
+var retriedErrors = []error{
+	// Retry ErrConnectionClosed, caused by server closing keepalive connection
+	// before notifying client
+	fasthttp.ErrConnectionClosed,
+}
+
+func (c Client) handle(
 	ctx context.Context,
 	uri string,
 	bodyFn requestContentFn,
@@ -223,15 +240,21 @@ func (c Client) postOrPut(
 		req.URI().QueryArgs().Add(k, v)
 	}
 
-	if err := bodyFn(req); err != nil {
-		return err
+	if bodyFn != nil {
+		if err := bodyFn(req); err != nil {
+			return err
+		}
 	}
+
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
 	log.Ctx(ctx).Debug().Func(ops.LogHTTPRequest(req)).Msg("http client request")
 
-	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
+	err := retry(func() error {
+		return c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
+	}, maxRetries, retriedErrors)
+
 	if err != nil {
 		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
 	} else {
@@ -241,74 +264,59 @@ func (c Client) postOrPut(
 
 	statusCode := resp.StatusCode()
 	if err == nil {
-		switch statusCode {
-		case http.StatusOK:
-			if resp.Header.ContentLength() > 0 {
-				return parseFn(resp)
-			}
-		case http.StatusCreated:
-			if resp.Header.ContentLength() > 0 {
-				return parseFn(resp)
-			}
-		case http.StatusAccepted:
-			return nil
-		default:
-			// if possible, still populate using response body if there is one
-			_ = parseFn(resp)
-			return NewHTTPError(statusCode, string(resp.Body()))
-		}
+		return handleResponse(statusCode, resp, parseFn)
 	}
+
 	return handleError(err)
 }
 
-func (c Client) get(
-	ctx context.Context,
-	uri string,
-	parseFn responseParseFn,
-	headers map[string]string,
-	query map[string]string) error {
-	req := fasthttp.AcquireRequest()
-	defer fasthttp.ReleaseRequest(req)
-	req.SetRequestURI(uri)
-
-	ctx, span := otel.Tracer(tracerName).Start(ctx, string(req.URI().Path()))
-	defer span.End()
-
-	for k, v := range query {
-		req.URI().QueryArgs().Add(k, v)
-	}
-	req.Header.SetMethod(fasthttp.MethodGet)
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-	addTraceHeaders(ctx, &req.Header)
-
-	resp := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(resp)
-
-	log.Ctx(ctx).Debug().Func(ops.LogHTTPRequest(req)).Msg("http client request")
-
-	err := c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
-	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
-	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
-	}
-	ops.TraceHTTPAttributes(span, req, resp, err)
-
-	statusCode := resp.StatusCode()
-	if err == nil {
-		switch statusCode {
-		case http.StatusOK:
+func handleResponse(statusCode int, resp *fasthttp.Response, parseFn responseParseFn) error {
+	switch statusCode {
+	case http.StatusOK:
+		if resp.Header.ContentLength() > 0 {
 			return parseFn(resp)
-		default:
-			// if possible, still populate using response body if there is one
-			_ = parseFn(resp)
-			return NewHTTPError(statusCode, string(resp.Body()))
+		}
+	case http.StatusCreated:
+		if resp.Header.ContentLength() > 0 {
+			return parseFn(resp)
+		}
+	case http.StatusAccepted:
+		return nil
+	default:
+		// if possible, still populate using response body if there is one
+		_ = parseFn(resp)
+		return NewHTTPError(statusCode, string(resp.Body()))
+	}
+	return nil
+}
+
+// retry will run call() and check its returned error. Errors matching any of retriedErrors
+// are retried up to maxRetries amount of times.
+func retry(call func() error, maxRetries int, retriedErrors []error) (err error) {
+	for r := 0; r <= maxRetries; r++ {
+		err = call()
+
+		switch {
+		case err == nil:
+			// never retry successful calls
+			return err
+		case !containsError(err, retriedErrors):
+			// don't retry errors not part of retriedErrors
+			return err
 		}
 	}
 
-	return handleError(err)
+	return err
+}
+
+// containsError returns true if checkedErrors contains err, otherwise false
+func containsError(err error, checkedErrors []error) bool {
+	for _, e := range checkedErrors {
+		if errors.Is(err, e) {
+			return true
+		}
+	}
+	return false
 }
 
 func handleError(err error) error {
