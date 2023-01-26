@@ -224,6 +224,66 @@ func Test_read_json_validation(t *testing.T) {
 	}
 }
 
+func Test_retry(t *testing.T) {
+	tests := []struct {
+		name          string
+		maxRetries    int
+		retriedErrors []error
+		err           error
+		called        int
+	}{
+		{
+			name:          "run once",
+			maxRetries:    0,
+			retriedErrors: nil,
+			err:           nil,
+			called:        1,
+		},
+		{
+			name:          "run once with no retried errors",
+			maxRetries:    1,
+			retriedErrors: nil,
+			err:           assert.AnError,
+			called:        1,
+		},
+		{
+			name:          "run once with error not matching retried errors",
+			maxRetries:    1,
+			retriedErrors: []error{assert.AnError, errors.New("some error")},
+			err:           errors.New("other error"),
+			called:        1,
+		},
+		{
+			name:          "retry with error matching retried error",
+			maxRetries:    1,
+			retriedErrors: []error{assert.AnError},
+			err:           assert.AnError,
+			called:        2,
+		},
+		{
+			name:          "retry twice with error matching retried error",
+			maxRetries:    2,
+			retriedErrors: []error{assert.AnError},
+			err:           assert.AnError,
+			called:        3,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(tt *testing.T) {
+			called := 0
+
+			err := retry(func() error {
+				called++
+				return test.err
+			}, test.maxRetries, test.retriedErrors)
+
+			assert.Equal(t, test.called, called)
+			assert.Equal(t, err, test.err)
+		})
+	}
+}
+
 func Benchmark_readJson_parse(b *testing.B) {
 	rawJSON := []byte(`{
 						  "some":"thing",
