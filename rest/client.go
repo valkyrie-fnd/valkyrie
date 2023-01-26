@@ -293,17 +293,16 @@ func handleResponse(statusCode int, resp *fasthttp.Response, parseFn responsePar
 // retry will run call() and check its returned error. Errors matching any of retriedErrors
 // are retried up to maxRetries amount of times.
 func retry(call func() error, maxRetries int, retriedErrors []error) (err error) {
-loop:
 	for r := 0; r <= maxRetries; r++ {
 		err = call()
 
 		switch {
 		case err == nil:
 			// never retry successful calls
-			break loop
+			return err
 		case !containsError(err, retriedErrors):
 			// don't retry errors not part of retriedErrors
-			break loop
+			return err
 		}
 	}
 
