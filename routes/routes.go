@@ -48,6 +48,9 @@ func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamCli
 
 // OperatorRoutes Init the operator side routes
 func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HTTPClientJSONInterface) error {
+	// ping endpoint is public and used by load balancers for health checking
+	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
+
 	// Create subgroup and registry
 	registry := provider.NewRegistry(a, config.OperatorBasePath)
 
