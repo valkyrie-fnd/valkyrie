@@ -22,7 +22,8 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	if err != nil {
 		herr := &rest.HTTPError{}
 		if errors.As(err, herr) {
-			return c.Status(herr.Code).SendString(herr.Error())
+			c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+			return c.Status(herr.Code).SendString(herr.Message)
 		}
 		return err
 	}
