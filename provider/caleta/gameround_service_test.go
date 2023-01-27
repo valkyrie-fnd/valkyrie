@@ -14,7 +14,7 @@ import (
 
 func Test_Requesting_Gameround_Render_Page(t *testing.T) {
 	sut, _ := NewCaletaService(configs.ProviderConf{}, mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
-		r := resp.(*InlineResponse200)
+		r := resp.(*gameRoundRenderResponse)
 		url := "successUrl"
 		r.Url = &url
 		return nil
@@ -33,7 +33,21 @@ func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, err := sut.GetGameRoundRender(ctx, "gameRoundId")
 	assert.Equal(t, "", res)
-	assert.EqualError(t, err, "HTTP 500: url missing from response")
+	assert.EqualError(t, err, "HTTP 400: 0: ")
+}
+
+func Test_Requesting_Gameround_Render_Page_error_from_response(t *testing.T) {
+	sut, _ := NewCaletaService(configs.ProviderConf{}, mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+		r := resp.(*gameRoundRenderResponse)
+		r.Code = 100
+		r.Message = "Bad Stuff"
+		return nil
+	}})
+	app := fiber.New()
+	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+	res, err := sut.GetGameRoundRender(ctx, "gameRoundId")
+	assert.Equal(t, "", res)
+	assert.EqualError(t, err, "HTTP 400: 100: Bad Stuff")
 }
 
 func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {

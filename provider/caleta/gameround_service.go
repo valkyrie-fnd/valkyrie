@@ -8,6 +8,12 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
+type gameRoundRenderResponse struct {
+	InlineResponse200
+	Message string
+	Code    int
+}
+
 func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundID string) (string, error) {
 	body := GameroundJSONRequestBody{
 		Round:      &gameRoundID,
@@ -24,13 +30,13 @@ func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundID str
 		return "", rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
-	resp := InlineResponse200{}
+	resp := gameRoundRenderResponse{}
 	err = service.client.PostJSON(ctx.UserContext(), req, &resp)
 	if err != nil {
 		return "", err
 	}
 	if resp.Url == nil {
-		return "", rest.NewHTTPError(fiber.StatusInternalServerError, "url missing from response")
+		return "", rest.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
 	}
 
 	return *resp.Url, nil
