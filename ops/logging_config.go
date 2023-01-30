@@ -30,6 +30,8 @@ func ConfigureLogging(logConfig configs.LogConfig) {
 	zerolog.ErrorStackMarshaler = func(err error) interface{} {
 		return pkgerrors.MarshalStack(errors.WithStack(err))
 	}
+	// configure stack field name to stack_trace, that is automatically recognized by Google error reporting
+	zerolog.ErrorStackFieldName = "stack_trace"
 
 	// use custom json marshaller (goccy/go-json)
 	zerolog.InterfaceMarshalFunc = json.Marshal
