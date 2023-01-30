@@ -89,13 +89,20 @@ type googleLoggingHook struct {
 	spanContext trace.SpanContext
 }
 
-// Run adds standard tracing fields supported by Google Cloud Logging:
+// Run adds standard fields supported by Google Cloud Logging:
 // https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
-func (h googleLoggingHook) Run(e *zerolog.Event, _ zerolog.Level, _ string) {
+func (h googleLoggingHook) Run(e *zerolog.Event, l zerolog.Level, _ string) {
+	// Add tracing fields tracing
 	if h.spanContext.IsValid() {
 		e.Str("logging.googleapis.com/trace", fmt.Sprintf("projects/%s/traces/%s", h.projectID, h.spanContext.TraceID()))
 		e.Str("logging.googleapis.com/spanId", h.spanContext.SpanID().String())
 		e.Bool("logging.googleapis.com/trace_sampled", h.spanContext.IsSampled())
+	}
+
+	// Add error reporting field annotation for error logs
+	// https://cloud.google.com/error-reporting/docs/formatting-error-messages#reported-error-example
+	if l == zerolog.ErrorLevel || l == zerolog.FatalLevel || l == zerolog.PanicLevel {
+		e.Str("@type", "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent")
 	}
 }
 
