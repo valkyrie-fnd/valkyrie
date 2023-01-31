@@ -70,6 +70,8 @@ jobs:
             fetch-depth: 0 # fetch all revision and tags, necessary for .github/tools/version.sh
       - name: Install Task
         uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set input version
         if: github.event.inputs.version != ''
         run: |
