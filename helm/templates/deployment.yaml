@@ -57,10 +57,12 @@ spec:
               containerPort: 8083
               protocol: TCP
           livenessProbe:
+            initialDelaySeconds: 10
             httpGet:
               path: /monitoring/ping
               port: http-operator
           readinessProbe:
+            initialDelaySeconds: 10
             httpGet:
               path: /monitoring/ping
               port: http-operator
