@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
@@ -57,7 +56,6 @@ func Test_GoogleErrorHook_Inherited(t *testing.T) {
 	// Add googleErrorHook to global logger
 	captor := strings.Builder{}
 	log.Logger = log.Output(&captor).Hook(googleErrorHook{})
-	zerolog.DefaultContextLogger = &log.Logger
 
 	childLogger := log.With().Logger()
 	childLogger.Error().Msg("oops")
