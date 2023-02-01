@@ -67,13 +67,18 @@ func ConfigureTracing(cfg *TracingConfig) error {
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
+	if cfg.Exporter == Google {
+		// Add googleErrorHook to global logger, so that it's inherited by child loggers
+		log.Logger = log.Hook(googleErrorHook{})
+	}
+
 	return nil
 }
 
 func googleTraceLogging(projectID string) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-		// Logger with googleLoggingHook registered
-		logger := log.Ctx(ctx.UserContext()).Hook(googleLoggingHook{
+		// Logger with googleTracingHook registered
+		logger := log.Ctx(ctx.UserContext()).Hook(googleTracingHook{
 			spanContext: trace.SpanFromContext(ctx.UserContext()).SpanContext(),
 			projectID:   projectID,
 		})
@@ -84,23 +89,26 @@ func googleTraceLogging(projectID string) fiber.Handler {
 	}
 }
 
-type googleLoggingHook struct {
+type googleTracingHook struct {
 	projectID   string
 	spanContext trace.SpanContext
 }
 
-// Run adds standard fields supported by Google Cloud Logging:
+// Run adds standard tracing fields supported by Google Cloud Logging:
 // https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
-func (h googleLoggingHook) Run(e *zerolog.Event, l zerolog.Level, _ string) {
-	// Add tracing fields tracing
+func (h googleTracingHook) Run(e *zerolog.Event, l zerolog.Level, _ string) {
 	if h.spanContext.IsValid() {
 		e.Str("logging.googleapis.com/trace", fmt.Sprintf("projects/%s/traces/%s", h.projectID, h.spanContext.TraceID()))
 		e.Str("logging.googleapis.com/spanId", h.spanContext.SpanID().String())
 		e.Bool("logging.googleapis.com/trace_sampled", h.spanContext.IsSampled())
 	}
+}
 
-	// Add error reporting field annotation for error logs
-	// https://cloud.google.com/error-reporting/docs/formatting-error-messages#reported-error-example
+type googleErrorHook struct{}
+
+// Run adds standard error reporting field annotation
+// https://cloud.google.com/error-reporting/docs/formatting-error-messages#reported-error-example
+func (h googleErrorHook) Run(e *zerolog.Event, l zerolog.Level, _ string) {
 	if l == zerolog.ErrorLevel || l == zerolog.FatalLevel || l == zerolog.PanicLevel {
 		e.Str("@type", "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent")
 	}

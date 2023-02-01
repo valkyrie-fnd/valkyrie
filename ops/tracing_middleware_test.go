@@ -3,9 +3,12 @@ package ops
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,4 +28,42 @@ func Test_pathSkippingMiddleware(t *testing.T) {
 
 	_, err = app.Test(httptest.NewRequest(http.MethodGet, "/y", nil))
 	assert.NoError(t, err)
+}
+
+func Test_GoogleErrorHook_Global(t *testing.T) {
+	globalLogger := log.Logger
+	defer func() {
+		log.Logger = globalLogger
+	}()
+
+	// Add googleErrorHook to global logger
+	captor := strings.Builder{}
+	log.Logger = log.Output(&captor).Hook(googleErrorHook{})
+
+	log.Error().Msg("oops")
+
+	logMessage := captor.String()
+	assert.Contains(t, logMessage, "oops")
+	assert.Contains(t, logMessage, "@type")
+	assert.Contains(t, logMessage, "ReportedErrorEvent")
+}
+
+func Test_GoogleErrorHook_Inherited(t *testing.T) {
+	globalLogger := log.Logger
+	defer func() {
+		log.Logger = globalLogger
+	}()
+
+	// Add googleErrorHook to global logger
+	captor := strings.Builder{}
+	log.Logger = log.Output(&captor).Hook(googleErrorHook{})
+	zerolog.DefaultContextLogger = &log.Logger
+
+	childLogger := log.With().Logger()
+	childLogger.Error().Msg("oops")
+
+	logMessage := captor.String()
+	assert.Contains(t, logMessage, "oops")
+	assert.Contains(t, logMessage, "@type")
+	assert.Contains(t, logMessage, "ReportedErrorEvent")
 }
