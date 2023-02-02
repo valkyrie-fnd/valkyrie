@@ -83,8 +83,10 @@ type ValkyrieConfig struct {
 	Pam              PamConf          `yaml:"pam"`
 	Tracing          TraceConfig      `yaml:"tracing,omitempty"`
 	Providers        []ProviderConf   `yaml:"providers,flow"`
-	OperatorBasePath string           `yaml:"operator_base_path,omitempty"`
 	ProviderBasePath string           `yaml:"provider_base_path,omitempty"`
+	// APIKey used as bearer token to access operator endpoints
+	OperatorAPIKey   string           `yaml:"operator_api_key,omitempty"`
+	OperatorBasePath string           `yaml:"operator_base_path,omitempty"`
 	Version          string           `yaml:"-"`
 	Logging          LogConfig        `yaml:"logging,omitempty"`
 	HTTPClient       HTTPClientConfig `yaml:"http_client"`
