@@ -51,6 +51,9 @@ func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HT
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
+	// Add authorization for operator paths
+	a.Use(config.OperatorBasePath, provider.OperatorAuthorization(config.OperatorAPIKey))
+
 	// Create subgroup and registry
 	registry := provider.NewRegistry(a, config.OperatorBasePath)
 

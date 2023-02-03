@@ -3,7 +3,7 @@ info:
   title: Valkyrie Operator API
   description: |
     Valkyrie endpoints for communicating with a provider. Exposed valkyrie endpoints can differ between configured provider modules. Make sure the ones you want to use are implemented.
-  version: 0.2.0
+  version: 0.3.0
   license:
     name: MIT
     url: https://github.com/valkyrie-fnd/valkyrie/blob/main/LICENSE.md
@@ -47,6 +47,8 @@ paths:
               schema:
                 type: string
               example: Bad game launch call
+        "401":
+          $ref: '#/components/responses/UnauthorizedResponse'
   /{provider}/gamerounds/{gameRoundId}/render:
     get:
       description: Optional. Returns a rendered representation of the specified game round.
@@ -70,6 +72,8 @@ paths:
       responses:
         "302":
           description: Redirect to provider specific url with rendered result
+        "401": 
+          $ref: '#/components/responses/UnauthorizedResponse'
         "500":
           description: Something went wrong fetching the rendered page
 components:
@@ -126,3 +130,14 @@ components:
       example: 7ca10daf12f2cac9fecf559b11f0f0c8bd21ae43
       minLength: 1
       maxLength: 40
+  responses: 
+    UnauthorizedResponse:
+      description: Operator API Key is missing or invalid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Operator API Key, if any is required
+
+security:
+  - bearerAuth: []

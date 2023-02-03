@@ -10,17 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	signingKey = `-----BEGIN RSA PRIVATE KEY-----
-caleta-signing-key
------END RSA PRIVATE KEY-----
-`
-	verificationKey = `-----BEGIN PUBLIC KEY-----
-caleta-verification-key
------END PUBLIC KEY-----
-`
-)
-
 type testWrapper struct {
 	name        string
 	envFilePath string
@@ -337,6 +326,7 @@ func TestValkConfigFile(t *testing.T) {
 			},
 		},
 		OperatorBasePath: "/operator",
+		OperatorAPIKey:   "operator-api-key",
 		ProviderBasePath: "/providers",
 		Tracing: TraceConfig{
 			TraceType:       "stdout",
@@ -367,7 +357,7 @@ func TestValkConfigFile(t *testing.T) {
 				Name:     "Caleta",
 				URL:      "https://caleta-url",
 				BasePath: "/caleta",
-				Auth:     map[string]any{"verification_key": verificationKey, "signing_key": signingKey, "operator_id": "caleta-operator-id"},
+				Auth:     map[string]any{"operator_id": "caleta-operator-id"},
 			},
 		},
 		HTTPServer: HTTPServerConfig{

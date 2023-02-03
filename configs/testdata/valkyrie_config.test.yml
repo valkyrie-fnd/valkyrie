@@ -24,6 +24,7 @@ pam: # player account management
   url: "https://pam-url" # base url to PAM
 provider_base_path: "/providers" # Base url used by provider wallet calls to Valkyrie
 operator_base_path: "/operator" # Base url used by operator calls to Valkyrie
+operator_api_key: operator-api-key # Operator API Key
 providers:
   - name: Evolution # Name of provider
     url: "https://evo-url" # url used for gameLaunch
@@ -42,14 +43,14 @@ providers:
     url: "https://caleta-url"
     base_path: "/caleta" # base path to differentiate exposed endpoints between providers
     auth:
-      verification_key: |
-        -----BEGIN PUBLIC KEY-----
-        caleta-verification-key
-        -----END PUBLIC KEY-----
-      signing_key: |
-        -----BEGIN RSA PRIVATE KEY-----
-        caleta-signing-key
-        -----END RSA PRIVATE KEY-----
+      #verification_key: |
+      #  -----BEGIN PUBLIC KEY-----
+      #  caleta-verification-key
+      #  -----END PUBLIC KEY-----
+      #signing_key: |
+      #  -----BEGIN RSA PRIVATE KEY-----
+      #  caleta-signing-key
+      #  -----END RSA PRIVATE KEY-----
       operator_id: caleta-operator-id
 http_server: # optional http server configuration
   read_timeout: 3s
