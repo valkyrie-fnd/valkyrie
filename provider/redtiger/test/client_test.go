@@ -124,7 +124,7 @@ func (api *RGIClient) Auth() (*redtiger.AuthResponseWrapper, error) {
 	return &resp, nil
 }
 
-func (api *RGIClient) Stake(gameKey, transID, roundID string, amt, amtPromo redtiger.Money) (*redtiger.StakeResponseWrapper, error) {
+func (api *RGIClient) Stake(gameKey, transID, roundID string, amt, amtPromo redtiger.Money, promo *redtiger.Promo) (*redtiger.StakeResponseWrapper, error) {
 	req := redtiger.StakeRequest{
 		BaseRequest: api.baseRequest,
 		Transaction: redtiger.TransactionStake{
@@ -144,6 +144,9 @@ func (api *RGIClient) Stake(gameKey, transID, roundID string, amt, amtPromo redt
 		Game: redtiger.Game{
 			Key: gameKey,
 		},
+	}
+	if promo != nil {
+		req.Promo = *promo
 	}
 
 	path := "/stake"
@@ -215,7 +218,6 @@ func (api *RGIClient) Payout(gameKey, transID, roundID string, amt, promoAmt, ga
 			Type: "slot",
 			Key:  gameKey,
 		},
-
 		Retry: false,
 	}
 
