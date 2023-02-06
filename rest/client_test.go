@@ -24,7 +24,6 @@ func init() {
 
 // A stub of fasthttp in order to run the `Do()` offline
 type StubFasthttp struct {
-	fastHTTPClient
 	resp *fasthttp.Response
 	err  error
 }
