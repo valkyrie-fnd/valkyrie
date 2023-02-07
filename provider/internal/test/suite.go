@@ -48,7 +48,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		pamURL = v
 	} else {
 		pamPort, _ := testutils.GetFreePort()
-		s.pamServer = genericpam.RunServer(dataStore, fmt.Sprintf(baseAddr, pamPort), dataStore.GetPamApiToken(), dataStore.GetProviderTokens())
+		s.pamServer = genericpam.RunServer(dataStore, genericpam.Config{
+			PamApiKey:      dataStore.GetPamApiToken(),
+			ProviderTokens: dataStore.GetProviderTokens(),
+			Address:        fmt.Sprintf(baseAddr, pamPort)})
 		pamURL = fmt.Sprintf(baseURL, pamPort)
 	}
 
@@ -56,8 +59,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		s.BackdoorURL = v
 	} else {
 		backdoorPort, _ := testutils.GetFreePort()
-		s.backdoorServer = backdoors.BackdoorServer(dataStore, fmt.Sprintf(baseAddr, backdoorPort))
-		s.BackdoorURL = fmt.Sprintf(baseURL+"/backdoors/", backdoorPort)
+		s.backdoorServer, s.BackdoorURL = backdoors.BackdoorServer(dataStore, fmt.Sprintf(baseAddr, backdoorPort))
 	}
 
 	if v, found := os.LookupEnv("VALKYRIE_URL"); found {

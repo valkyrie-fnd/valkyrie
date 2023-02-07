@@ -11,28 +11,37 @@ require (
 	github.com/four-fingers/oapi-codegen v0.0.0-20221219135408-9237c9743c67
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/goccy/go-json v0.10.0
+
+	// TODO: uppgrade otel once https://github.com/gofiber/contrib/pull/451 is done
 	github.com/gofiber/contrib/otelfiber v0.0.0-20230119212140-c5d658dbb5ca
-	github.com/gofiber/fiber/v2 v2.41.1-0.20230115125653-8a605c67d131
+	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/gofiber/swagger v0.1.8
 	github.com/google/go-querystring v1.1.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-hclog v1.4.0
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.9
-	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230125093730-250e840b0f96
+	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230207114947-2b0da4b82e50
 	github.com/valyala/fasthttp v1.44.0
 	go.opentelemetry.io/otel v1.11.2
 	go.opentelemetry.io/otel/exporters/jaeger v1.11.2
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.11.2
 	go.opentelemetry.io/otel/sdk v1.11.2
 	go.opentelemetry.io/otel/trace v1.11.2
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/philhofer/fwd v1.1.2 // indirect
+	github.com/savsgio/dictpool v0.0.0-20221023140959-7bf2e61cea94 // indirect
+	github.com/savsgio/gotils v0.0.0-20230203094617-bcbc01813b4f // indirect
+	github.com/tinylib/msgp v1.1.8 // indirect
 )
 
 require (
@@ -55,7 +64,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/hashicorp/go-plugin v1.4.8
 	github.com/hashicorp/yamux v0.1.1 // indirect
-	github.com/klauspost/compress v1.15.14 // indirect
+	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -76,14 +85,13 @@ require (
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/oauth2 v0.4.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/api v0.106.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // avoids depending on all of oapi-codegen's and swag's dependencies
