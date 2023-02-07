@@ -3,19 +3,16 @@ package caleta
 import (
 	"context"
 	"errors"
-	"reflect"
+	"fmt"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/valyala/fasthttp"
-
-	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
-	"github.com/valkyrie-fnd/valkyrie/rest"
-
 	"github.com/stretchr/testify/assert"
-
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/provider"
+	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -43,6 +40,25 @@ var (
 	}
 	headers = &provider.GameLaunchHeaders{SessionKey: "123"}
 )
+
+type mockAPIClient struct {
+	rest.HTTPClientJSONInterface
+	getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
+	requestGameLaunchFn    func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error)
+	getGameRoundRenderFn   func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error)
+}
+
+func (api *mockAPIClient) getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
+	return api.getRoundTransactionsFn(ctx, gameRoundID)
+}
+
+func (api *mockAPIClient) requestGameLaunch(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
+	return api.requestGameLaunchFn(ctx, body)
+}
+
+func (api *mockAPIClient) getGameRoundRender(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+	return api.getGameRoundRenderFn(ctx, gameRoundID)
+}
 
 func TestStaticUrlGameLaunch(t *testing.T) {
 	type args struct {
@@ -81,7 +97,7 @@ func TestStaticUrlGameLaunch(t *testing.T) {
 
 	for _, test := range gameLaunchTests {
 		t.Run(test.name, func(t *testing.T) {
-			s, err := NewCaletaService(test.config, mockClient{})
+			s, err := NewCaletaService(&mockAPIClient{}, test.config)
 			assert.NoError(t, err)
 			result, err := s.GameLaunch(nil, test.args.req, test.args.headers)
 			if test.e != nil {
@@ -92,15 +108,6 @@ func TestStaticUrlGameLaunch(t *testing.T) {
 	}
 }
 
-type mockClient struct {
-	rest.HTTPClientJSONInterface
-	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
-}
-
-func (m mockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
-	return m.PostJSONFunc(ctx, req, resp)
-}
-
 func TestRequestingGameLaunch(t *testing.T) {
 	type args struct {
 		req     *provider.GameLaunchRequest
@@ -108,26 +115,19 @@ func TestRequestingGameLaunch(t *testing.T) {
 	}
 
 	type tests struct {
-		name   string
-		args   args
-		postFn func(ctx context.Context, req *rest.HTTPRequest, resp any) error
-		config configs.ProviderConf
-		want   string
-		e      error
+		name         string
+		args         args
+		gameLaunchFn func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error)
+		config       configs.ProviderConf
+		want         string
+		e            error
 	}
 
 	var gameLaunchTests = []tests{
 		{
 			name: "successful game launch",
-			postFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
-				assert.Equal(t, "http://caleta-test/api/game/url", req.URL)
-				assert.NotEmpty(t, req.Headers["X-Auth-Signature"])
-				assert.NotNil(t, req.Body)
-
-				reflect.ValueOf(resp).
-					Elem().
-					Set(reflect.ValueOf(InlineResponse200{Url: testutils.Ptr("valid-game-url")}))
-				return nil
+			gameLaunchFn: func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
+				return &InlineResponse200{Url: testutils.Ptr("valid-game-url")}, nil
 			},
 			config: providerConf,
 			args: args{
@@ -139,13 +139,8 @@ func TestRequestingGameLaunch(t *testing.T) {
 		},
 		{
 			name: "successful game launch without signing_key",
-			postFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
-				assert.Empty(t, req.Headers["X-Auth-Signature"])
-
-				reflect.ValueOf(resp).
-					Elem().
-					Set(reflect.ValueOf(InlineResponse200{Url: testutils.Ptr("valid-game-url")}))
-				return nil
+			gameLaunchFn: func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
+				return &InlineResponse200{Url: testutils.Ptr("valid-game-url")}, nil
 			},
 			config: configs.ProviderConf{
 				URL: "http://caleta-test",
@@ -165,8 +160,8 @@ func TestRequestingGameLaunch(t *testing.T) {
 		},
 		{
 			name: "error post request",
-			postFn: func(_ context.Context, _ *rest.HTTPRequest, _ any) error {
-				return errors.New("post error")
+			gameLaunchFn: func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
+				return nil, fmt.Errorf("post error")
 			},
 			config: providerConf,
 			args: args{
@@ -178,11 +173,8 @@ func TestRequestingGameLaunch(t *testing.T) {
 		},
 		{
 			name: "error url missing from response",
-			postFn: func(_ context.Context, _ *rest.HTTPRequest, resp any) error {
-				reflect.ValueOf(resp).
-					Elem().
-					Set(reflect.ValueOf(InlineResponse200{}))
-				return nil
+			gameLaunchFn: func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
+				return &InlineResponse200{}, nil
 			},
 			config: providerConf,
 			args: args{
@@ -199,7 +191,8 @@ func TestRequestingGameLaunch(t *testing.T) {
 			app := fiber.New()
 			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 			defer app.ReleaseCtx(ctx)
-			s, err := NewCaletaService(test.config, mockClient{PostJSONFunc: test.postFn})
+
+			s, err := NewCaletaService(&mockAPIClient{requestGameLaunchFn: test.gameLaunchFn}, test.config)
 			assert.NoError(t, err)
 			result, err := s.GameLaunch(ctx, test.args.req, test.args.headers)
 			if test.e != nil {
@@ -247,7 +240,8 @@ func Test_getLaunchConfigError(t *testing.T) {
 }
 
 func Test_getGameUrlBody(t *testing.T) {
-	service, _ := NewCaletaService(providerConf, nil)
+	service, err := NewCaletaService(&mockAPIClient{}, providerConf)
+	assert.NoError(t, err)
 	body, err := service.getGameLaunchBody(request, headers)
 	assert.NoError(t, err)
 
@@ -263,34 +257,49 @@ func Test_getGameUrlBody(t *testing.T) {
 	assert.Equal(t, request.LaunchConfig["deposit_url"], *body.DepositUrl)
 }
 
-type mockSigner struct {
-	SignFunc func([]byte) ([]byte, error)
-}
-
-func (m mockSigner) Sign(payload []byte) ([]byte, error) {
-	return m.SignFunc(payload)
-}
-
-func Test_authHeaderSigner(t *testing.T) {
-	expectedSignature := "signed"
-	headerSigner := authHeaderSigner{signer: mockSigner{SignFunc: func(_ []byte) ([]byte, error) {
-		return []byte(expectedSignature), nil
-	}}}
-
-	headers := map[string]string{}
-	err := headerSigner.sign(&GameUrlBody{}, headers)
+func Test_Requesting_Gameround_Render_Page(t *testing.T) {
+	service, err := NewCaletaService(&mockAPIClient{getGameRoundRenderFn: func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+		return &gameRoundRenderResponse{InlineResponse200: InlineResponse200{Url: testutils.Ptr("successUrl")}}, nil
+	}}, configs.ProviderConf{})
 	assert.NoError(t, err)
-
-	assert.Equal(t, expectedSignature, headers["X-Auth-Signature"])
+	app := fiber.New()
+	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+	res, _ := service.GetGameRoundRender(ctx, "gameRoundId")
+	assert.Equal(t, "successUrl", res)
 }
 
-func Test_authHeaderSignerError(t *testing.T) {
-	headerSigner := authHeaderSigner{signer: mockSigner{SignFunc: func(_ []byte) ([]byte, error) {
-		return nil, errors.New("sign error")
-	}}}
+func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
+	service, err := NewCaletaService(&mockAPIClient{getGameRoundRenderFn: func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+		return &gameRoundRenderResponse{}, nil
+	}}, configs.ProviderConf{})
+	assert.NoError(t, err)
+	app := fiber.New()
+	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	assert.Equal(t, "", res)
+	assert.EqualError(t, err, "HTTP 400: 0: ")
+}
 
-	headers := map[string]string{}
-	err := headerSigner.sign(&GameUrlBody{}, headers)
-	assert.Error(t, err, "sign error")
-	assert.Empty(t, headers)
+func Test_Requesting_Gameround_Render_Page_error_from_response(t *testing.T) {
+	service, err := NewCaletaService(&mockAPIClient{getGameRoundRenderFn: func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+		return &gameRoundRenderResponse{Code: 100, Message: "Bad Stuff"}, nil
+	}}, configs.ProviderConf{})
+	assert.NoError(t, err)
+	app := fiber.New()
+	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	assert.Equal(t, "", res)
+	assert.EqualError(t, err, "HTTP 400: 100: Bad Stuff")
+}
+
+func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {
+	service, err := NewCaletaService(&mockAPIClient{getGameRoundRenderFn: func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+		return nil, fmt.Errorf("Some network error")
+	}}, configs.ProviderConf{})
+	assert.NoError(t, err)
+	app := fiber.New()
+	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	assert.Equal(t, "", res)
+	assert.EqualError(t, err, "Some network error")
 }

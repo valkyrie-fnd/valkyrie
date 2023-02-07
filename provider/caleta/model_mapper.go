@@ -107,7 +107,7 @@ func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject) p
 	}
 }
 
-func winTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) pam.AddTransactionRequestMapper {
+func winTransactionMapper(ctx context.Context, r *TransactionwinRequestObject, roundTransactions *[]roundTransaction) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
@@ -129,11 +129,12 @@ func winTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) p
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.DEPOSIT,
 				BetCode:               r.Body.Bet,
+				RoundTransactions:     roundTransactionsMapper(roundTransactions),
 			},
 		}, nil
 	}
 }
-func promoWinTransactionMapper(ctx context.Context, r *TransactionwinRequestObject) pam.AddTransactionRequestMapper {
+func promoWinTransactionMapper(ctx context.Context, r *TransactionwinRequestObject, roundTransactions *[]roundTransaction) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
@@ -155,12 +156,13 @@ func promoWinTransactionMapper(ctx context.Context, r *TransactionwinRequestObje
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMODEPOSIT,
 				BetCode:               r.Body.Bet,
+				RoundTransactions:     roundTransactionsMapper(roundTransactions),
 			},
 		}, nil
 	}
 }
 
-func cancelTransactionMapper(ctx context.Context, r *WalletrollbackRequestObject, session *pam.Session, tt pam.TransactionType) pam.AddTransactionRequestMapper {
+func cancelTransactionMapper(ctx context.Context, r *WalletrollbackRequestObject, session *pam.Session, tt pam.TransactionType, roundTransactions *[]roundTransaction) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		return ctx, &pam.AddTransactionRequest{
 			PlayerID: utils.OrZeroValue(r.Body.User),
@@ -179,6 +181,7 @@ func cancelTransactionMapper(ctx context.Context, r *WalletrollbackRequestObject
 				ProviderBetRef:        &r.Body.ReferenceTransactionUuid,
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       tt,
+				RoundTransactions:     roundTransactionsMapper(roundTransactions),
 			},
 		}, nil
 	}
@@ -196,5 +199,32 @@ func getTransactionsMapper(ctx context.Context, r *WalletWinBody) pam.GetTransac
 				XCorrelationID:        r.RequestUuid,
 			},
 		}, nil
+	}
+}
+
+func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.RoundTransaction {
+	if roundTransactions != nil {
+		var roundTx []pam.RoundTransaction
+		for _, t := range *roundTransactions {
+			amt := toPamAmount(t.Payload.Amount)
+			txID := t.Payload.TransactionUUID
+			isGameOver := t.Payload.RoundClosed
+			tx := pam.RoundTransaction{
+				ProviderTransactionId: &txID,
+				CashAmount:            &amt,
+				IsGameOver:            &isGameOver,
+				TransactionDateTime:   &t.ClosedTime, // TODO: Or is it CreatedTime?
+			}
+
+			jackpotAmt := toPamAmount(t.Payload.JackpotContribution)
+			if t.Payload.JackpotContribution != 0 {
+				tx.JackpotContribution = &jackpotAmt
+			}
+
+			roundTx = append(roundTx, tx)
+		}
+		return &roundTx
+	} else {
+		return nil
 	}
 }

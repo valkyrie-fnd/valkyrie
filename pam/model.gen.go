@@ -330,6 +330,22 @@ type ProviderRoundId = string
 // ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 type ProviderTransactionId = string
 
+// RoundTransaction A transaction that's part of a game round. It has a limited set of fields as its intended use is when doing gamewise settlement.
+type RoundTransaction struct {
+	// CashAmount Amount in some currency, rounded to 6 decimal places
+	CashAmount *Amount `json:"cashAmount,omitempty"`
+	IsGameOver *bool   `json:"isGameOver,omitempty"`
+
+	// JackpotContribution Amount in some currency, rounded to 6 decimal places
+	JackpotContribution *Amount `json:"jackpotContribution,omitempty"`
+
+	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
+	ProviderTransactionId *ProviderTransactionId `json:"providerTransactionId,omitempty"`
+
+	// TransactionDateTime A date and time in IS0 8601 format
+	TransactionDateTime *Timestamp `json:"transactionDateTime,omitempty"`
+}
+
 // Session defines model for Session.
 type Session struct {
 	// Country ISO 3166-1 alpha-2 two letter country code
@@ -408,6 +424,7 @@ type Transaction struct {
 
 	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 	ProviderTransactionId ProviderTransactionId `json:"providerTransactionId"`
+	RoundTransactions     *[]RoundTransaction   `json:"roundTransactions,omitempty"`
 	Tip                   *Tip                  `json:"tip,omitempty"`
 
 	// TransactionDateTime A date and time in IS0 8601 format

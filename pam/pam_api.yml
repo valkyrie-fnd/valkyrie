@@ -535,6 +535,20 @@ components:
       properties:
         tipAmount:
           $ref: "#/components/schemas/Amount"
+    RoundTransaction:
+      description: "A transaction that's part of a game round. It has a limited set of fields as its intended use is when doing gamewise settlement."
+      type: object
+      properties:
+        providerTransactionId:
+          $ref: "#/components/schemas/ProviderTransactionId"
+        transactionDateTime:
+          $ref: "#/components/schemas/Timestamp"
+        cashAmount:
+          $ref: "#/components/schemas/Amount"
+        isGameOver:
+          type: boolean
+        jackpotContribution:
+          $ref: "#/components/schemas/Amount"
     Transaction:
       type: object
       properties:
@@ -574,6 +588,10 @@ components:
             $ref: "#/components/schemas/Jackpot"
         tip:
           $ref: "#/components/schemas/Tip"
+        roundTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoundTransaction"
       required:
         - currency
         - provider

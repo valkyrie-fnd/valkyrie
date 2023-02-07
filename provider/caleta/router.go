@@ -16,12 +16,27 @@ const (
 func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
-			service := NewService(args.Client)
+
+			var service *WalletService
+
+			// If gamewise settlement, provide a transaction client
+			if args.PamClient.GetSettlementType() == "gamewise" {
+				apiClient, err := NewAPIClient(args.HTTPClient, args.Config)
+				if err != nil {
+					return nil, err
+				}
+				service = NewWalletService(args.PamClient, apiClient)
+			} else {
+				service = NewWalletService(args.PamClient, nil)
+			}
+
+			log.Info().Msgf("Configured for settlement type '%s'", args.PamClient.GetSettlementType())
+
 			return NewProviderRouter(args.Config, service)
 		})
 	provider.OperatorFactory().
 		Register(ProviderName, func(args provider.OperatorArgs) (*provider.Router, error) {
-			return NewOperatorRouter(args.Config, args.Client)
+			return NewOperatorRouter(args.Config, args.HTTPClient)
 		})
 }
 
@@ -63,13 +78,18 @@ func getProviderMiddlewares(auth AuthConf) ([]fiber.Handler, error) {
 }
 
 func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
-	service, err := NewCaletaService(config, httpClient)
+	apiClient, err := NewAPIClient(httpClient, config)
 	if err != nil {
 		return nil, err
 	}
 
-	controller := provider.NewGameLaunchController(service)
-	grCtrl := provider.NewGameRoundController(service)
+	caletaService, err := NewCaletaService(apiClient, config)
+	if err != nil {
+		return nil, err
+	}
+
+	controller := provider.NewGameLaunchController(caletaService)
+	grCtrl := provider.NewGameRoundController(caletaService)
 
 	routes := []provider.Route{
 		{

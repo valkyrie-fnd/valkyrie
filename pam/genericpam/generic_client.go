@@ -11,7 +11,9 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
-const DriverName = "generic"
+const (
+	DriverName = "generic"
+)
 
 func init() {
 	pam.ClientFactory().
@@ -21,15 +23,17 @@ func init() {
 }
 
 type genericPamConfig struct {
-	Name   string `mapstructure:"name"`
-	URL    string `mapstructure:"url"`
-	APIKey string `mapstructure:"api_key"`
+	Name           string `mapstructure:"name"`
+	URL            string `mapstructure:"url"`
+	APIKey         string `mapstructure:"api_key"`
+	SettlementType string `mapstructure:"settlement_type"`
 }
 
 type GenericPam struct {
-	rest    rest.HTTPClientJSONInterface
-	baseURL string
-	apiKey  string
+	rest           rest.HTTPClientJSONInterface
+	baseURL        string
+	apiKey         string
+	settlementType string
 }
 
 func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericPam, error) {
@@ -41,9 +45,10 @@ func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericP
 	log.Info().Msgf("Creating %s pam client", config.Name)
 
 	return &GenericPam{
-		baseURL: config.URL,
-		apiKey:  config.APIKey,
-		rest:    client,
+		baseURL:        config.URL,
+		apiKey:         config.APIKey,
+		rest:           client,
+		settlementType: config.SettlementType,
 	}, nil
 }
 
@@ -207,6 +212,10 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 		return nil, err
 	}
 	return resp.Session, nil
+}
+
+func (c *GenericPam) GetSettlementType() string {
+	return c.settlementType
 }
 
 // handleErrors does general error handling for a response and returns

@@ -22,6 +22,7 @@ pam: # player account management
   name: generic # check /pam-folder for available PAMs
   api_key: pam-api-key # api key to PAM
   url: "https://pam-url" # base url to PAM
+  settlement_type: "gamewise" # Settlement type for the configured PAM, "mixed" (default) or "gamewise"
 provider_base_path: "/providers" # Base url used by provider wallet calls to Valkyrie
 operator_base_path: "/operator" # Base url used by operator calls to Valkyrie
 operator_api_key: operator-api-key # Operator API Key
