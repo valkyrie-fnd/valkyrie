@@ -211,10 +211,11 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 
 func Test_winTransactionMapper(t *testing.T) {
 	tests := []struct {
-		name        string
-		request     *TransactionwinRequestObject
-		want        *pam.AddTransactionRequest
-		dateCompare dateAssert
+		name              string
+		request           *TransactionwinRequestObject
+		roundTransactions *[]roundTransaction
+		want              *pam.AddTransactionRequest
+		dateCompare       dateAssert
 	}{
 		{
 			name: "basic",
@@ -289,7 +290,7 @@ func Test_winTransactionMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, res, err := winTransactionMapper(context.TODO(), tt.request)(dummyAmtReader)
+			_, res, err := winTransactionMapper(context.TODO(), tt.request, tt.roundTransactions)(dummyAmtReader)
 
 			tt.dateCompare(t, tt.want.Body.TransactionDateTime, res.Body.TransactionDateTime)
 
@@ -305,10 +306,11 @@ func Test_winTransactionMapper(t *testing.T) {
 
 func Test_promoWinTransactionMapper(t *testing.T) {
 	tests := []struct {
-		name        string
-		request     *TransactionwinRequestObject
-		want        *pam.AddTransactionRequest
-		dateCompare dateAssert
+		name              string
+		request           *TransactionwinRequestObject
+		roundTransactions *[]roundTransaction
+		want              *pam.AddTransactionRequest
+		dateCompare       dateAssert
 	}{
 		{
 			name: "basic",
@@ -383,7 +385,7 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, res, err := promoWinTransactionMapper(context.TODO(), tt.request)(dummyAmtReader)
+			_, res, err := promoWinTransactionMapper(context.TODO(), tt.request, tt.roundTransactions)(dummyAmtReader)
 
 			tt.dateCompare(t, tt.want.Body.TransactionDateTime, res.Body.TransactionDateTime)
 
@@ -400,10 +402,11 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 func Test_cancelTransactionMapper(t *testing.T) {
 
 	tests := []struct {
-		name        string
-		request     *WalletrollbackRequestObject
-		want        *pam.AddTransactionRequest
-		dateCompare dateAssert
+		name              string
+		request           *WalletrollbackRequestObject
+		roundTransactions *[]roundTransaction
+		want              *pam.AddTransactionRequest
+		dateCompare       dateAssert
 	}{
 		{
 			name: "basic",
@@ -473,7 +476,7 @@ func Test_cancelTransactionMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, res, err := cancelTransactionMapper(context.TODO(), tt.request, &pam.Session{Currency: "EUR"}, pam.PROMOCANCEL)(dummyAmtReader)
+			_, res, err := cancelTransactionMapper(context.TODO(), tt.request, &pam.Session{Currency: "EUR"}, pam.PROMOCANCEL, tt.roundTransactions)(dummyAmtReader)
 
 			tt.dateCompare(t, tt.want.Body.TransactionDateTime, res.Body.TransactionDateTime)
 
@@ -482,6 +485,171 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			tt.want.Body.TransactionDateTime = now
 
 			assert.NoError(t, err)
+			assert.Equal(t, tt.want, res)
+		})
+	}
+}
+
+func Test_roundTransactionsMapper(t *testing.T) {
+	tests := []struct {
+		name  string
+		input *[]roundTransaction
+		want  *[]pam.RoundTransaction
+	}{
+		{
+			name:  "no transactions",
+			input: nil,
+			want:  nil,
+		},
+		{
+			name: "one transaction",
+			input: &[]roundTransaction{
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid",
+					Payload: payload{
+						Bet:                      "zero",
+						Round:                    "CG-303",
+						Token:                    "token",
+						Currency:                 "EUR",
+						GameCode:                 "gc",
+						RequestUUID:              "req-uuid",
+						SupplierUser:             "supp-usr",
+						TransactionUUID:          "trans-uuid",
+						ReferenceTransactionUUID: "ref-trans-uuid",
+						GameID:                   1,
+						Amount:                   200000,
+						RoundClosed:              true,
+						IsFree:                   false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       200000,
+				},
+			},
+			want: &[]pam.RoundTransaction{
+				{
+					ProviderTransactionId: utils.Ptr("trans-uuid"),
+					CashAmount:            utils.Ptr(toPamAmount(200000)),
+					IsGameOver:            utils.Ptr(true),
+					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+				},
+			},
+		},
+		{
+			name: "three transactions",
+			input: &[]roundTransaction{
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid-0",
+					Payload: payload{
+						Bet:                 "Base",
+						Round:               "CG-303",
+						Token:               "token",
+						Currency:            "EUR",
+						GameCode:            "gc",
+						RequestUUID:         "req-uuid-0",
+						SupplierUser:        "supp-usr",
+						TransactionUUID:     "txn-uuid-0",
+						GameID:              1,
+						JackpotContribution: 2000,
+						Amount:              200000,
+						RoundClosed:         false,
+						IsFree:              false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       200000,
+				},
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid-1",
+					Payload: payload{
+						Bet:                 "Extra Ball",
+						Round:               "CG-303",
+						Token:               "token",
+						Currency:            "EUR",
+						GameCode:            "gc",
+						RequestUUID:         "req-uuid-1",
+						SupplierUser:        "supp-usr",
+						TransactionUUID:     "txn-uuid-1",
+						GameID:              1,
+						JackpotContribution: 3000,
+						Amount:              300000,
+						RoundClosed:         false,
+						IsFree:              false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       300000,
+				},
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid-2",
+					Payload: payload{
+						Bet:                      "zero",
+						Round:                    "CG-303",
+						Token:                    "token",
+						Currency:                 "EUR",
+						GameCode:                 "gc",
+						RequestUUID:              "req-uuid-2",
+						SupplierUser:             "supp-usr",
+						TransactionUUID:          "txn-uuid-2",
+						ReferenceTransactionUUID: "txn-uuid-0",
+						GameID:                   1,
+						Amount:                   200000,
+						RoundClosed:              true,
+						IsFree:                   false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       200000,
+				},
+			},
+			want: &[]pam.RoundTransaction{
+				{
+					ProviderTransactionId: utils.Ptr("txn-uuid-0"),
+					CashAmount:            utils.Ptr(toPamAmount(200000)),
+					IsGameOver:            utils.Ptr(false),
+					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					JackpotContribution:   utils.Ptr(toPamAmount(2000)),
+				},
+				{
+					ProviderTransactionId: utils.Ptr("txn-uuid-1"),
+					CashAmount:            utils.Ptr(toPamAmount(300000)),
+					IsGameOver:            utils.Ptr(false),
+					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					JackpotContribution:   utils.Ptr(toPamAmount(3000)),
+				},
+				{
+					ProviderTransactionId: utils.Ptr("txn-uuid-2"),
+					CashAmount:            utils.Ptr(toPamAmount(200000)),
+					IsGameOver:            utils.Ptr(true),
+					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := roundTransactionsMapper(tt.input)
 			assert.Equal(t, tt.want, res)
 		})
 	}

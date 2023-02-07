@@ -11,13 +11,14 @@ import (
 
 // ProviderArgs composes all arguments required to build a provider router
 type ProviderArgs struct {
-	Client pam.PamClient
-	Config configs.ProviderConf
+	PamClient  pam.PamClient
+	HTTPClient rest.HTTPClientJSONInterface
+	Config     configs.ProviderConf
 }
 
 type OperatorArgs struct {
-	Client rest.HTTPClientJSONInterface
-	Config configs.ProviderConf
+	HTTPClient rest.HTTPClientJSONInterface
+	Config     configs.ProviderConf
 }
 
 type providerFactory = internal.AbstractFactory[ProviderArgs, *Router]

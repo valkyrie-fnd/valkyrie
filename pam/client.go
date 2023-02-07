@@ -73,6 +73,8 @@ type PamClient interface {
 	AddTransaction(AddTransactionRequestMapper) (*TransactionResult, error)
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
+	// GetSettlementType returns the type of settlement the PAM expects
+	GetSettlementType() string
 }
 
 // AmountRounder provides rounding requirements and is used for verifying

@@ -16,13 +16,13 @@ const (
 func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
-			service := NewService(args.Client)
+			service := NewService(args.PamClient)
 			controller := NewProviderController(service)
 			return NewProviderRouter(args.Config, controller)
 		})
 	provider.OperatorFactory().
 		Register(ProviderName, func(args provider.OperatorArgs) (*provider.Router, error) {
-			return NewOperatorRouter(args.Config, args.Client)
+			return NewOperatorRouter(args.Config, args.HTTPClient)
 		})
 }
 

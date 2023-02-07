@@ -112,6 +112,10 @@ func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRe
 	return &response
 }
 
+func (vp *VPluginRPC) GetSettlementType() string {
+	return "gamewise" // TODO: Hard coded for now, plugin server init could return settlement type from configuration.
+}
+
 type VPlugin struct {
 	Impl PAM
 }

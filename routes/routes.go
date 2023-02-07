@@ -20,7 +20,7 @@ import (
 )
 
 // ProviderRoutes Init the provider routes
-func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient) error {
+func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient, httpClient rest.HTTPClientJSONInterface) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
@@ -31,8 +31,9 @@ func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamCli
 	for _, c := range config.Providers {
 		providerRouter, err := provider.ProviderFactory().
 			Build(c.Name, provider.ProviderArgs{
-				Config: c,
-				Client: pam,
+				Config:     c,
+				PamClient:  pam,
+				HTTPClient: httpClient,
 			})
 		if err != nil {
 			return fmt.Errorf("implementation of provider '%s' does not exist (%w)", c.Name, err)
@@ -47,7 +48,7 @@ func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamCli
 }
 
 // OperatorRoutes Init the operator side routes
-func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HTTPClientJSONInterface) error {
+func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, httpClient rest.HTTPClientJSONInterface) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
@@ -61,8 +62,8 @@ func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, client rest.HT
 	for _, c := range config.Providers {
 		operatorRouter, err := provider.OperatorFactory().
 			Build(c.Name, provider.OperatorArgs{
-				Config: c,
-				Client: client,
+				Config:     c,
+				HTTPClient: httpClient,
 			})
 		if err != nil {
 			return fmt.Errorf("implementation of operator routes for provider '%s' does not exist (%w)", c.Name, err)

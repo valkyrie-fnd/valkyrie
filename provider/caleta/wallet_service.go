@@ -2,19 +2,21 @@ package caleta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rs/zerolog/log"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-type ProviderService struct {
-	pam.PamClient
+type WalletService struct {
+	PamClient pam.PamClient
+	APIClient API
 }
 
-// NewService Create new caleta provider service
-func NewService(pamClient pam.PamClient) *ProviderService {
-	return &ProviderService{PamClient: pamClient}
+// NewService Create new caleta wallet service
+func NewWalletService(pamClient pam.PamClient, apiClient API) *WalletService {
+	return &WalletService{PamClient: pamClient, APIClient: apiClient}
 }
 
 // @Id           CaletaBalance
@@ -28,13 +30,13 @@ func NewService(pamClient pam.PamClient) *ProviderService {
 // @Success      200     {object}  Walletbalance200JSONResponse
 // @Failure      400     {object}  Walletbalance200JSONResponse
 // @Router       /providers/caleta/wallet/balance [post]
-func (s *ProviderService) Walletbalance(ctx context.Context, request WalletbalanceRequestObject) (WalletbalanceResponseObject, error) {
-	session, err := s.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
+func (s *WalletService) Walletbalance(ctx context.Context, request WalletbalanceRequestObject) (WalletbalanceResponseObject, error) {
+	session, err := s.PamClient.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletbalance200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
-	balance, err := s.GetBalance(balanceRequestMapper(ctx, request.Body))
+	balance, err := s.PamClient.GetBalance(balanceRequestMapper(ctx, request.Body))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletbalance200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
@@ -60,8 +62,8 @@ func (s *ProviderService) Walletbalance(ctx context.Context, request Walletbalan
 // @Success      200     {object}  Walletcheck200JSONResponse
 // @Failure      400     {object}  Walletcheck200JSONResponse
 // @Router       /providers/caleta/wallet/check [post]
-func (s *ProviderService) Walletcheck(ctx context.Context, request WalletcheckRequestObject) (WalletcheckResponseObject, error) {
-	session, err := s.RefreshSession(refreshSessionMapper(ctx, request.Body.Token, ""))
+func (s *WalletService) Walletcheck(ctx context.Context, request WalletcheckRequestObject) (WalletcheckResponseObject, error) {
+	session, err := s.PamClient.RefreshSession(refreshSessionMapper(ctx, request.Body.Token, ""))
 	if err != nil {
 		// Walletcheck has no error status in response. Return error instead
 		return nil, err
@@ -82,22 +84,24 @@ func (s *ProviderService) Walletcheck(ctx context.Context, request WalletcheckRe
 // @Success      200     {object}  Walletbet200JSONResponse
 // @Failure      400     {object}  Walletbet200JSONResponse
 // @Router       /providers/caleta/wallet/bet [post]
-func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetRequestObject) (WalletbetResponseObject, error) {
-	session, err := s.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
+func (s *WalletService) Walletbet(ctx context.Context, request WalletbetRequestObject) (WalletbetResponseObject, error) {
+	session, err := s.PamClient.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletbet200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
+
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree {
-		tranRes, err = s.AddTransaction(promoBetTransactionMapper(ctx, &request))
+		tranRes, err = s.PamClient.AddTransaction(promoBetTransactionMapper(ctx, &request))
 	} else {
-		tranRes, err = s.AddTransaction(betTransactionMapper(ctx, &request))
+		tranRes, err = s.PamClient.AddTransaction(betTransactionMapper(ctx, &request))
 	}
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletbet200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
+
 	amt := fromPamAmount(tranRes.Balance.CashAmount)
 	return Walletbet200JSONResponse{
 		Status:      RSOK,
@@ -119,17 +123,21 @@ func (s *ProviderService) Walletbet(ctx context.Context, request WalletbetReques
 // @Success      200     {object}  Transactionwin200JSONResponse
 // @Failure      400     {object}  Transactionwin200JSONResponse
 // @Router       /providers/caleta/wallet/win [post]
-func (s *ProviderService) Transactionwin(ctx context.Context, request TransactionwinRequestObject) (TransactionwinResponseObject, error) {
-	session, err := s.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
+func (s *WalletService) Transactionwin(ctx context.Context, request TransactionwinRequestObject) (TransactionwinResponseObject, error) {
+	session, err := s.PamClient.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Transactionwin200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
+
+	// If gamewise settlement, get the round transactions
+	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetSettlementType(), request.Body.Round)
+
 	var tranRes *pam.TransactionResult
 	var requestMapper pam.AddTransactionRequestMapper
 	if request.Body.IsFree {
 		// Check that Bet-transaction Exist. For Promo-transactions this check needs to be done here
-		transactions, tErr := s.GetTransactions(getTransactionsMapper(ctx, request.Body))
+		transactions, tErr := s.PamClient.GetTransactions(getTransactionsMapper(ctx, request.Body))
 		if tErr != nil {
 			return Transactionwin200JSONResponse{Status: RSERRORTRANSACTIONDOESNOTEXIST, RequestUuid: request.Body.RequestUuid}, nil
 		}
@@ -141,11 +149,11 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 			}
 		}
 
-		requestMapper = promoWinTransactionMapper(ctx, &request)
+		requestMapper = promoWinTransactionMapper(ctx, &request, roundTransactions)
 	} else {
-		requestMapper = winTransactionMapper(ctx, &request)
+		requestMapper = winTransactionMapper(ctx, &request, roundTransactions)
 	}
-	tranRes, err = s.AddTransaction(requestMapper)
+	tranRes, err = s.PamClient.AddTransaction(requestMapper)
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Transactionwin200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
@@ -171,17 +179,21 @@ func (s *ProviderService) Transactionwin(ctx context.Context, request Transactio
 // @Success      200     {object}  Walletrollback200JSONResponse
 // @Failure      400     {object}  Walletrollback200JSONResponse
 // @Router       /providers/caleta/wallet/rollback [post]
-func (s *ProviderService) Walletrollback(ctx context.Context, request WalletrollbackRequestObject) (WalletrollbackResponseObject, error) {
-	session, err := s.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
+func (s *WalletService) Walletrollback(ctx context.Context, request WalletrollbackRequestObject) (WalletrollbackResponseObject, error) {
+	session, err := s.PamClient.GetSession(getSessionMapper(ctx, request.Body.Token, request.Body.RequestUuid))
 	if err != nil {
 		errStatus := getCErrorStatus(err)
 		return Walletrollback200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
+
+	// If gamewise settlement, get the round transactions
+	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetSettlementType(), request.Body.Round)
+
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree != nil && *request.Body.IsFree {
-		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.PROMOCANCEL))
+		tranRes, err = s.PamClient.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.PROMOCANCEL, roundTransactions))
 	} else {
-		tranRes, err = s.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.CANCEL))
+		tranRes, err = s.PamClient.AddTransaction(cancelTransactionMapper(ctx, &request, session, pam.CANCEL, roundTransactions))
 	}
 	if err != nil {
 		errStatus := getCErrorStatus(err)
@@ -207,4 +219,18 @@ func (s *ProviderService) Walletrollback(ctx context.Context, request Walletroll
 		RequestUuid: request.Body.RequestUuid,
 		User:        request.Body.User,
 	}, nil
+}
+
+// getRoundTransactions fetches all transactions linked to a given round (only if settlement type "gamewise" is enabled)
+func (s *WalletService) getRoundTransactions(ctx context.Context, settlementType, round string) *[]roundTransaction {
+	var roundTransactions *[]roundTransaction
+	if settlementType == "gamewise" {
+		if rounds, err := s.APIClient.getRoundTransactions(ctx, round); err != nil {
+			log.Warn().Msg(fmt.Sprintf("Failed to get round transactions for ID %s, reason: %s", round, err.Error()))
+		} else {
+			roundTransactions = rounds.RoundTransactions
+		}
+	}
+
+	return roundTransactions
 }
