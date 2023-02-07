@@ -11,6 +11,8 @@ require (
 	github.com/four-fingers/oapi-codegen v0.0.0-20221219135408-9237c9743c67
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/goccy/go-json v0.10.0
+
+	// TODO: uppgrade otel once https://github.com/gofiber/contrib/pull/451 is done
 	github.com/gofiber/contrib/otelfiber v0.0.0-20230119212140-c5d658dbb5ca
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/gofiber/swagger v0.1.8
@@ -31,7 +33,7 @@ require (
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.11.2
 	go.opentelemetry.io/otel/sdk v1.11.2
 	go.opentelemetry.io/otel/trace v1.11.2
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -90,7 +92,6 @@ require (
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // avoids depending on all of oapi-codegen's and swag's dependencies
