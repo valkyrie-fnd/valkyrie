@@ -12,7 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/goccy/go-json v0.10.0
 	github.com/gofiber/contrib/otelfiber v0.0.0-20230119212140-c5d658dbb5ca
-	github.com/gofiber/fiber/v2 v2.41.1-0.20230115125653-8a605c67d131
+	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/gofiber/swagger v0.1.8
 	github.com/google/go-querystring v1.1.0
 	github.com/google/uuid v1.3.0
@@ -33,6 +33,13 @@ require (
 	go.opentelemetry.io/otel/trace v1.11.2
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/philhofer/fwd v1.1.1 // indirect
+	github.com/savsgio/dictpool v0.0.0-20221023140959-7bf2e61cea94 // indirect
+	github.com/savsgio/gotils v0.0.0-20220530130905-52f3993e8d6d // indirect
+	github.com/tinylib/msgp v1.1.6 // indirect
 )
 
 require (
