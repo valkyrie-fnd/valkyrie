@@ -7,7 +7,7 @@ import (
 )
 
 // Amount alias for use in evolution integration providing
-// primarilly custom wire format
+// primarily custom wire format
 type Amount pam.Amt
 
 var ZeroAmount Amount = Amount(pam.Zero)

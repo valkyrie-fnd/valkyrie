@@ -23,6 +23,7 @@ type AsyncLogConfig struct {
 	PollInterval time.Duration `yaml:"poll_interval" default:"10ms"`
 }
 
+// OutputLogConfig Configuration for logging output
 type OutputLogConfig struct {
 	// Type configures where to output logs.
 	// Supported types: "stdout", "stderr", "file"

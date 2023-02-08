@@ -6,7 +6,7 @@ import (
 )
 
 // CaletaDate is a type alias for time.Time and only used to trick OAPI model
-// generation from referencing time.Time directly. Thus not allowing custom
+// generation from referencing time.Time directly. Thus, not allowing custom
 // unmarshaller.
 type caletaDate time.Time
 

@@ -9,12 +9,16 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func NewZerologAdapter() *zerologAdapter {
-	return &zerologAdapter{zlog: &log.Logger}
-}
-
+// zerologAdapter acts as an adapter for hclog.Logger interface and zerolog.
+//
+// This is used to bridge logs sent over vplugin (using hclog) to zerolog that is
+// used within Valkyrie.
 type zerologAdapter struct {
 	zlog *zerolog.Logger
+}
+
+func NewZerologAdapter() *zerologAdapter {
+	return &zerologAdapter{zlog: &log.Logger}
 }
 
 func (z zerologAdapter) Log(level hclog.Level, msg string, args ...interface{}) {

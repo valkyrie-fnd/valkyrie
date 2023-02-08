@@ -182,7 +182,7 @@ func (s *CaletaIntegrationTestSuite) Test_Bet_Negative() {
 	bet, err := s.client.Bet(gameCode, currency, uuid(), uuid(), -multiplier)
 	s.Assert().NoError(err)
 	if s.Assert().NotNil(bet) {
-		s.Assert().NotEqual(bet.Status, caleta.RSOK) // TODO: not sure about errorcode
+		s.Assert().NotEqual(bet.Status, caleta.RSOK)
 
 		s.Assert().Nil(bet.User)
 		s.Assert().Nil(bet.Balance)
@@ -359,7 +359,7 @@ func (s *CaletaIntegrationTestSuite) Test_Win_Negative() {
 	win, err := s.client.Win(gameCode, currency, round, transactionID, uuid(), -multiplier)
 	s.Assert().NoError(err)
 	if s.Assert().NotNil(win) {
-		s.Assert().NotEqual(win.Status, caleta.RSOK) // TODO: not sure about errorcode
+		s.Assert().NotEqual(win.Status, caleta.RSOK)
 
 		s.Assert().Nil(win.User)
 		s.Assert().Nil(win.Balance)
