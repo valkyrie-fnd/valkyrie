@@ -7,7 +7,8 @@ In [this folder](./example-game-provider/) you will find `example-game-provider`
 - `controller.go` - request parsing and validation from wallet calls
 - `wallet_service.go` - mainly a mapping service converting the provider specific api to work with the Valkyrie PAM api
 - `provider_service.go` - in the other way the Valkyrie operator api needs to be converted to work with the provider specifics, such as gamelaunch
-- `config.go` - define auth and provider specific from the configuration.
+- `config.go` - define "auth" and "provider_specific" from the configuration.
+- `models.go` - define any models used by the provider wallet api, such as request models.
 
 Another step that needs to be done is defining what configuration is needed for this specific provider.
 - `name` - Should be the same as `ProviderName` in router.go
@@ -15,6 +16,9 @@ Another step that needs to be done is defining what configuration is needed for 
 - `URL` - base path to game provider server for requests such as gamelaunch and render
 - `auth` - "key - value" map for whatever auth fields are needed for the specific provider
 - `provider_specific` - are there any other configuration that is needed for a specific provider? put them here.
+
+See [caleta configuration](../provider/caleta/docs/index.md) for reference, as well as the [website](https://valbyrie.bet/docs/get-started/configuration) documentation.
+
 ## Looking at the code
 [router.go](./example-game-provider/router.go) can be a good starting point. In there we set up the endpoints for the providers wallet api as well as the endpoints the operator will use to communicate with the game provider server.
 
@@ -35,3 +39,20 @@ import (
 
 [provider_service.go](./example-game-provider/provider_service.go) is where you convert Valkyrie operator api to your own domain api.
 
+## Documentation
+
+Adding a subfolder to the provider called "docs", will enable the valkyrie site to pick up the provider module and add the information to it. Any `.md` or `.mdx` files will be added to the the documentation of the provider on [valkyrie.bet](https://valkyrie.bet).
+
+Any images or other assets should be placed in the assets sub-folder.
+
+Add a `config.yml` with info that will be used in the [providers](https://valbyrie.bet/providers) section of the website.
+
+```yaml
+id: 99 # just increase from other existing ids
+name: "Example Games" # Name of provider shown on the website
+cardImage: "example-logo.png" # Image shown in the provider card. The images should be placed in the assets folder
+description: "Amazing games from example provider" # Short description that will be shown in the provider card
+path: "exampleprovider" # url path to provider on the valkyrie website
+```
+
+See Caleta, Evolution and Red tiger for reference.

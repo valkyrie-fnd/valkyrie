@@ -15,12 +15,6 @@ func NewController(walletService *WalletService) *Controller {
 	return &Controller{walletService: walletService}
 }
 
-// balanceRequest follow game provider request structure.
-type balanceRequest struct {
-	Currency string
-	PlayerID string
-}
-
 type requestType interface {
 	balanceRequest // | BetRequest etc. Add all request types the provider supports
 }
