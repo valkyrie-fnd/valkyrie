@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// OperatorAuthorization is used as a fiber middleware to validate a configured api key.
 func OperatorAuthorization(apiKey string) fiber.Handler {
 	if apiKey == "" {
 		log.Warn().Msg("No api key configured for operator, authorization check disabled")

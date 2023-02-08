@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Config `operator_base_path`. General base path for all requests from operator side
 - Config `provider_base_path`. General base path for all request from provider side
 - Game round render endpoint for provider Caleta
+- Config `operator_api_key`. Optional configuration that enables api key authorization check on operator endpoints.
 
 ### Changed
 

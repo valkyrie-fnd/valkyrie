@@ -2,6 +2,7 @@ package ops
 
 import (
 	"context"
+
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/valyala/fasthttp"
 	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
@@ -22,6 +23,7 @@ func GetTracingHeaders(ctx context.Context) map[string]string {
 	return carrier
 }
 
+// TraceHTTPAttributes sets relevant tracing attributes based on provided fasthttp.Request and fasthttp.Response.
 func TraceHTTPAttributes(span trace.Span, req *fasthttp.Request, resp *fasthttp.Response, err error) {
 	if err != nil {
 		span.RecordError(err)

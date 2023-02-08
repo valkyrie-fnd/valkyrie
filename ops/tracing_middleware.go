@@ -38,6 +38,7 @@ func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
 	}
 }
 
+// ConfigureTracing configures the tracing framework based on TracingConfig.
 func ConfigureTracing(cfg *TracingConfig) error {
 	// No config - no setup
 	if *cfg == noTracingConfig {
