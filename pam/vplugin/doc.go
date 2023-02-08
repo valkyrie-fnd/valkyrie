@@ -1,3 +1,3 @@
-// Package vplugin contains the details for communicating with a plugin-based PAM implementation.
-// The plugin-based PAM implements the interface in vplugin and communicates over rpc.
+// Package vplugin contains the generic and externalized plugin interface for PAM. This
+// allows closed source implementations to be used with valkyrie as plugins.
 package vplugin
