@@ -56,6 +56,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.8
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -88,8 +89,6 @@ require (
 	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
-
-require github.com/kr/text v0.2.0 // indirect
 
 // avoids depending on all of oapi-codegen's and swag's dependencies
 replace (
