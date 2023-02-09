@@ -4,6 +4,14 @@ import (
 	"context"
 )
 
+// Enum for valid settlement types
+type SettlementType string
+
+const (
+	MIXED    SettlementType = "MIXED"
+	GAMEWISE SettlementType = "GAMEWISE"
+)
+
 // RefreshSessionRequest bundles everything needed to make a request
 type RefreshSessionRequest struct {
 	Params RefreshSessionParams
@@ -73,8 +81,8 @@ type PamClient interface {
 	AddTransaction(AddTransactionRequestMapper) (*TransactionResult, error)
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
-	// GetSettlementType returns the type of settlement the PAM expects
-	GetSettlementType() string
+	// GetSettlementType returns the type of settlement the PAM supports
+	GetSettlementType() SettlementType
 }
 
 // AmountRounder provides rounding requirements and is used for verifying

@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	DriverName = "generic"
+	DriverName     = "generic"
+	settlementType = pam.MIXED
 )
 
 func init() {
@@ -23,17 +24,15 @@ func init() {
 }
 
 type genericPamConfig struct {
-	Name           string `mapstructure:"name"`
-	URL            string `mapstructure:"url"`
-	APIKey         string `mapstructure:"api_key"`
-	SettlementType string `mapstructure:"settlement_type"`
+	Name   string `mapstructure:"name"`
+	URL    string `mapstructure:"url"`
+	APIKey string `mapstructure:"api_key"`
 }
 
 type GenericPam struct {
-	rest           rest.HTTPClientJSONInterface
-	baseURL        string
-	apiKey         string
-	settlementType string
+	rest    rest.HTTPClientJSONInterface
+	baseURL string
+	apiKey  string
 }
 
 func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericPam, error) {
@@ -45,10 +44,9 @@ func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericP
 	log.Info().Msgf("Creating %s pam client", config.Name)
 
 	return &GenericPam{
-		baseURL:        config.URL,
-		apiKey:         config.APIKey,
-		rest:           client,
-		settlementType: config.SettlementType,
+		baseURL: config.URL,
+		apiKey:  config.APIKey,
+		rest:    client,
 	}, nil
 }
 
@@ -214,8 +212,8 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	return resp.Session, nil
 }
 
-func (c *GenericPam) GetSettlementType() string {
-	return c.settlementType
+func (c *GenericPam) GetSettlementType() pam.SettlementType {
+	return settlementType
 }
 
 // handleErrors does general error handling for a response and returns

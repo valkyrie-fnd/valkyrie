@@ -118,7 +118,6 @@ pam:
   name: generic
   api_key: ${KEY1}
   url: 'http://pam.url'
-  settlement_type: gamewise
 providers:
   - name: providerA
     url: 'https://some.url'
@@ -127,10 +126,9 @@ providers:
     `,
 		want: &ValkyrieConfig{
 			Pam: PamConf{
-				"name":            "generic",
-				"api_key":         "key-one",
-				"url":             "http://pam.url",
-				"settlement_type": "gamewise",
+				"name":    "generic",
+				"api_key": "key-one",
+				"url":     "http://pam.url",
 			},
 			Tracing: TraceConfig{SampleRatio: 0.01},
 			Providers: []ProviderConf{
@@ -338,10 +336,9 @@ func TestValkConfigFile(t *testing.T) {
 			SampleRatio:     0.01,
 		},
 		Pam: PamConf{
-			"name":            "generic",
-			"api_key":         "pam-api-key",
-			"url":             "https://pam-url",
-			"settlement_type": "gamewise",
+			"name":    "generic",
+			"api_key": "pam-api-key",
+			"url":     "https://pam-url",
 		},
 		Providers: []ProviderConf{
 			{

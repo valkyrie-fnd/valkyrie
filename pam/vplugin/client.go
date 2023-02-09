@@ -35,8 +35,8 @@ type PAM interface {
 	AddTransaction(pam.AddTransactionRequest) *pam.AddTransactionResponse
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(pam.GetGameRoundRequest) *pam.GameRoundResponse
-	// GetSettlementType returns the configured type of settlement
-	GetSettlementType() string
+	// GetSettlementType returns the type of settlement the PAM supports
+	GetSettlementType() pam.SettlementType
 
 	PluginControl
 }
@@ -50,7 +50,7 @@ func init() {
 
 type PluginPAM struct {
 	plugin         PAM
-	settlementType string
+	settlementType pam.SettlementType
 }
 
 func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
@@ -69,9 +69,10 @@ func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
 		return nil, err
 	}
 
-	settlementType, err := pam.GetSettlementType(cfg)
-	if err != nil {
-		return nil, err
+	// Call the server and get the settlement type, this needs to be done only once.
+	settlementType := plugin.GetSettlementType()
+	if settlementType == "" {
+		return nil, fmt.Errorf("Could not get PAM settlement type")
 	}
 
 	return &PluginPAM{plugin: plugin, settlementType: settlementType}, nil
@@ -184,9 +185,8 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	return resp.Gameround, nil
 }
 
-func (vp *PluginPAM) GetSettlementType() string {
-	// This is a static variable derived from configuration, so no need to call the plugin
-	return vp.settlementType
+func (vp *PluginPAM) GetSettlementType() pam.SettlementType {
+	return vp.settlementType // This has been initialized in the Init() call
 }
 
 // getPamConf adds logging and tracing configuration to PamConf if missing.
