@@ -40,7 +40,7 @@ func RegisterGobs() {
 	gob.RegisterName("configs.TraceConfig", configs.TraceConfig{})
 
 	gob.Register(map[string]interface{}{})
-	gob.Register(new(interface{}))
+	gob.Register(new(interface{})) // This is passed when a plugin function has no input parameter(s)
 }
 
 type VPluginRPC struct {
