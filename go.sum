@@ -170,8 +170,8 @@ github.com/swaggo/files v1.0.0/go.mod h1:N59U6URJLyU1PQgFqPM7wXLMhJx7QAolnvfQkqO
 github.com/tinylib/msgp v1.1.6/go.mod h1:75BAfg2hauQhs3qedfdDZmWAPcFMAvJE5b9rGOMufyw=
 github.com/tinylib/msgp v1.1.8 h1:FCXC1xanKO4I8plpHGH2P7koL/RzZs12l/+r7vakfm0=
 github.com/tinylib/msgp v1.1.8/go.mod h1:qkpG+2ldGg4xRFmx+jfTvZPxfGFhi64BcnL9vkCm/Tw=
-github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230207114947-2b0da4b82e50 h1:N2VbxDplzZTMIVLbuR+38JZh5SeFmRFoK/Z3PMc+I2g=
-github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230207114947-2b0da4b82e50/go.mod h1:46Z0Eg/K0ixqGCCinzsW6nr0wr/QXmjsVJoYcPKKmUU=
+github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230209130924-d94d53318e43 h1:f/8MmVpblabfNlqsRalwq+5+oy9sL8siEnX4tTRsjqM=
+github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230209130924-d94d53318e43/go.mod h1:46Z0Eg/K0ixqGCCinzsW6nr0wr/QXmjsVJoYcPKKmUU=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.44.0 h1:R+gLUhldIsfg1HokMuQjdQ5bh9nuXHPIfvkYUu9eR5Q=

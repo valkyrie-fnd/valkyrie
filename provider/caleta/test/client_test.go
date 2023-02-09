@@ -64,14 +64,14 @@ func (api *RGIClient) SetupSession(currency string) error {
 	}
 
 	api.session = resp.Result.Token
-	api.userID = resp.Result.UserId
+	api.userID = resp.Result.UserID
 
 	return nil
 }
 
 func (api *RGIClient) BlockAccount(currency string) error {
 	req := backdoors.SessionRequest{
-		UserId:    testutils.Ptr(api.userID),
+		UserID:    testutils.Ptr(api.userID),
 		Currency:  &currency,
 		Provider:  caleta.ProviderName,
 		IsBlocked: testutils.Ptr(true),

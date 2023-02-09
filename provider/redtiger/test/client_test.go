@@ -39,7 +39,7 @@ func (api *RGIClient) SetupSession(currency string) error {
 
 	api.baseRequest = redtiger.BaseRequest{
 		Token:    res.Token,
-		UserID:   res.UserId,
+		UserID:   res.UserID,
 		Casino:   "Kongo",
 		Currency: currency,
 		IP:       "1.2.3.4",
