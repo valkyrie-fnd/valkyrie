@@ -40,6 +40,7 @@ func RegisterGobs() {
 	gob.RegisterName("configs.TraceConfig", configs.TraceConfig{})
 
 	gob.Register(map[string]interface{}{})
+	gob.Register(new(interface{})) // This is passed when a plugin function has no input parameter(s)
 }
 
 type VPluginRPC struct {
@@ -110,8 +111,13 @@ func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRe
 	return &response
 }
 
-func (vp *VPluginRPC) GetSettlementType() string {
-	return "gamewise" // TODO: Hard coded for now, plugin server init could return settlement type from configuration.
+func (vp *VPluginRPC) GetSettlementType() pam.SettlementType {
+	var settlementType pam.SettlementType
+	if err := callWithLogging(vp.client, "Plugin.GetSettlementType", new(interface{}), &settlementType); err != nil {
+		return ""
+	}
+
+	return settlementType
 }
 
 type VPlugin struct {

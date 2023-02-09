@@ -221,10 +221,10 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 	}, nil
 }
 
-// getRoundTransactions fetches all transactions linked to a given round (only if settlement type "gamewise" is enabled)
-func (s *WalletService) getRoundTransactions(ctx context.Context, settlementType, round string) *[]roundTransaction {
+// getRoundTransactions fetches all transactions linked to a given round (only if PAM settlement type is "GAMEWISE")
+func (s *WalletService) getRoundTransactions(ctx context.Context, settlementType pam.SettlementType, round string) *[]roundTransaction {
 	var roundTransactions *[]roundTransaction
-	if settlementType == "gamewise" {
+	if settlementType == pam.GAMEWISE {
 		if rounds, err := s.APIClient.getRoundTransactions(ctx, round); err != nil {
 			log.Warn().Msg(fmt.Sprintf("Failed to get round transactions for ID %s, reason: %s", round, err.Error()))
 		} else {

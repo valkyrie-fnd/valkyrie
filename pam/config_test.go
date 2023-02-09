@@ -45,39 +45,3 @@ func TestGetNameInvalid(t *testing.T) {
 	_, err := GetName(input)
 	assert.Error(t, err)
 }
-
-func TestGetSettlementType(t *testing.T) {
-	input := map[string]any{
-		"settlement_type": "mixed",
-	}
-
-	settlementType, err := GetSettlementType(input)
-	assert.NoError(t, err)
-	assert.Equal(t, "mixed", settlementType)
-}
-
-func TestGetSettlementTypeMissingButDefaultShouldKickIn(t *testing.T) {
-	input := map[string]any{}
-
-	settlementType, err := GetSettlementType(input)
-	assert.NoError(t, err)
-	assert.Equal(t, "mixed", settlementType)
-}
-
-func TestGetSettlementTypeInvalidType(t *testing.T) {
-	input := map[string]any{
-		"settlement_type": 123,
-	}
-
-	_, err := GetSettlementType(input)
-	assert.Error(t, err)
-}
-
-func TestGetSettlementTypeInvalidValue(t *testing.T) {
-	input := map[string]any{
-		"settlement_type": "foo",
-	}
-
-	_, err := GetSettlementType(input)
-	assert.Error(t, err)
-}
