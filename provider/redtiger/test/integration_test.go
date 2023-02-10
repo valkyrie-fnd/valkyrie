@@ -34,13 +34,13 @@ type RedTigerIntegrationTestSuite struct {
 // Runs all tests in suite below one by one
 func TestSuite(t *testing.T) {
 	providerConfigFn := func(ds datastore.ExtendedDatastore) configs.ProviderConf {
-		apiKey, _ := ds.GetProviderApiKey(redtiger.ProviderName)
+		apiKey, _ := ds.GetProviderAPIKey(redtiger.ProviderName)
 		sessionKey := ds.GetProviderTokens()[redtiger.ProviderName]
 		return configs.ProviderConf{
 			Name:     redtiger.ProviderName,
 			BasePath: "/redtiger",
 			Auth: map[string]any{
-				"api_key":     testutils.EnvOrDefault("RT_API_KEY", apiKey.ApiKey),
+				"api_key":     testutils.EnvOrDefault("RT_API_KEY", apiKey.APIKey),
 				"recon_token": testutils.EnvOrDefault("RT_RECON_TOKEN", sessionKey),
 			},
 		}

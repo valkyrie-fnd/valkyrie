@@ -40,7 +40,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	dataStore := memorydatastore.NewMapDataStore(config)
 
 	if v, found := os.LookupEnv("PAM_TOKEN"); found {
-		dataStore.AddPamApiToken(v)
+		dataStore.AddPamAPIToken(v)
 	}
 
 	var pamURL string
@@ -49,7 +49,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	} else {
 		pamPort, _ := testutils.GetFreePort()
 		s.pamServer = genericpam.RunServer(dataStore, genericpam.Config{
-			PamApiKey:      dataStore.GetPamApiToken(),
+			PamAPIKey:      dataStore.GetPamAPIToken(),
 			ProviderTokens: dataStore.GetProviderTokens(),
 			Address:        fmt.Sprintf(baseAddr, pamPort)})
 		pamURL = fmt.Sprintf(baseURL, pamPort)
@@ -80,7 +80,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			Pam: configs.PamConf{
 				"name":    "generic",
 				"url":     pamURL,
-				"api_key": dataStore.GetPamApiToken(),
+				"api_key": dataStore.GetPamAPIToken(),
 			},
 			HTTPServer: configs.HTTPServerConfig{
 				ProviderAddress: fmt.Sprintf(baseAddr, providerPort),

@@ -34,12 +34,12 @@ type EvolutionIntegrationTestSuite struct {
 // Runs all tests in suite below one by one
 func TestSuite(t *testing.T) {
 	providerConfigFn := func(ds datastore.ExtendedDatastore) configs.ProviderConf {
-		apiKey, _ := ds.GetProviderApiKey(evolution.ProviderName)
+		apiKey, _ := ds.GetProviderAPIKey(evolution.ProviderName)
 		return configs.ProviderConf{
 			Name:     evolution.ProviderName,
 			BasePath: "/evolution",
 			Auth: map[string]any{
-				"api_key": testutils.EnvOrDefault("EVO_API_KEY", apiKey.ApiKey),
+				"api_key": testutils.EnvOrDefault("EVO_API_KEY", apiKey.APIKey),
 			},
 		}
 	}
