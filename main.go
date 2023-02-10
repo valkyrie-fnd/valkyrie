@@ -50,13 +50,10 @@ func main() {
 }
 
 func listenForSignal() context.Context {
-	ctx, cancel := context.WithCancel(context.Background())
-
-	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		<-shutdown
+		<-ctx.Done()
 		log.Info().Msg("Shutting down")
 		cancel()
 	}()
