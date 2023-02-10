@@ -14,7 +14,7 @@ logging:
     # max_backups: 3                  # the maximum number of old log files to retain
     # compress: false                 # determines if the rotated log files should be compressed using gzip
 tracing:
-  type: stdout # jeager, googleCloudTrace
+  type: stdout # jaeger, googleCloudTrace
   service_name: traceServiceName #
   url: "https://tracing-server-url"
   google_project_id: xyz # if you're using googleCloudTrace

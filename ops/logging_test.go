@@ -54,10 +54,16 @@ func TestLogHTTPRequest(t *testing.T) {
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
 	request.Header.SetUserAgent("bar")
+	request.Header.SetContentType("text/plain")
+	request.Header.Set("X-Correlation-ID", "foo")
 
 	logger.Debug().Func(LogHTTPRequest(request)).Send()
 
 	assert.Contains(t, captor.String(), "\"userAgent\":\"bar\"")
+	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
+	assert.Contains(t, captor.String(), "\"Content-Type\":\"text/plain\"")
+
+	assert.NotContains(t, captor.String(), "\"X-Forwarded-For\"", "X-Forwarded-For header is never set")
 }
 
 func TestHTTPRequestContentLengthNegative(t *testing.T) {
@@ -88,6 +94,7 @@ func TestLogHTTPResponse(t *testing.T) {
 	defer fasthttp.ReleaseResponse(response)
 	response.SetBodyString("foo")
 	response.Header.SetContentType("text/plain")
+	response.Header.Set("X-Correlation-ID", "foo")
 
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
@@ -95,6 +102,10 @@ func TestLogHTTPResponse(t *testing.T) {
 	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
 
 	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
+	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
+	assert.Contains(t, captor.String(), "\"Content-Type\":\"text/plain\"")
+
+	assert.NotContains(t, captor.String(), "\"X-Forwarded-For\"", "X-Forwarded-For header is never set")
 }
 
 func TestLogHTTPResponseSkipEmptyContentType(t *testing.T) {
