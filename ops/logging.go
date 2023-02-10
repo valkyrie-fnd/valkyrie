@@ -59,11 +59,10 @@ func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) 
 func logRequestHeaders(req *fasthttp.Request, requestDict *zerolog.Event) {
 	// Request headers
 	requestHeaders := zerolog.Dict()
-	if contentType := req.Header.ContentType(); len(contentType) > 0 {
-		requestHeaders.Bytes("Content-Type", contentType)
-	}
-	if contentEncoding := req.Header.ContentEncoding(); len(contentEncoding) > 0 {
-		requestHeaders.Bytes("Content-Encoding", contentEncoding)
+	for _, name := range loggedHeaders {
+		if value := req.Header.Peek(name); len(value) > 0 {
+			requestHeaders.Bytes(name, value)
+		}
 	}
 	requestDict.Dict("requestHeaders", requestHeaders)
 }
@@ -102,11 +101,10 @@ func logResponseBody(resp *fasthttp.Response, requestDict *zerolog.Event) {
 
 func logResponseHeaders(resp *fasthttp.Response, requestDict *zerolog.Event) {
 	responseHeaders := zerolog.Dict()
-	if contentType := resp.Header.ContentType(); len(contentType) > 0 {
-		responseHeaders.Bytes("Content-Type", contentType)
-	}
-	if contentEncoding := resp.Header.ContentEncoding(); len(contentEncoding) > 0 {
-		responseHeaders.Bytes("Content-Encoding", contentEncoding)
+	for _, name := range loggedHeaders {
+		if value := resp.Header.Peek(name); len(value) > 0 {
+			responseHeaders.Bytes(name, value)
+		}
 	}
 	requestDict.Dict("responseHeaders", responseHeaders)
 }
@@ -119,6 +117,14 @@ var loggedContentTypes = map[string]struct{}{
 	fiber.MIMEMultipartForm:              {},
 	"application/vnd.kafka.json.v2+json": {},
 	"application/vnd.kafka.v2+json":      {},
+}
+
+var loggedHeaders = []string{
+	"Content-Type",
+	"Content-Encoding",
+	"X-Forwarded-For",
+	"X-Correlation-ID",
+	"traceparent",
 }
 
 // isContentTypeLogged returns true for the content types that should be logged.
