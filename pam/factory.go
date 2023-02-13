@@ -6,20 +6,19 @@ import (
 	"sync"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/internal"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/httpclient"
 )
 
 // ClientArgs composes all arguments required to build a pam client
 type ClientArgs struct {
 	Context     context.Context
-	Client      rest.HTTPClientJSONInterface
+	Client      httpclient.HTTPClientJSONInterface
 	Config      configs.PamConf
 	TraceConfig configs.TraceConfig
 	LogConfig   configs.LogConfig
 }
 
-type clientFactory = internal.AbstractFactory[ClientArgs, PamClient]
+type clientFactory = configs.AbstractFactory[ClientArgs, PamClient]
 
 var (
 	once    sync.Once
@@ -30,7 +29,7 @@ var (
 func ClientFactory() *clientFactory {
 	// Make the factory a singleton
 	once.Do(func() {
-		factory = internal.NewAbstractFactory[ClientArgs, PamClient]()
+		factory = configs.NewAbstractFactory[ClientArgs, PamClient]()
 	})
 
 	return factory

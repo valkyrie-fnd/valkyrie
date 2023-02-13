@@ -6,10 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
 
-	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/pam"
+	"github.com/valkyrie-fnd/valkyrie/pam/testutils"
 )
 
 func TestVPlugin_GobCodecs(t *testing.T) {
@@ -70,7 +69,7 @@ func TestVPlugin_GobCodecs(t *testing.T) {
 				PlayerID: "id",
 				Params: pam.GetTransactionsParams{
 					Provider:       "prov",
-					ProviderBetRef: utils.Ptr("ref"),
+					ProviderBetRef: testutils.Ptr("ref"),
 				},
 			},
 			target: pam.GetTransactionsRequest{},
@@ -79,7 +78,7 @@ func TestVPlugin_GobCodecs(t *testing.T) {
 			desc: "gob AddTransactionResponse",
 			source: pam.AddTransactionResponse{
 				TransactionResult: &pam.TransactionResult{
-					TransactionId: utils.Ptr("ett"),
+					TransactionId: testutils.Ptr("ett"),
 				},
 			},
 			target: pam.AddTransactionResponse{},

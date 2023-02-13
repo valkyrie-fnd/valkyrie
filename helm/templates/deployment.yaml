@@ -50,22 +50,22 @@ spec:
             {{- toYaml . | nindent 10 }}
           {{- end }}
           ports:
-            - name: http-operator
+            - name: httpclient-operator
               containerPort: 8084
               protocol: TCP
-            - name: http-provider
+            - name: httpclient-provider
               containerPort: 8083
               protocol: TCP
           livenessProbe:
             initialDelaySeconds: 10
             httpGet:
               path: /monitoring/ping
-              port: http-operator
+              port: httpclient-operator
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:
               path: /monitoring/ping
-              port: http-operator
+              port: httpclient-operator
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

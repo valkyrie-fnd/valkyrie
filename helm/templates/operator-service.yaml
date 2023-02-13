@@ -12,8 +12,8 @@ spec:
   type: {{ .Values.operatorService.type }}
   ports:
     - port: {{ .Values.operatorService.port }}
-      targetPort: http-operator
+      targetPort: httpclient-operator
       protocol: TCP
-      name: http-operator
+      name: httpclient-operator
   selector:
     {{- include "valkyrie.selectorLabels" . | nindent 4 }}

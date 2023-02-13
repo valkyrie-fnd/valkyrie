@@ -774,7 +774,7 @@ components:
         - PAM_ERR_TIMEOUT
   securitySchemes:
     bearerAuth:
-      type: http
+      type: httpclient
       description: PAM API token, if any is required
       scheme: bearer
   responses:

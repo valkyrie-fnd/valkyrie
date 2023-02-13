@@ -7,7 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// Amt is then internal alias for the Decimal type and
+// Amt is then factory alias for the Decimal type and
 // it is injected into generated model for the Generic PAM.
 // NB: use `Amt` internally instead of the generated pam.Amount
 type Amt decimal.Decimal

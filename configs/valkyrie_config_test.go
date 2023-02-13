@@ -53,7 +53,7 @@ var tests = []testWrapper{
 		yamlData: `
 tracing:
   type: jaeger
-  url: 'http://localhost'
+  url: 'httpclient://localhost'
   service_name: my-service
 `,
 		want: &ValkyrieConfig{
@@ -117,7 +117,7 @@ tracing:
 pam:
   name: generic
   api_key: ${KEY1}
-  url: 'http://pam.url'
+  url: 'httpclient://pam.url'
 providers:
   - name: providerA
     url: 'https://some.url'
@@ -150,7 +150,7 @@ providers:
 pam:
   name: generic
   api_key: 123xyz
-  url: 'http://pam.url'
+  url: 'httpclient://pam.url'
 providers:
   - name: providerA
     url: 'https://some.url'

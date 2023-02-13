@@ -12,8 +12,8 @@ spec:
   type: {{ .Values.providerService.type }}
   ports:
     - port: {{ .Values.providerService.port }}
-      targetPort: http-provider
+      targetPort: httpclient-provider
       protocol: TCP
-      name: http-provider
+      name: httpclient-provider
   selector:
     {{- include "valkyrie.selectorLabels" . | nindent 4 }}

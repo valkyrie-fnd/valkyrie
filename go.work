@@ -1,0 +1,9 @@
+go 1.19
+
+use (
+	./application
+	./configs
+	./httpclient
+	./ops
+	./pam
+)

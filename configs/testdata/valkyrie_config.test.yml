@@ -52,13 +52,13 @@ providers:
       #  caleta-signing-key
       #  -----END RSA PRIVATE KEY-----
       operator_id: caleta-operator-id
-http_server: # optional http server configuration
+http_server: # optional httpclient server configuration
   read_timeout: 3s
   write_timeout: 3s
   idle_timeout: 30s
   provider_address: localhost:8083
   operator_address: localhost:8084
-http_client: # optional http client configuration
+http_client: # optional httpclient client configuration
   read_timeout: 10s
   write_timeout: 3s
   idle_timeout: 30s

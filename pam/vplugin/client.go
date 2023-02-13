@@ -8,8 +8,9 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/ops"
+
+	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 

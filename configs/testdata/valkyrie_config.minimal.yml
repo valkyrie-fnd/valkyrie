@@ -54,7 +54,7 @@ providers: []
 #        -----END RSA PRIVATE KEY-----
 #      operator_id: CALETA_OPERATOR_ID
 
-# http server configuration
+# httpclient server configuration
 http_server: {}
 #  read_timeout: 1s
 #  write_timeout: 1s
@@ -62,7 +62,7 @@ http_server: {}
 #  provider_address: localhost:8083
 #  operator_address: localhost:8084
 
-# http client configuration
+# httpclient client configuration
 http_client: {}
 #  read_timeout: 1s
 #  write_timeout: 1s

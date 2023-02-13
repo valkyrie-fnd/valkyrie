@@ -7,8 +7,8 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/httpclient"
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
 const (
@@ -30,12 +30,12 @@ type genericPamConfig struct {
 }
 
 type GenericPam struct {
-	rest    rest.HTTPClientJSONInterface
+	client  httpclient.HTTPClientJSONInterface
 	baseURL string
 	apiKey  string
 }
 
-func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericPam, error) {
+func Create(cfg configs.PamConf, client httpclient.HTTPClientJSONInterface) (*GenericPam, error) {
 	config, err := pam.GetConfig[genericPamConfig](cfg)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericP
 	return &GenericPam{
 		baseURL: config.URL,
 		apiKey:  config.APIKey,
-		rest:    client,
+		client:  client,
 	}, nil
 }
 
@@ -70,13 +70,13 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 	url := fmt.Sprintf("%s/players/session", c.baseURL)
 	var resp pam.SessionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.PutJSON(ctx, req, &resp)
+	err = c.client.PutJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
 	}
@@ -93,13 +93,13 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 	url := fmt.Sprintf("%s/players/%s/balance", c.baseURL, r.PlayerID)
 	resp := pam.BalanceResponse{}
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = c.client.GetJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
 		return nil, err
 	}
@@ -123,13 +123,13 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 	if r.Params.ProviderBetRef != nil {
 		query["providerBetRef"] = *r.Params.ProviderBetRef
 	}
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   query,
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = c.client.GetJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
 		return nil, err
 	}
@@ -149,14 +149,14 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 	url := fmt.Sprintf("%s/players/%s/transactions", c.baseURL, r.PlayerID)
 	var resp pam.AddTransactionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
 		Body:    &r.Body,
 	}
 
-	err = c.rest.PostJSON(ctx, req, &resp)
+	err = c.client.PostJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
 		if resp.TransactionResult != nil {
 			// Special case, balance may still be included even if add transaction resulted in error.
@@ -177,13 +177,13 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	url := fmt.Sprintf("%s/players/%s/gamerounds/%s", c.baseURL, r.PlayerID, r.ProviderRoundID)
 	var resp pam.GameRoundResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = c.client.GetJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
 		return nil, err
 	}
@@ -199,13 +199,13 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	url := fmt.Sprintf("%s/players/session", c.baseURL)
 	var resp pam.SessionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &httpclient.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = c.client.GetJSON(ctx, req, &resp)
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
 	}
@@ -224,10 +224,10 @@ func handleErrors[T any](pamError *pam.PamError, httpErr error, entity *T) error
 		return pam.ToValkyrieError(pamError)
 	}
 	if httpErr != nil {
-		if errors.Is(httpErr, rest.TimeoutError) {
-			return pam.ErrorWrapper("http client timeout", pam.ValkErrTimeout, httpErr)
+		if errors.Is(httpErr, httpclient.TimeoutError) {
+			return pam.ErrorWrapper("httpclient client timeout", pam.ValkErrTimeout, httpErr)
 		}
-		return pam.ErrorWrapper("http client error", pam.ValkErrUndefined, httpErr)
+		return pam.ErrorWrapper("httpclient client error", pam.ValkErrUndefined, httpErr)
 	}
 	if entity == nil {
 		return pam.ValkyrieError{ValkErrorCode: pam.ValkErrUndefined, ErrMsg: "nil entity"}

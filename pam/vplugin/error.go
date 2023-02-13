@@ -8,7 +8,7 @@ func handleErrors[T any](pamError *pam.PamError, httpErr error, entity *T) error
 		return pam.ToValkyrieError(pamError)
 	}
 	if httpErr != nil {
-		return pam.ErrorWrapper("http client error", pam.ValkErrUndefined, httpErr)
+		return pam.ErrorWrapper("httpclient client error", pam.ValkErrUndefined, httpErr)
 	}
 	if entity == nil {
 		return pam.ValkyrieError{ValkErrorCode: pam.ValkErrUndefined, ErrMsg: "nil entity"}

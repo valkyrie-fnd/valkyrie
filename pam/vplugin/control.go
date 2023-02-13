@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 
-	"github.com/valkyrie-fnd/valkyrie/internal/routine"
+	"github.com/valkyrie-fnd/valkyrie/pam/routine"
 )
 
 type PluginControl interface {

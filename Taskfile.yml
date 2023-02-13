@@ -19,6 +19,7 @@ vars:
     sh: bash .github/tools/version.sh
   VERSION: '{{ coalesce .VERSION .GIT_VERSION }}' # pick first non-empty version
   BUILD_CMD: CGO_ENABLED=0 go build -ldflags="-w -s -X main.appVersion={{.VERSION}}"
+  MODULE: github.com/valkyrie-fnd/valkyrie/application
   # workaround to use built-in windows commands
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
 
@@ -36,11 +37,12 @@ tasks:
       - task: test
 
   tidy:
+    dir: '{{.USER_WORKING_DIR}}'
     desc: tidy module
     sources:
-      - ./go.mod
+      - ./*/go.mod
     generates:
-      - ./go.sum
+      - ./*/go.sum
     cmds:
       - go mod tidy
 
@@ -50,8 +52,8 @@ tasks:
       - gen
     sources:
       - ./**/generate.go
-      - ./provider/*/service.go
-      - ./provider/caleta/caletagaming-caleta-gaming_system_api_operators_guide-1.5-oapi3.yaml
+      - ./*/provider/*/service.go
+      - ./*/provider/caleta/caletagaming-caleta-gaming_system_api_operators_guide-1.5-oapi3.yaml
       - ./pam/pam_api.yml
     generates:
       - ./**/*.gen.go
@@ -124,7 +126,7 @@ tasks:
     generates:
       - "{{.BUILD_DIR}}/{{.NAME}}"
     cmds:
-      - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}"
+      - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}} {{.MODULE}}"
 
   build:linux:
     desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
@@ -132,7 +134,7 @@ tasks:
       - build:prepare
     cmds:
       - mkdir -p {{.BUILD_DIR}}/linux-amd64
-      - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
+      - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}} {{.MODULE}}
 
   build:windows:
     desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
@@ -142,7 +144,7 @@ tasks:
       - build:prepare
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/windows-amd64"
-      - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
+      - GOOS=windows GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe {{.MODULE}}
 
   build:osx:
     desc: build OSX binary. Use cli args to build dev variant "-- -tags=dev"
@@ -156,14 +158,14 @@ tasks:
     internal: true
     cmds:
       - mkdir -p {{.BUILD_DIR}}/darwin-amd64
-      - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
+      - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}} {{.MODULE}}
 
   build:osx:arm64:
     desc: build OSX arm64 binary
     internal: true
     cmds:
       - mkdir -p {{.BUILD_DIR}}/darwin-arm64
-      - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
+      - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}} {{.MODULE}}
 
   build:all:
     desc: build for all supported platforms. Use cli args to build dev variant "-- -tags=dev"
@@ -266,8 +268,8 @@ tasks:
     desc: documentation
     cmds:
       - go install golang.org/x/tools/cmd/godoc@latest
-      - echo 'documentation served from http://localhost:8080/'
-      - godoc -http=localhost:8080
+      - echo 'documentation served from httpclient://localhost:8080/'
+      - godoc -httpclient=localhost:8080
 
   dependency:outdated:
     desc: list directly dependent modules that can be upgraded

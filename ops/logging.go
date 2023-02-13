@@ -6,7 +6,6 @@ import (
 
 	"github.com/valyala/fasthttp"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog"
 )
 
@@ -112,11 +111,11 @@ func logResponseHeaders(resp *fasthttp.Response, requestDict *zerolog.Event) {
 }
 
 var loggedContentTypes = map[string]struct{}{
-	fiber.MIMEApplicationJSON:            {},
-	fiber.MIMETextPlain:                  {},
-	fiber.MIMEApplicationXML:             {},
-	fiber.MIMEApplicationForm:            {},
-	fiber.MIMEMultipartForm:              {},
+	"application/json":                   {},
+	"text/plain":                         {},
+	"application/xml":                    {},
+	"application/x-www-form-urlencoded":  {},
+	"multipart/form-data":                {},
 	"application/vnd.kafka.json.v2+json": {},
 	"application/vnd.kafka.v2+json":      {},
 }

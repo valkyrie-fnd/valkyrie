@@ -42,16 +42,16 @@ var pathPing = []byte("/ping")
 func requestResponseLogging(c *fiber.Ctx) error {
 	path := c.Request().URI().Path()
 	if !bytes.HasSuffix(path, pathPing) {
-		log.Ctx(c.UserContext()).Debug().Func(LogHTTPRequest(c.Request())).Msg("http server request")
+		log.Ctx(c.UserContext()).Debug().Func(LogHTTPRequest(c.Request())).Msg("httpclient server request")
 	}
 
 	err := c.Next()
 
 	if !bytes.HasSuffix(path, pathPing) {
 		if err != nil {
-			log.Ctx(c.UserContext()).Error().Func(LogHTTPResponse(c.Request(), c.Response(), err)).Msg("http server response")
+			log.Ctx(c.UserContext()).Error().Func(LogHTTPResponse(c.Request(), c.Response(), err)).Msg("httpclient server response")
 		} else {
-			log.Ctx(c.UserContext()).Debug().Func(LogHTTPResponse(c.Request(), c.Response(), nil)).Msg("http server response")
+			log.Ctx(c.UserContext()).Debug().Func(LogHTTPResponse(c.Request(), c.Response(), nil)).Msg("httpclient server response")
 		}
 	}
 
