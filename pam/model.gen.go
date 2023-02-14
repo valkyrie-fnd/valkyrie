@@ -339,11 +339,23 @@ type RoundTransaction struct {
 	// JackpotContribution Amount in some currency, rounded to 6 decimal places
 	JackpotContribution *Amount `json:"jackpotContribution,omitempty"`
 
+	// ProviderBetRef Provider bet reference for grouping or matching transactions. Either this or `providerTransactionId` is required. This one is prioritized if both are present. It is used for RGS:s that encapsulate many transactions in a wrapper transaction.
+	ProviderBetRef *ProviderBetRef `json:"providerBetRef,omitempty"`
+
 	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 	ProviderTransactionId *ProviderTransactionId `json:"providerTransactionId,omitempty"`
 
 	// TransactionDateTime A date and time in IS0 8601 format
 	TransactionDateTime *Timestamp `json:"transactionDateTime,omitempty"`
+
+	// TransactionType Transaction types according to:
+	// * `DEPOSIT` - for adding funds
+	// * `WITHDRAW` - subtract funds from an account balance. Generally for placing bets
+	// * `CANCEL` - reverting a previous transaction
+	// * `PROMODEPOSIT` - payout from promo and similar offerings programs
+	// * `PROMOWITHDRAW` - buyin to promo and similar offerings programs
+	// * `PROMOCANCEL` - reverting a previous promo transaction
+	TransactionType TransactionType `json:"transactionType"`
 }
 
 // Session defines model for Session.
