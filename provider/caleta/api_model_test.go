@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 )
 
 func Test_transactionResponse(t *testing.T) {
@@ -121,7 +123,7 @@ func Test_transactionResponse(t *testing.T) {
 							RoundClosed:              true,
 							SupplierUser:             "6",
 							TransactionUUID:          "txn-uuid-1",
-							ReferenceTransactionUUID: "txn-uuid-0",
+							ReferenceTransactionUUID: testutils.Ptr("txn-uuid-0"),
 						},
 					},
 				},

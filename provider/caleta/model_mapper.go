@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
@@ -209,11 +210,28 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 			amt := toPamAmount(t.Payload.Amount)
 			txID := t.Payload.TransactionUUID
 			isGameOver := t.Payload.RoundClosed
+			refTx := t.Payload.ReferenceTransactionUUID
+
+			// Detect transaction type
+			var transactionType pam.TransactionType
+			switch {
+			case refTx == nil:
+				transactionType = pam.WITHDRAW
+			case t.Payload.Bet == "zero":
+				transactionType = pam.DEPOSIT
+			case t.Payload.Bet == "":
+				transactionType = pam.CANCEL
+			default:
+				log.Warn().Msgf("Failed to detect transactionType for txID=%s", txID)
+			}
+
 			tx := pam.RoundTransaction{
 				ProviderTransactionId: &txID,
 				CashAmount:            &amt,
 				IsGameOver:            &isGameOver,
-				TransactionDateTime:   &t.ClosedTime, // TODO: Or is it CreatedTime?
+				TransactionDateTime:   &t.CreatedTime,
+				ProviderBetRef:        refTx,
+				TransactionType:       transactionType,
 			}
 
 			jackpotAmt := toPamAmount(t.Payload.JackpotContribution)
