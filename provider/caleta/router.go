@@ -21,7 +21,7 @@ func init() {
 			var service *WalletService
 
 			// If gamewise settlement, provide a transaction client
-			if args.PamClient.GetSettlementType() == pam.GAMEWISE {
+			if args.PamClient.GetTransactionHandling() == pam.PROVIDER {
 				apiClient, err := NewAPIClient(args.HTTPClient, args.Config)
 				if err != nil {
 					return nil, err

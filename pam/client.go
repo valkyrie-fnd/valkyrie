@@ -12,6 +12,20 @@ const (
 	GAMEWISE SettlementType = "GAMEWISE"
 )
 
+// TransactionHandling How the PAM expect the transaction handling to be done.
+//
+// Either the PAM keeps track of transactions that should be grouped together
+// or the PAM expects relevant transactions be included in transaction.RoundTransactions field.
+type TransactionHandling string
+
+const (
+	// OPERATOR Expects the operator to keep track of what transactions need to be grouped together
+	OPERATOR TransactionHandling = "OPERATOR"
+	// PROVIDER Expects the provider to pass all transactions needed grouped together.
+	// Make use of transaction.RoundTransactions to provide the PAM with relevant data
+	PROVIDER TransactionHandling = "PROVIDER"
+)
+
 // RefreshSessionRequest bundles everything needed to make a request
 type RefreshSessionRequest struct {
 	Params RefreshSessionParams
@@ -83,6 +97,8 @@ type PamClient interface {
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
 	// GetSettlementType returns the type of settlement the PAM supports
 	GetSettlementType() SettlementType
+	// GetTransactionHandling return the type of transaction handling the PAM supports
+	GetTransactionHandling() TransactionHandling
 }
 
 // AmountRounder provides rounding requirements and is used for verifying

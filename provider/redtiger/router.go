@@ -1,9 +1,12 @@
 package redtiger
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 )
 
@@ -14,6 +17,9 @@ const (
 func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
+			if args.PamClient.GetTransactionHandling() == pam.PROVIDER {
+				return nil, fmt.Errorf("Unsupported transaction handling")
+			}
 			service := NewService(args.PamClient)
 			controller := NewProviderController(service)
 			return NewProviderRouter(args.Config, controller)

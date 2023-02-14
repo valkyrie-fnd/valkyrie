@@ -216,6 +216,10 @@ func (c *GenericPam) GetSettlementType() pam.SettlementType {
 	return settlementType
 }
 
+func (c *GenericPam) GetTransactionHandling() pam.TransactionHandling {
+	return pam.OPERATOR
+}
+
 // handleErrors does general error handling for a response and returns
 // the most detailed error, or nil if no errors found.
 func handleErrors[T any](pamError *pam.PamError, httpErr error, entity *T) error {

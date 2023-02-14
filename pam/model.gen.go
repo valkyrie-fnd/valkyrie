@@ -436,8 +436,11 @@ type Transaction struct {
 
 	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 	ProviderTransactionId ProviderTransactionId `json:"providerTransactionId"`
-	RoundTransactions     *[]RoundTransaction   `json:"roundTransactions,omitempty"`
-	Tip                   *Tip                  `json:"tip,omitempty"`
+
+	// RoundTransactions Optional. In case the PAM does not handle grouping of transaction by itself, Valkyrie needs to provide
+	// transactions related to the round.
+	RoundTransactions *[]RoundTransaction `json:"roundTransactions,omitempty"`
+	Tip               *Tip                `json:"tip,omitempty"`
 
 	// TransactionDateTime A date and time in IS0 8601 format
 	TransactionDateTime Timestamp `json:"transactionDateTime"`
