@@ -12,6 +12,11 @@ type gameRoundRenderResponse struct {
 	Code    int
 }
 
+type transactionRequestBody struct {
+	RoundID    string `json:"round_id"`
+	OperatorID string `json:"operator_id"`
+}
+
 type transactionResponse struct {
 	RoundTransactions *[]roundTransaction `json:"transactions,omitempty"`
 	Message           string              `json:"message"`

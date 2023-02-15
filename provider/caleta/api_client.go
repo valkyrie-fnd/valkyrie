@@ -134,11 +134,6 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID 
 
 }
 
-type transactionRequestBody struct {
-	RoundID    string `json:"round_id"`
-	OperatorID string `json:"operator_id"`
-}
-
 func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 	req := &rest.HTTPRequest{
 		Body: transactionRequestBody{
