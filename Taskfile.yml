@@ -65,7 +65,7 @@ tasks:
     cmds:
       - task: lint:go
       - task: lint:docker
-        
+
   lint:go:
     desc: run linters configured by .golangci.yml
     sources:
@@ -332,3 +332,8 @@ tasks:
     silent: true
     cmds:
       - echo {{.VERSION}}
+
+  structurizr:
+    desc: run structurizr server on port 8090
+    cmds:
+      - docker run -it --rm -p 8090:8080 -v ${pwd}/structurizr:/usr/local/structurizr structurizr/lite

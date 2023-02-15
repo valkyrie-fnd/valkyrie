@@ -1,0 +1,453 @@
+{
+  "id" : 1,
+  "name" : "valkyrie",
+  "description" : "Description",
+  "lastModifiedDate" : "2023-02-16T15:52:39Z",
+  "lastModifiedAgent" : "structurizr-javascript",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlIHZhbGt5cmllIHsKICAgIG1vZGVsIHsKICAgICAgICBjYXNpbm9PcGVyYXRvciA9IGVsZW1lbnQgIkNhc2lubyBvcGVyYXRvciIgIlJ1bm5pbmcgb25lIG9yIG1vcmUgaW5zdGFuY2VzIG9mIFZhbGt5cmllIgogICAgICAgIGdhbWVQcm92aWRlciA9IGVsZW1lbnQgIkdhbWUgUHJvdmlkZXIiCiAgICAgICAgdmFsa3lyaWUgPSBzb2Z0d2FyZVN5c3RlbSAiVmFsa3lyaWUgc3lzdGVtIiAiVmFsa3lyaWUgb3BlbiBzb3VyY2UgaWdhbWluZyBhZ2dyZWdhdG9yInsKICAgICAgICAgICAgdmFsayA9IGNvbnRhaW5lciAiVmFsa3lyaWUiewogICAgICAgICAgICAgICAgcGFtID0gY29tcG9uZW50ICJQQU0gV2FsbGV0IiAiSW1wbGVtZW50YXRpb24gb2YgUGFtQ2xpZW50LiBNYWtpbmcgY2FsbHMgdG8gb3BlcmF0b3IsIHVwZGF0aW5nIGFjY291bnQgYmFsYW5jZSBldGMuIgogICAgICAgICAgICAgICAgb3BlcmF0b3JTZXJ2ZXIgPSBjb21wb25lbnQgIk9wZXJhdG9yIHNlcnZlciIgIkV4cG9zaW5nIHBvcnQgdXNlZCBieSBvcGVyYXRvciB0byBtYWtlIHJlcXVlc3RzIHRvd2FyZCBWYWxreXJpZSBhbmQgR2FtZSBwcm92aWRlcnMiCiAgICAgICAgICAgICAgICBwcm92aWRlclNlcnZlciA9IGNvbXBvbmVudCAiUHJvdmlkZXIgU2VydmVyIiAiRXhwb3NpbmcgcG9ydCB1c2VkIGJ5IGdhbWUgcHJvdmlkZXIgdG8gbWFrZSByZXF1ZXN0cyB0b3dhcmQgVmFsa3lyaWUiCiAgICAgICAgICAgICAgICBncm91cCBQcm92aWRlciB7IAogICAgICAgICAgICAgICAgICAgIG9wZXJhdG9yUm91dGVyID0gY29tcG9uZW50ICJPcGVyYXRvciBSb3V0ZXIiICJJbXBsZW1lbnRpbmcgJ29wZXJhdG9yX2FwaS55bWwnIG9hcGkgc3BlY2lmaWNhdGlvbiIKICAgICAgICAgICAgICAgICAgICBwcm92aWRlckNsaWVudCA9IGNvbXBvbmVudCAiUHJvdmlkZXIgQ2xpZW50IiAiSGFuZGxlIGF1dGhlbnRpY2F0aW9uIHRvd2FyZCBnYW1lIHByb3ZpZGVyIgogICAgICAgICAgICAgICAgICAgIHByb3ZpZGVyUm91dGVyID0gY29tcG9uZW50ICJQcm92aWRlciBSb3V0ZXIiICJJbXBsZW1lbnRpbmcgdGhlIHNwZWNpZmljIHByb3ZpZGVyJ3Mgd2FsbGV0IGFwaS4gTWFwcyB0aGUgcmVxdWVzdHMgdG8gY29uZm9ybSB0byBWYWxreXJpZSBQQU0gYXBpIgoKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgICAgICBwYW1WcGx1Z2luID0gY29udGFpbmVyICJQQU0gUGx1Z2luIiAiT1BUSU9OQUwuIFBBTSBwbHVnaW4gcnVubmluZyBhcyBhIHNlcGFyYXRlIHByb2Nlc3MiCiAgICAgICAgfQogICAgICAgIGNhc2lub09wZXJhdG9yIC0+IG9wZXJhdG9yU2VydmVyICJNYWtlcyBhcGkgY2FsbHMgdG8iCiAgICAgICAgb3BlcmF0b3JTZXJ2ZXIgLT4gb3BlcmF0b3JSb3V0ZXIgIlJvdXRlcyB0byBzcGVjaWZpYyBwcm92aWRlciIKICAgICAgICBvcGVyYXRvclJvdXRlciAtPiBwcm92aWRlckNsaWVudCAiY2FsbHMiCiAgICAgICAgcHJvdmlkZXJDbGllbnQgLT4gZ2FtZVByb3ZpZGVyICJNYWtlcyBhcGkgY2FsbHMgdG8iCiAgICAgICAgcHJvdmlkZXJTZXJ2ZXIgLT4gcHJvdmlkZXJSb3V0ZXIgIlJvdXRlcyB0byBzcGVjaWZpYyBwcm92aWRlciIKICAgICAgICBwcm92aWRlclJvdXRlciAtPiBwYW0gIkNhbGxzIgogICAgICAgIHBhbSAtPiBjYXNpbm9PcGVyYXRvciAiTWFrZXMgYXBpIGNhbGxzIHRvIgogICAgICAgIHBhbSAtPiBwYW1WcGx1Z2luICJDYWxscyIgCiAgICAgICAgcGFtVnBsdWdpbiAtPiBjYXNpbm9PcGVyYXRvciAiTWFrZXMgYXBpIGNhbGxzIHRvIgogICAgICAgIGdhbWVQcm92aWRlciAtPiBwcm92aWRlclNlcnZlciAiTWFrZXMgYXBpIGNhbGxzIHRvIgoKICAgIH0KICAgIHZpZXdzIHsKICAgICAgICB0aGVtZSBkZWZhdWx0CiAgICAgICAgc3lzdGVtTGFuZHNjYXBlIHsKICAgICAgICAgICAgIXNjcmlwdCBncm9vdnkgewogICAgICAgICAgICAgICAgd29ya3NwYWNlLnZpZXdzLmNyZWF0ZURlZmF1bHRWaWV3cygpCiAgICAgICAgICAgICAgICB3b3Jrc3BhY2Uudmlld3Mudmlld3MuZWFjaCB7IGl0LmRpc2FibGVBdXRvbWF0aWNMYXlvdXQoKSB9CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0K"
+  },
+  "configuration" : { },
+  "model" : {
+    "softwareSystems" : [ {
+      "id" : "3",
+      "tags" : "Element,Software System",
+      "name" : "Valkyrie system",
+      "description" : "Valkyrie open source igaming aggregator",
+      "relationships" : [ {
+        "id" : "19",
+        "sourceId" : "3",
+        "destinationId" : "2",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "17"
+      }, {
+        "id" : "24",
+        "sourceId" : "3",
+        "destinationId" : "1",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "22"
+      } ],
+      "location" : "Unspecified",
+      "containers" : [ {
+        "id" : "4",
+        "tags" : "Element,Container",
+        "name" : "Valkyrie",
+        "relationships" : [ {
+          "id" : "23",
+          "sourceId" : "4",
+          "destinationId" : "1",
+          "description" : "Makes api calls to",
+          "linkedRelationshipId" : "22"
+        }, {
+          "id" : "26",
+          "sourceId" : "4",
+          "destinationId" : "11",
+          "description" : "Calls",
+          "linkedRelationshipId" : "25"
+        }, {
+          "id" : "18",
+          "sourceId" : "4",
+          "destinationId" : "2",
+          "description" : "Makes api calls to",
+          "linkedRelationshipId" : "17"
+        } ],
+        "components" : [ {
+          "id" : "6",
+          "tags" : "Element,Component",
+          "name" : "Operator server",
+          "description" : "Exposing port used by operator to make requests toward Valkyrie and Game providers",
+          "relationships" : [ {
+            "id" : "15",
+            "tags" : "Relationship",
+            "sourceId" : "6",
+            "destinationId" : "8",
+            "description" : "Routes to specific provider"
+          } ],
+          "size" : 0
+        }, {
+          "id" : "8",
+          "tags" : "Element,Component",
+          "name" : "Operator Router",
+          "description" : "Implementing 'operator_api.yml' oapi specification",
+          "relationships" : [ {
+            "id" : "16",
+            "tags" : "Relationship",
+            "sourceId" : "8",
+            "destinationId" : "9",
+            "description" : "calls"
+          } ],
+          "group" : "Provider",
+          "size" : 0
+        }, {
+          "id" : "9",
+          "tags" : "Element,Component",
+          "name" : "Provider Client",
+          "description" : "Handle authentication toward game provider",
+          "relationships" : [ {
+            "id" : "17",
+            "tags" : "Relationship",
+            "sourceId" : "9",
+            "destinationId" : "2",
+            "description" : "Makes api calls to"
+          } ],
+          "group" : "Provider",
+          "size" : 0
+        }, {
+          "id" : "7",
+          "tags" : "Element,Component",
+          "name" : "Provider Server",
+          "description" : "Exposing port used by game provider to make requests toward Valkyrie",
+          "relationships" : [ {
+            "id" : "20",
+            "tags" : "Relationship",
+            "sourceId" : "7",
+            "destinationId" : "10",
+            "description" : "Routes to specific provider"
+          } ],
+          "size" : 0
+        }, {
+          "id" : "10",
+          "tags" : "Element,Component",
+          "name" : "Provider Router",
+          "description" : "Implementing the specific provider's wallet api. Maps the requests to conform to Valkyrie PAM api",
+          "relationships" : [ {
+            "id" : "21",
+            "tags" : "Relationship",
+            "sourceId" : "10",
+            "destinationId" : "5",
+            "description" : "Calls"
+          } ],
+          "group" : "Provider",
+          "size" : 0
+        }, {
+          "id" : "5",
+          "tags" : "Element,Component",
+          "name" : "PAM Wallet",
+          "description" : "Implementation of PamClient. Making calls to operator, updating account balance etc.",
+          "relationships" : [ {
+            "id" : "25",
+            "tags" : "Relationship",
+            "sourceId" : "5",
+            "destinationId" : "11",
+            "description" : "Calls"
+          }, {
+            "id" : "22",
+            "tags" : "Relationship",
+            "sourceId" : "5",
+            "destinationId" : "1",
+            "description" : "Makes api calls to"
+          } ],
+          "size" : 0
+        } ],
+        "documentation" : { }
+      }, {
+        "id" : "11",
+        "tags" : "Element,Container",
+        "name" : "PAM Plugin",
+        "description" : "OPTIONAL. PAM plugin running as a separate process",
+        "relationships" : [ {
+          "id" : "27",
+          "tags" : "Relationship",
+          "sourceId" : "11",
+          "destinationId" : "1",
+          "description" : "Makes api calls to"
+        } ],
+        "documentation" : { }
+      } ],
+      "documentation" : { }
+    } ],
+    "customElements" : [ {
+      "id" : "2",
+      "tags" : "Element",
+      "name" : "Game Provider",
+      "relationships" : [ {
+        "id" : "30",
+        "sourceId" : "2",
+        "destinationId" : "3",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "28"
+      }, {
+        "id" : "28",
+        "tags" : "Relationship",
+        "sourceId" : "2",
+        "destinationId" : "7",
+        "description" : "Makes api calls to"
+      }, {
+        "id" : "29",
+        "sourceId" : "2",
+        "destinationId" : "4",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "28"
+      } ]
+    }, {
+      "id" : "1",
+      "tags" : "Element",
+      "name" : "Casino operator",
+      "relationships" : [ {
+        "id" : "13",
+        "sourceId" : "1",
+        "destinationId" : "4",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "12"
+      }, {
+        "id" : "12",
+        "tags" : "Relationship",
+        "sourceId" : "1",
+        "destinationId" : "6",
+        "description" : "Makes api calls to"
+      }, {
+        "id" : "14",
+        "sourceId" : "1",
+        "destinationId" : "3",
+        "description" : "Makes api calls to",
+        "linkedRelationshipId" : "12"
+      } ],
+      "metadata" : "Running one or more instances of Valkyrie"
+    } ]
+  },
+  "documentation" : { },
+  "views" : {
+    "systemLandscapeViews" : [ {
+      "key" : "SystemLandscape-1",
+      "order" : 1,
+      "paperSize" : "A6_Portrait",
+      "dimensions" : {
+        "width" : 400,
+        "height" : 400
+      },
+      "enterpriseBoundaryVisible" : true
+    }, {
+      "key" : "SystemLandscape",
+      "order" : 2,
+      "paperSize" : "A5_Portrait",
+      "dimensions" : {
+        "width" : 866,
+        "height" : 1916
+      },
+      "enterpriseBoundaryVisible" : true,
+      "relationships" : [ {
+        "id" : "14",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "24",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "30",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 1258
+        } ]
+      }, {
+        "id" : "19",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 1258
+        } ]
+      } ],
+      "elements" : [ {
+        "id" : "1",
+        "x" : 208,
+        "y" : 208
+      }, {
+        "id" : "2",
+        "x" : 208,
+        "y" : 1408
+      }, {
+        "id" : "3",
+        "x" : 208,
+        "y" : 808
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "softwareSystemId" : "3",
+      "key" : "Valkyriesystem-SystemContext",
+      "order" : 3,
+      "paperSize" : "A5_Portrait",
+      "dimensions" : {
+        "width" : 866,
+        "height" : 1916
+      },
+      "enterpriseBoundaryVisible" : true,
+      "relationships" : [ {
+        "id" : "14",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "24",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "30",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 1258
+        } ]
+      }, {
+        "id" : "19",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 1258
+        } ]
+      } ],
+      "elements" : [ {
+        "id" : "1",
+        "x" : 208,
+        "y" : 208
+      }, {
+        "id" : "2",
+        "x" : 208,
+        "y" : 1408
+      }, {
+        "id" : "3",
+        "x" : 208,
+        "y" : 808
+      } ]
+    } ],
+    "containerViews" : [ {
+      "softwareSystemId" : "3",
+      "key" : "Valkyriesystem-Container",
+      "order" : 4,
+      "dimensions" : {
+        "width" : 1539,
+        "height" : 2024
+      },
+      "externalSoftwareSystemBoundariesVisible" : true,
+      "relationships" : [ {
+        "id" : "29",
+        "vertices" : [ {
+          "x" : 689,
+          "y" : 1349
+        } ]
+      }, {
+        "id" : "18",
+        "vertices" : [ {
+          "x" : 369,
+          "y" : 1359
+        } ]
+      }, {
+        "id" : "27"
+      }, {
+        "id" : "26"
+      }, {
+        "id" : "13",
+        "vertices" : [ {
+          "x" : 304,
+          "y" : 739
+        } ]
+      }, {
+        "id" : "23",
+        "vertices" : [ {
+          "x" : 590,
+          "y" : 705
+        } ]
+      } ],
+      "elements" : [ {
+        "id" : "11",
+        "x" : 869,
+        "y" : 859
+      }, {
+        "id" : "1",
+        "x" : 289,
+        "y" : 199
+      }, {
+        "id" : "2",
+        "x" : 269,
+        "y" : 1524
+      }, {
+        "id" : "4",
+        "x" : 219,
+        "y" : 869
+      } ]
+    } ],
+    "componentViews" : [ {
+      "key" : "Valkyriesystem-Valkyrie-Component",
+      "order" : 5,
+      "dimensions" : {
+        "width" : 2815,
+        "height" : 3306
+      },
+      "containerId" : "4",
+      "externalContainerBoundariesVisible" : true,
+      "relationships" : [ {
+        "id" : "28"
+      }, {
+        "id" : "17"
+      }, {
+        "id" : "16"
+      }, {
+        "id" : "27",
+        "vertices" : [ {
+          "x" : 2390,
+          "y" : 350
+        } ]
+      }, {
+        "id" : "15"
+      }, {
+        "id" : "25"
+      }, {
+        "id" : "12"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "21"
+      }, {
+        "id" : "20"
+      } ],
+      "elements" : [ {
+        "id" : "11",
+        "x" : 2165,
+        "y" : 915
+      }, {
+        "id" : "1",
+        "x" : 849,
+        "y" : 199
+      }, {
+        "id" : "2",
+        "x" : 720,
+        "y" : 2805
+      }, {
+        "id" : "5",
+        "x" : 1550,
+        "y" : 925
+      }, {
+        "id" : "6",
+        "x" : 310,
+        "y" : 710
+      }, {
+        "id" : "7",
+        "x" : 1110,
+        "y" : 2285
+      }, {
+        "id" : "8",
+        "x" : 315,
+        "y" : 1380
+      }, {
+        "id" : "9",
+        "x" : 305,
+        "y" : 1835
+      }, {
+        "id" : "10",
+        "x" : 1075,
+        "y" : 1490
+      } ]
+    } ],
+    "configuration" : {
+      "branding" : { },
+      "styles" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ],
+      "terminology" : { },
+      "metadataSymbols" : "SquareBrackets",
+      "lastSavedView" : "Valkyriesystem-Valkyrie-Component"
+    }
+  }
+}
