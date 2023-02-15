@@ -222,7 +222,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 			case t.Payload.Bet == "" && t.Payload.Currency == "":
 				transactionType = pam.CANCEL
 			default:
-				log.Warn().Msgf("Failed to detect transactionType for txID=%s", txID)
+				log.Warn().Msgf("Failed to detect transactionType for txID=%s, skipping transaction", txID)
 				continue
 			}
 
