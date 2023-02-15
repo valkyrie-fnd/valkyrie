@@ -217,12 +217,13 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 			switch {
 			case refTx == nil:
 				transactionType = pam.WITHDRAW
-			case t.Payload.Bet == "zero":
+			case t.Payload.Currency != "" && t.Payload.Bet != "":
 				transactionType = pam.DEPOSIT
-			case t.Payload.Bet == "":
+			case t.Payload.Bet == "" && t.Payload.Currency == "":
 				transactionType = pam.CANCEL
 			default:
 				log.Warn().Msgf("Failed to detect transactionType for txID=%s", txID)
+				continue
 			}
 
 			tx := pam.RoundTransaction{
