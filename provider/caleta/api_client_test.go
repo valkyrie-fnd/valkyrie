@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/rest"
@@ -251,7 +252,11 @@ func Test_roundTransactions(t *testing.T) {
 			jsonFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
 				assert.Equal(t, "http://caleta-test/api/transactions/round", req.URL)
 				assert.NotEmpty(t, req.Headers["X-Auth-Signature"])
-				assert.Equal(t, "909", req.Query["round_id"])
+				assert.Empty(t, req.Query)
+
+				body := req.Body.(transactionRequestBody)
+				assert.Equal(t, "909", body.RoundID)
+
 				reflect.ValueOf(resp).
 					Elem().
 					Set(reflect.ValueOf(transactionResponse{

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider/caleta/auth"
 	"github.com/valkyrie-fnd/valkyrie/rest"
@@ -133,11 +134,19 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID 
 
 }
 
+type transactionRequestBody struct {
+	RoundID    string `json:"round_id"`
+	OperatorID string `json:"operator_id"`
+}
+
 func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 	req := &rest.HTTPRequest{
+		Body: transactionRequestBody{
+			RoundID:    gameRoundID,
+			OperatorID: apiClient.operatorID,
+		},
 		URL:     fmt.Sprintf("%s%s", apiClient.url, "/api/transactions/round"),
 		Headers: map[string]string{},
-		Query:   map[string]string{"round_id": gameRoundID, "operator_id": apiClient.operatorID},
 	}
 
 	resp := transactionResponse{}
@@ -148,6 +157,6 @@ func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundI
 		return nil, rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
-	err = apiClient.rest.GetJSON(ctx, req, &resp)
+	err = apiClient.rest.PostJSON(ctx, req, &resp)
 	return &resp, err
 }
