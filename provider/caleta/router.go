@@ -5,6 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
@@ -20,7 +21,7 @@ func init() {
 			var service *WalletService
 
 			// If gamewise settlement, provide a transaction client
-			if args.PamClient.GetSettlementType() == "gamewise" {
+			if args.PamClient.GetSettlementType() == pam.GAMEWISE {
 				apiClient, err := NewAPIClient(args.HTTPClient, args.Config)
 				if err != nil {
 					return nil, err
