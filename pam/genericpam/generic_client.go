@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	DriverName     = "generic"
-	settlementType = pam.MIXED
+	DriverName = "generic"
 )
 
 func init() {
@@ -212,8 +211,8 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	return resp.Session, nil
 }
 
-func (c *GenericPam) GetSettlementType() pam.SettlementType {
-	return settlementType
+func (c *GenericPam) GetTransactionSupplier() pam.TransactionSupplier {
+	return pam.OPERATOR
 }
 
 // handleErrors does general error handling for a response and returns

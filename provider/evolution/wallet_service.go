@@ -7,17 +7,17 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-type ProviderService struct {
-	pam.PamClient
-	ctx context.Context
+type WalletService struct {
+	pamClient pam.PamClient
+	ctx       context.Context
 }
 
-func NewService(pamClient pam.PamClient) *ProviderService {
-	return &ProviderService{PamClient: pamClient, ctx: context.Background()}
+func NewService(pamClient pam.PamClient) *WalletService {
+	return &WalletService{pamClient: pamClient, ctx: context.Background()}
 }
 
-func (service *ProviderService) WithContext(ctx context.Context) Service {
-	return &ProviderService{PamClient: service.PamClient, ctx: ctx}
+func (service *WalletService) WithContext(ctx context.Context) Service {
+	return &WalletService{pamClient: service.pamClient, ctx: ctx}
 }
 
 // @Id           EvoCheck
@@ -32,14 +32,14 @@ func (service *ProviderService) WithContext(ctx context.Context) Service {
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/check [post]
-func (service *ProviderService) Check(req CheckRequest) (*CheckResponse, error) {
+func (service *WalletService) Check(req CheckRequest) (*CheckResponse, error) {
 	// Sanity check that req.UserID is valid and has an account balance.
-	_, err := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+	_, err := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 	if err != nil {
 		return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 	}
 
-	session, err := service.RefreshSession(service.refreshSessionRequestMapper(req))
+	session, err := service.pamClient.RefreshSession(service.refreshSessionRequestMapper(req))
 	if err != nil {
 		return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 	}
@@ -65,8 +65,8 @@ func (service *ProviderService) Check(req CheckRequest) (*CheckResponse, error) 
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/balance [post]
-func (service *ProviderService) Balance(req BalanceRequest) (*StandardResponse, error) {
-	balance, err := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+func (service *WalletService) Balance(req BalanceRequest) (*StandardResponse, error) {
+	balance, err := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 
 	if err != nil {
 		return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
@@ -92,9 +92,9 @@ func (service *ProviderService) Balance(req BalanceRequest) (*StandardResponse, 
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/debit [post]
-func (service *ProviderService) Debit(req DebitRequest) (*StandardResponse, error) {
+func (service *WalletService) Debit(req DebitRequest) (*StandardResponse, error) {
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.AddTransaction(service.debitRequestMapper(req, time.Now()))
+	tranResp, err := service.pamClient.AddTransaction(service.debitRequestMapper(req, time.Now()))
 
 	if err != nil {
 		if tranResp != nil && tranResp.Balance != nil {
@@ -131,12 +131,12 @@ func (service *ProviderService) Debit(req DebitRequest) (*StandardResponse, erro
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/credit [post]
-func (service *ProviderService) Credit(req CreditRequest) (*StandardResponse, error) {
+func (service *WalletService) Credit(req CreditRequest) (*StandardResponse, error) {
 	// Preflight check that the credit transaction is reasonable
-	transactions, err := service.GetTransactions(service.findTransForCreditRequestMapper(req))
+	transactions, err := service.pamClient.GetTransactions(service.findTransForCreditRequestMapper(req))
 
 	if err != nil {
-		balance, balanceErr := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+		balance, balanceErr := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 		if balanceErr != nil {
 			return nil, toProviderError(balanceErr, req.UUID, ZeroAmount, ZeroAmount)
 		} else {
@@ -154,7 +154,7 @@ func (service *ProviderService) Credit(req CreditRequest) (*StandardResponse, er
 
 	// fetch balance and bail if validation failed
 	if validationError != nil {
-		balance, balanceErr := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+		balance, balanceErr := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 		if balanceErr != nil {
 			return nil, toProviderError(balanceErr, req.UUID, ZeroAmount, ZeroAmount)
 		} else {
@@ -163,7 +163,7 @@ func (service *ProviderService) Credit(req CreditRequest) (*StandardResponse, er
 	}
 
 	// Send the credit transaction and ignore the success response
-	tranResp, err := service.AddTransaction(service.creditTransRequestMapper(req, time.Now()))
+	tranResp, err := service.pamClient.AddTransaction(service.creditTransRequestMapper(req, time.Now()))
 	if err != nil {
 		if tranResp != nil && tranResp.Balance != nil {
 			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
@@ -199,12 +199,12 @@ func (service *ProviderService) Credit(req CreditRequest) (*StandardResponse, er
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/cancel [post]
-func (service *ProviderService) Cancel(req CancelRequest) (*StandardResponse, error) {
+func (service *WalletService) Cancel(req CancelRequest) (*StandardResponse, error) {
 	// Preflight check that the credit transaction is reasonable
-	transactions, err := service.GetTransactions(service.findTransForCancelRequestMapper(req))
+	transactions, err := service.pamClient.GetTransactions(service.findTransForCancelRequestMapper(req))
 
 	if err != nil {
-		balance, balanceErr := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+		balance, balanceErr := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 		if balanceErr != nil {
 			return nil, toProviderError(balanceErr, req.UUID, ZeroAmount, ZeroAmount)
 		} else {
@@ -222,7 +222,7 @@ func (service *ProviderService) Cancel(req CancelRequest) (*StandardResponse, er
 
 	// fetch balance and bail if validation failed
 	if validationError != nil {
-		balance, balanceErr := service.GetBalance(service.balanceRequestMapper(req.RequestBase))
+		balance, balanceErr := service.pamClient.GetBalance(service.balanceRequestMapper(req.RequestBase))
 		if balanceErr != nil {
 			return nil, toProviderError(balanceErr, req.UUID, ZeroAmount, ZeroAmount)
 		} else {
@@ -231,7 +231,7 @@ func (service *ProviderService) Cancel(req CancelRequest) (*StandardResponse, er
 	}
 
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.AddTransaction(service.cancelTransRequestMapper(req, time.Now()))
+	tranResp, err := service.pamClient.AddTransaction(service.cancelTransRequestMapper(req, time.Now()))
 	if err != nil {
 		if tranResp != nil && tranResp.Balance != nil {
 			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
@@ -267,9 +267,9 @@ func (service *ProviderService) Cancel(req CancelRequest) (*StandardResponse, er
 // @Failure      400     {object}  StandardResponse
 // @Failure      500     {object}  StandardResponse
 // @Router       /providers/evolution/promo_payout [post]
-func (service *ProviderService) PromoPayout(req PromoPayoutRequest) (*StandardResponse, error) {
+func (service *WalletService) PromoPayout(req PromoPayoutRequest) (*StandardResponse, error) {
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.AddTransaction(service.promoPayoutTransRequestMapper(req, time.Now()))
+	tranResp, err := service.pamClient.AddTransaction(service.promoPayoutTransRequestMapper(req, time.Now()))
 
 	if err != nil {
 		if tranResp != nil && tranResp.Balance != nil {

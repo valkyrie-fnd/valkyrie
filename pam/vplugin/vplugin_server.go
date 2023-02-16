@@ -78,9 +78,3 @@ func (pp *VPluginRPCServer) GetGameRound(args any, resp *pam.GameRoundResponse) 
 	*resp = *result
 	return nil
 }
-
-func (pp *VPluginRPCServer) GetSettlementType(args any, resp *pam.SettlementType) error {
-	result := pp.Impl.GetSettlementType()
-	*resp = result
-	return nil
-}

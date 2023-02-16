@@ -12,7 +12,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-var s = &ProviderService{ctx: context.Background()}
+var s = &WalletService{ctx: context.Background()}
 
 var noRoundingRounder pam.AmountRounder = func(amt pam.Amt) (*pam.Amount, error) {
 	a := pam.Amount(amt)

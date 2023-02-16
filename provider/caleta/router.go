@@ -20,8 +20,8 @@ func init() {
 
 			var service *WalletService
 
-			// If gamewise settlement, provide a transaction client
-			if args.PamClient.GetSettlementType() == pam.GAMEWISE {
+			// If transaction supplier is PROVIDER, provide a transaction client
+			if args.PamClient.GetTransactionSupplier() == pam.PROVIDER {
 				apiClient, err := NewAPIClient(args.HTTPClient, args.Config)
 				if err != nil {
 					return nil, err
@@ -31,7 +31,7 @@ func init() {
 				service = NewWalletService(args.PamClient, nil)
 			}
 
-			log.Info().Msgf("Configured for settlement type '%s'", args.PamClient.GetSettlementType())
+			log.Info().Msgf("Configured for transaction supplier '%s'", args.PamClient.GetTransactionSupplier())
 
 			return NewProviderRouter(args.Config, service)
 		})

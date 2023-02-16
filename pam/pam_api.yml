@@ -597,6 +597,9 @@ components:
         tip:
           $ref: "#/components/schemas/Tip"
         roundTransactions:
+          description: |
+            Optional. In case the PAM does not handle grouping of transaction by itself, Valkyrie needs to provide 
+            transactions related to the round.
           type: array
           items:
             $ref: "#/components/schemas/RoundTransaction"

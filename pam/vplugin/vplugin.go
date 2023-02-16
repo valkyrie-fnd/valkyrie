@@ -111,15 +111,6 @@ func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRe
 	return &response
 }
 
-func (vp *VPluginRPC) GetSettlementType() pam.SettlementType {
-	var settlementType pam.SettlementType
-	if err := callWithLogging(vp.client, "Plugin.GetSettlementType", new(interface{}), &settlementType); err != nil {
-		return ""
-	}
-
-	return settlementType
-}
-
 type VPlugin struct {
 	Impl PAM
 }

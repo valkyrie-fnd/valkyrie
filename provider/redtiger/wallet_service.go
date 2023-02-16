@@ -8,18 +8,18 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-type ProviderService struct {
-	pam.PamClient
-	ctx context.Context
+type WalletService struct {
+	pamClient pam.PamClient
+	ctx       context.Context
 }
 
 // NewService Create new red tiger provider service
-func NewService(pamClient pam.PamClient) *ProviderService {
-	return &ProviderService{PamClient: pamClient, ctx: context.Background()}
+func NewService(pamClient pam.PamClient) *WalletService {
+	return &WalletService{pamClient: pamClient, ctx: context.Background()}
 }
 
-func (s *ProviderService) WithContext(ctx context.Context) Service {
-	return &ProviderService{PamClient: s.PamClient, ctx: ctx}
+func (s *WalletService) WithContext(ctx context.Context) Service {
+	return &WalletService{pamClient: s.pamClient, ctx: ctx}
 }
 
 // Auth implements Service
@@ -34,8 +34,8 @@ func (s *ProviderService) WithContext(ctx context.Context) Service {
 // @Success      200     {object}  AuthResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/auth [post]
-func (s *ProviderService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorResponse) {
-	session, err := s.RefreshSession(s.refreshSessionRequestMapper(req))
+func (s *WalletService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorResponse) {
+	session, err := s.pamClient.RefreshSession(s.refreshSessionRequestMapper(req))
 	if err != nil {
 		e := createRtErrorResponse(fmt.Errorf("Failed to Auth: %w", err))
 		return nil, &e
@@ -47,7 +47,7 @@ func (s *ProviderService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorRes
 		req.UserID = session.PlayerId
 	}
 
-	balance, err := s.GetBalance(s.getBalanceMapper(req.BaseRequest))
+	balance, err := s.pamClient.GetBalance(s.getBalanceMapper(req.BaseRequest))
 	if err != nil {
 		e := createRtErrorResponse(fmt.Errorf("Failed to Auth: %w", err))
 		return nil, &e
@@ -84,7 +84,7 @@ func (s *ProviderService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorRes
 // @Success      200     {object}  PayoutResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/payout [post]
-func (s *ProviderService) Payout(req PayoutRequest) (*PayoutResponseWrapper, *ErrorResponse) {
+func (s *WalletService) Payout(req PayoutRequest) (*PayoutResponseWrapper, *ErrorResponse) {
 	return handlePayout(s, req, pam.DEPOSIT)
 
 }
@@ -101,7 +101,7 @@ func (s *ProviderService) Payout(req PayoutRequest) (*PayoutResponseWrapper, *Er
 // @Success      200     {object}  StakeResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/stake [post]
-func (s *ProviderService) Stake(req StakeRequest) (*StakeResponseWrapper, *ErrorResponse) {
+func (s *WalletService) Stake(req StakeRequest) (*StakeResponseWrapper, *ErrorResponse) {
 	return handleStake(s, req, pam.WITHDRAW)
 }
 
@@ -117,7 +117,7 @@ func (s *ProviderService) Stake(req StakeRequest) (*StakeResponseWrapper, *Error
 // @Success      200     {object}  RefundResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/refund [post]
-func (s *ProviderService) Refund(req RefundRequest) (*RefundResponseWrapper, *ErrorResponse) {
+func (s *WalletService) Refund(req RefundRequest) (*RefundResponseWrapper, *ErrorResponse) {
 	return handleRefund(s, req, pam.CANCEL)
 }
 
@@ -133,7 +133,7 @@ func (s *ProviderService) Refund(req RefundRequest) (*RefundResponseWrapper, *Er
 // @Success      200     {object}  StakeResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/promo/buyin [post]
-func (s *ProviderService) PromoBuyin(req StakeRequest) (*StakeResponseWrapper, *ErrorResponse) {
+func (s *WalletService) PromoBuyin(req StakeRequest) (*StakeResponseWrapper, *ErrorResponse) {
 	return handleStake(s, req, pam.PROMOWITHDRAW)
 }
 
@@ -149,7 +149,7 @@ func (s *ProviderService) PromoBuyin(req StakeRequest) (*StakeResponseWrapper, *
 // @Success      200     {object}  RefundResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/promo/refund [post]
-func (s *ProviderService) PromoRefund(req RefundRequest) (*RefundResponseWrapper, *ErrorResponse) {
+func (s *WalletService) PromoRefund(req RefundRequest) (*RefundResponseWrapper, *ErrorResponse) {
 	return handleRefund(s, req, pam.PROMOCANCEL)
 }
 
@@ -165,12 +165,12 @@ func (s *ProviderService) PromoRefund(req RefundRequest) (*RefundResponseWrapper
 // @Success      200     {object}  PayoutResponseWrapper
 // @Failure      400     {object}  ErrorResponse
 // @Router       /providers/redtiger/promo/settle [post]
-func (s *ProviderService) PromoSettle(req PayoutRequest) (*PayoutResponseWrapper, *ErrorResponse) {
+func (s *WalletService) PromoSettle(req PayoutRequest) (*PayoutResponseWrapper, *ErrorResponse) {
 	return handlePayout(s, req, pam.PROMODEPOSIT)
 }
 
-func handleStake(s *ProviderService, req StakeRequest, transType pam.TransactionType) (*StakeResponseWrapper, *ErrorResponse) {
-	existingTransactions, err := s.GetTransactions(s.getTransactionsMapper(req.BaseRequest, req.Transaction.ID))
+func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionType) (*StakeResponseWrapper, *ErrorResponse) {
+	existingTransactions, err := s.pamClient.GetTransactions(s.getTransactionsMapper(req.BaseRequest, req.Transaction.ID))
 	if err != nil {
 		var valkErr pam.ValkyrieError
 		if errors.As(err, &valkErr) {
@@ -182,7 +182,7 @@ func handleStake(s *ProviderService, req StakeRequest, transType pam.Transaction
 	}
 	// no existing transaction
 	if existingTransactions == nil {
-		gameEvent, gErr := s.GetGameRound(s.getGameRoundMapper(req.BaseRequest, req.Round.ID))
+		gameEvent, gErr := s.pamClient.GetGameRound(s.getGameRoundMapper(req.BaseRequest, req.Round.ID))
 		if gErr != nil {
 			var valkErr pam.ValkyrieError
 			isValkErr := errors.As(gErr, &valkErr)
@@ -196,7 +196,7 @@ func handleStake(s *ProviderService, req StakeRequest, transType pam.Transaction
 			return nil, &e
 		}
 	}
-	tranRes, err := s.AddTransaction(s.getStakeTransactionMapper(req, transType))
+	tranRes, err := s.pamClient.AddTransaction(s.getStakeTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
@@ -231,8 +231,8 @@ func handleStake(s *ProviderService, req StakeRequest, transType pam.Transaction
 	return &response, nil
 }
 
-func handlePayout(s *ProviderService, req PayoutRequest, transType pam.TransactionType) (*PayoutResponseWrapper, *ErrorResponse) {
-	tranRes, err := s.AddTransaction(s.getPayoutTransactionMapper(req, transType))
+func handlePayout(s *WalletService, req PayoutRequest, transType pam.TransactionType) (*PayoutResponseWrapper, *ErrorResponse) {
+	tranRes, err := s.pamClient.AddTransaction(s.getPayoutTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
@@ -267,8 +267,8 @@ func handlePayout(s *ProviderService, req PayoutRequest, transType pam.Transacti
 	}, nil
 }
 
-func handleRefund(s *ProviderService, req RefundRequest, transType pam.TransactionType) (*RefundResponseWrapper, *ErrorResponse) {
-	tranRes, err := s.AddTransaction(s.getRefundTransactionMapper(req, transType))
+func handleRefund(s *WalletService, req RefundRequest, transType pam.TransactionType) (*RefundResponseWrapper, *ErrorResponse) {
+	tranRes, err := s.pamClient.AddTransaction(s.getRefundTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
