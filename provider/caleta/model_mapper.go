@@ -226,6 +226,11 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 				continue
 			}
 
+			var betCode *string
+			if v := t.Payload.Bet; v != "" {
+				betCode = &v
+			}
+
 			tx := pam.RoundTransaction{
 				ProviderTransactionId: &txID,
 				CashAmount:            &amt,
@@ -233,6 +238,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 				TransactionDateTime:   &t.CreatedTime,
 				ProviderBetRef:        refTx,
 				TransactionType:       transactionType,
+				BetCode:               betCode,
 			}
 
 			jackpotAmt := toPamAmount(t.Payload.JackpotContribution)

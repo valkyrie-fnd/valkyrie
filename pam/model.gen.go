@@ -332,6 +332,9 @@ type ProviderTransactionId = string
 
 // RoundTransaction A transaction that's part of a game round. It has a limited set of fields as its intended use is when doing gamewise settlement.
 type RoundTransaction struct {
+	// BetCode metadata about what kind of bet/transaction it is
+	BetCode *BetCode `json:"betCode,omitempty"`
+
 	// CashAmount Amount in some currency, rounded to 6 decimal places
 	CashAmount *Amount `json:"cashAmount,omitempty"`
 	IsGameOver *bool   `json:"isGameOver,omitempty"`
