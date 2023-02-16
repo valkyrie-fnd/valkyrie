@@ -541,6 +541,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					TransactionDateTime:   utils.Ptr(now),
 					ProviderBetRef:        utils.Ptr("ref-trans-uuid"),
 					TransactionType:       pam.DEPOSIT,
+					BetCode:               utils.Ptr("zero"),
 				},
 			},
 		},
@@ -634,6 +635,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					TransactionDateTime:   utils.Ptr(now),
 					JackpotContribution:   utils.Ptr(toPamAmount(2000)),
 					TransactionType:       pam.WITHDRAW,
+					BetCode:               utils.Ptr("Base"),
 				},
 				{
 					ProviderTransactionId: utils.Ptr("txn-uuid-1"),
@@ -642,6 +644,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					TransactionDateTime:   utils.Ptr(now),
 					JackpotContribution:   utils.Ptr(toPamAmount(3000)),
 					TransactionType:       pam.WITHDRAW,
+					BetCode:               utils.Ptr("Extra Ball"),
 				},
 				{
 					ProviderTransactionId: utils.Ptr("txn-uuid-2"),
@@ -650,6 +653,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					TransactionDateTime:   utils.Ptr(now),
 					ProviderBetRef:        utils.Ptr("txn-uuid-0"),
 					TransactionType:       pam.DEPOSIT,
+					BetCode:               utils.Ptr("zero"),
 				},
 			},
 		},

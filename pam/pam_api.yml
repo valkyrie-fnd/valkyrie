@@ -553,6 +553,8 @@ components:
           $ref: "#/components/schemas/TransactionType"
         providerBetRef:
           $ref: "#/components/schemas/ProviderBetRef"
+        betCode:
+          $ref: "#/components/schemas/BetCode"
       required:
         - transactionType
     Transaction:
