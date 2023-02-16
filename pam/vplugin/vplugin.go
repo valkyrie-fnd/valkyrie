@@ -111,6 +111,15 @@ func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRe
 	return &response
 }
 
+func (vp *VPluginRPC) GetTransactionSupplier() pam.TransactionSupplier {
+	var transactionSupplier pam.TransactionSupplier
+	if err := callWithLogging(vp.client, "Plugin.GetTransactionSupplier", new(interface{}), &transactionSupplier); err != nil {
+		return ""
+	}
+
+	return transactionSupplier
+}
+
 type VPlugin struct {
 	Impl PAM
 }
