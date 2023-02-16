@@ -211,7 +211,7 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	return resp.Session, nil
 }
 
-func (c *GenericPam) GetTransactionHandling() pam.TransactionHandling {
+func (c *GenericPam) GetTransactionSupplier() pam.TransactionSupplier {
 	return pam.OPERATOR
 }
 

@@ -4,18 +4,18 @@ import (
 	"context"
 )
 
-// TransactionHandling How the PAM expect the transaction handling to be done.
+// TransactionSupplier How the PAM expect the transaction handling to be done.
 //
 // Either the PAM keeps track of transactions that should be grouped together
 // or the PAM expects relevant transactions be included in transaction.RoundTransactions field.
-type TransactionHandling string
+type TransactionSupplier string
 
 const (
 	// OPERATOR Expects the operator to keep track of what transactions need to be grouped together
-	OPERATOR TransactionHandling = "OPERATOR"
-	// PROVIDER Expects the provider to pass all transactions needed grouped together.
+	OPERATOR TransactionSupplier = "OPERATOR"
+	// PROVIDER Expects the provider to supply all transactions needed grouped together.
 	// Make use of transaction.RoundTransactions to provide the PAM with relevant data
-	PROVIDER TransactionHandling = "PROVIDER"
+	PROVIDER TransactionSupplier = "PROVIDER"
 )
 
 // RefreshSessionRequest bundles everything needed to make a request
@@ -87,8 +87,8 @@ type PamClient interface {
 	AddTransaction(AddTransactionRequestMapper) (*TransactionResult, error)
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
-	// GetTransactionHandling return the type of transaction handling the PAM supports
-	GetTransactionHandling() TransactionHandling
+	// GetTransactionSupplier return the type of transaction supplier the PAM supports
+	GetTransactionSupplier() TransactionSupplier
 }
 
 // AmountRounder provides rounding requirements and is used for verifying

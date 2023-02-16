@@ -19,7 +19,7 @@ const (
 func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
-			if args.PamClient.GetTransactionHandling() == pam.PROVIDER {
+			if args.PamClient.GetTransactionSupplier() == pam.PROVIDER {
 				return nil, fmt.Errorf("Unsupported transaction handling")
 			}
 			service := NewService(args.PamClient)

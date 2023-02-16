@@ -35,8 +35,8 @@ type PAM interface {
 	AddTransaction(pam.AddTransactionRequest) *pam.AddTransactionResponse
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(pam.GetGameRoundRequest) *pam.GameRoundResponse
-	// GetTransactionHandling return the type of transaction handling the PAM supports
-	GetTransactionHandling() pam.TransactionHandling
+	// GetTransactionSupplier return the type of transaction supplier the PAM supports
+	GetTransactionSupplier() pam.TransactionSupplier
 	PluginControl
 }
 
@@ -49,7 +49,7 @@ func init() {
 
 type PluginPAM struct {
 	plugin              PAM
-	transactionHandling pam.TransactionHandling
+	transactionSupplier pam.TransactionSupplier
 }
 
 func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
@@ -68,12 +68,12 @@ func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
 		return nil, err
 	}
 
-	// Call the server and get the transaction handling, this needs to be done only once.
-	transactionHandling := plugin.GetTransactionHandling()
-	if transactionHandling == "" {
-		return nil, fmt.Errorf("Could not get PAM transaction handling")
+	// Call the server and get the transaction supplier, this needs to be done only once.
+	transactionSupplier := plugin.GetTransactionSupplier()
+	if transactionSupplier == "" {
+		return nil, fmt.Errorf("Could not get PAM transaction supplier")
 	}
-	return &PluginPAM{plugin: plugin, transactionHandling: transactionHandling}, nil
+	return &PluginPAM{plugin: plugin, transactionSupplier: transactionSupplier}, nil
 }
 
 func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, error) {
@@ -183,8 +183,8 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	return resp.Gameround, nil
 }
 
-func (vp *PluginPAM) GetTransactionHandling() pam.TransactionHandling {
-	return vp.transactionHandling // This has been initialized in the Init() call
+func (vp *PluginPAM) GetTransactionSupplier() pam.TransactionSupplier {
+	return vp.transactionSupplier // This has been initialized in the Init() call
 }
 
 // getPamConf adds logging and tracing configuration to PamConf if missing.

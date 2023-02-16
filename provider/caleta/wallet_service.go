@@ -131,7 +131,7 @@ func (s *WalletService) Transactionwin(ctx context.Context, request Transactionw
 	}
 
 	// If gamewise settlement, get the round transactions
-	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionHandling(), request.Body.Round)
+	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
 
 	var tranRes *pam.TransactionResult
 	var requestMapper pam.AddTransactionRequestMapper
@@ -187,7 +187,7 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 	}
 
 	// If gamewise settlement, get the round transactions
-	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionHandling(), request.Body.Round)
+	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
 
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree != nil && *request.Body.IsFree {
@@ -221,10 +221,10 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 	}, nil
 }
 
-// getRoundTransactions fetches all transactions linked to a given round (only if PAM transaction handling is "PROVIDER")
-func (s *WalletService) getRoundTransactions(ctx context.Context, transactionHandling pam.TransactionHandling, round string) *[]roundTransaction {
+// getRoundTransactions fetches all transactions linked to a given round (only if PAM transaction supplier is "PROVIDER")
+func (s *WalletService) getRoundTransactions(ctx context.Context, transactionSupplier pam.TransactionSupplier, round string) *[]roundTransaction {
 	var roundTransactions *[]roundTransaction
-	if transactionHandling == pam.PROVIDER {
+	if transactionSupplier == pam.PROVIDER {
 		if rounds, err := s.APIClient.getRoundTransactions(ctx, round); err != nil {
 			log.Warn().Msg(fmt.Sprintf("Failed to get round transactions for ID %s, reason: %s", round, err.Error()))
 		} else {

@@ -103,7 +103,6 @@ type mockPamClient struct {
 	pam.PamClient
 }
 
-// GetTransactionHandling return the type of transaction handling the PAM supports
-func (p *mockPamClient) GetTransactionHandling() pam.TransactionHandling {
+func (p *mockPamClient) GetTransactionSupplier() pam.TransactionSupplier {
 	return pam.OPERATOR
 }

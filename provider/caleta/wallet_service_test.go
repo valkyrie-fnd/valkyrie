@@ -143,7 +143,7 @@ func Test_Bet(t *testing.T) {
 		name                string
 		sessionFn           func() (*pam.Session, error)
 		addTranFn           func() (*pam.TransactionResult, error)
-		transactionHandling pam.TransactionHandling
+		transactionSupplier pam.TransactionSupplier
 		request             WalletbetRequestObject
 		want                WalletbetResponseObject
 	}{
@@ -225,7 +225,7 @@ func Test_Bet(t *testing.T) {
 			pamstub := pamStub{}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
-			pamstub.getTransactionHandlingFn = func() pam.TransactionHandling { return test.transactionHandling }
+			pamstub.getTransactionSupplierFn = func() pam.TransactionSupplier { return test.transactionSupplier }
 			sut := NewWalletService(&pamstub, nil)
 
 			resp, err := sut.Walletbet(ctx, test.request)
@@ -241,7 +241,7 @@ func Test_Win(t *testing.T) {
 		name                string
 		sessionFn           func() (*pam.Session, error)
 		addTranFn           func() (*pam.TransactionResult, error)
-		transactionHandling pam.TransactionHandling
+		transactionSupplier pam.TransactionSupplier
 		request             TransactionwinRequestObject
 		want                TransactionwinResponseObject
 	}{
@@ -307,7 +307,7 @@ func Test_Win(t *testing.T) {
 			pamstub := pamStub{}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
-			pamstub.getTransactionHandlingFn = func() pam.TransactionHandling { return test.transactionHandling }
+			pamstub.getTransactionSupplierFn = func() pam.TransactionSupplier { return test.transactionSupplier }
 			api := &mockAPIClient{getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				return &transactionResponse{}, nil
 			}}
@@ -326,7 +326,7 @@ func Test_Rollback(t *testing.T) {
 		name                string
 		sessionFn           func() (*pam.Session, error)
 		addTranFn           func() (*pam.TransactionResult, error)
-		transactionHandling pam.TransactionHandling
+		transactionSupplier pam.TransactionSupplier
 		request             WalletrollbackRequestObject
 		want                WalletrollbackResponseObject
 	}{
@@ -419,7 +419,7 @@ func Test_Rollback(t *testing.T) {
 	ctx := context.Background()
 	for _, test := range tests {
 		t.Run(test.name, func(tt *testing.T) {
-			pamstub := pamStub{getTransactionHandlingFn: func() pam.TransactionHandling { return test.transactionHandling }}
+			pamstub := pamStub{getTransactionSupplierFn: func() pam.TransactionSupplier { return test.transactionSupplier }}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
 			api := &mockAPIClient{getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
@@ -437,19 +437,19 @@ func Test_Rollback(t *testing.T) {
 func Test_getRoundTransactions(t *testing.T) {
 	tests := []struct {
 		name                   string
-		transactionHandling    pam.TransactionHandling
+		transactionSupplier    pam.TransactionSupplier
 		round                  string
 		getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 		want                   *[]roundTransaction
 	}{
 		{
-			name:                "Operator transaction handling should not return any transactions",
-			transactionHandling: pam.OPERATOR,
+			name:                "Operator transaction supplier should not return any transactions",
+			transactionSupplier: pam.OPERATOR,
 			round:               "909",
 		},
 		{
 			name:                "Provider transaction should return round transactions",
-			transactionHandling: pam.PROVIDER,
+			transactionSupplier: pam.PROVIDER,
 			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				id, _ := strconv.Atoi(gameRoundID)
@@ -472,7 +472,7 @@ func Test_getRoundTransactions(t *testing.T) {
 		},
 		{
 			name:                "Failed getting transactions",
-			transactionHandling: pam.PROVIDER,
+			transactionSupplier: pam.PROVIDER,
 			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				return nil, fmt.Errorf("Error fetching transactions")
@@ -480,8 +480,8 @@ func Test_getRoundTransactions(t *testing.T) {
 			want: nil,
 		},
 		{
-			name:                "Provider transaction handling but no transactions found",
-			transactionHandling: pam.PROVIDER,
+			name:                "Provider transaction supplier but no transactions found",
+			transactionSupplier: pam.PROVIDER,
 			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				return &transactionResponse{Code: 1016, Message: "Invalid Round"}, nil
@@ -493,10 +493,10 @@ func Test_getRoundTransactions(t *testing.T) {
 	ctx := context.Background()
 	for _, test := range tests {
 		t.Run(test.name, func(tt *testing.T) {
-			pamstub := pamStub{getTransactionHandlingFn: func() pam.TransactionHandling { return test.transactionHandling }}
+			pamstub := pamStub{getTransactionSupplierFn: func() pam.TransactionSupplier { return test.transactionSupplier }}
 			api := &mockAPIClient{getRoundTransactionsFn: test.getRoundTransactionsFn}
 			service := NewWalletService(&pamstub, api)
-			resp := service.getRoundTransactions(ctx, test.transactionHandling, test.round)
+			resp := service.getRoundTransactions(ctx, test.transactionSupplier, test.round)
 			assert.Equal(tt, test.want, resp)
 		})
 	}
@@ -511,7 +511,7 @@ type pamStub struct {
 	addTransFn               func() (*pam.TransactionResult, error)
 	getTransFn               func() ([]pam.Transaction, error)
 	getGameRoundFn           func() (*pam.GameRound, error)
-	getTransactionHandlingFn func() pam.TransactionHandling
+	getTransactionSupplierFn func() pam.TransactionSupplier
 }
 
 func (pam *pamStub) RefreshSession(_ pam.RefreshSessionRequestMapper) (*pam.Session, error) {
@@ -538,6 +538,6 @@ func (pam *pamStub) GetGameRound(_ pam.GetGameRoundRequestMapper) (*pam.GameRoun
 	return pam.getGameRoundFn()
 }
 
-func (pam *pamStub) GetTransactionHandling() pam.TransactionHandling {
-	return pam.getTransactionHandlingFn()
+func (pam *pamStub) GetTransactionSupplier() pam.TransactionSupplier {
+	return pam.getTransactionSupplierFn()
 }
