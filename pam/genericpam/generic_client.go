@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	DriverName     = "generic"
-	settlementType = pam.MIXED
+	DriverName = "generic"
 )
 
 func init() {
@@ -210,10 +209,6 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 		return nil, err
 	}
 	return resp.Session, nil
-}
-
-func (c *GenericPam) GetSettlementType() pam.SettlementType {
-	return settlementType
 }
 
 func (c *GenericPam) GetTransactionHandling() pam.TransactionHandling {

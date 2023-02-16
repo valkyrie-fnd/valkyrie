@@ -31,7 +31,7 @@ func init() {
 				service = NewWalletService(args.PamClient, nil)
 			}
 
-			log.Info().Msgf("Configured for settlement type '%s'", args.PamClient.GetSettlementType())
+			log.Info().Msgf("Configured for transaction handling '%s'", args.PamClient.GetTransactionHandling())
 
 			return NewProviderRouter(args.Config, service)
 		})

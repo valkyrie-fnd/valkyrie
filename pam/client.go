@@ -4,14 +4,6 @@ import (
 	"context"
 )
 
-// Enum for valid settlement types
-type SettlementType string
-
-const (
-	MIXED    SettlementType = "MIXED"
-	GAMEWISE SettlementType = "GAMEWISE"
-)
-
 // TransactionHandling How the PAM expect the transaction handling to be done.
 //
 // Either the PAM keeps track of transactions that should be grouped together
@@ -95,8 +87,6 @@ type PamClient interface {
 	AddTransaction(AddTransactionRequestMapper) (*TransactionResult, error)
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
-	// GetSettlementType returns the type of settlement the PAM supports
-	GetSettlementType() SettlementType
 	// GetTransactionHandling return the type of transaction handling the PAM supports
 	GetTransactionHandling() TransactionHandling
 }

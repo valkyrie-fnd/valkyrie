@@ -35,8 +35,6 @@ type PAM interface {
 	AddTransaction(pam.AddTransactionRequest) *pam.AddTransactionResponse
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(pam.GetGameRoundRequest) *pam.GameRoundResponse
-	// GetSettlementType returns the type of settlement the PAM supports
-	GetSettlementType() pam.SettlementType
 	// GetTransactionHandling return the type of transaction handling the PAM supports
 	GetTransactionHandling() pam.TransactionHandling
 	PluginControl
@@ -51,7 +49,6 @@ func init() {
 
 type PluginPAM struct {
 	plugin              PAM
-	settlementType      pam.SettlementType
 	transactionHandling pam.TransactionHandling
 }
 
@@ -71,18 +68,12 @@ func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
 		return nil, err
 	}
 
-	// Call the server and get the settlement type, this needs to be done only once.
-	settlementType := plugin.GetSettlementType()
-	if settlementType == "" {
-		return nil, fmt.Errorf("Could not get PAM settlement type")
-	}
-
 	// Call the server and get the transaction handling, this needs to be done only once.
 	transactionHandling := plugin.GetTransactionHandling()
 	if transactionHandling == "" {
 		return nil, fmt.Errorf("Could not get PAM transaction handling")
 	}
-	return &PluginPAM{plugin: plugin, settlementType: settlementType, transactionHandling: transactionHandling}, nil
+	return &PluginPAM{plugin: plugin, transactionHandling: transactionHandling}, nil
 }
 
 func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, error) {
@@ -190,10 +181,6 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 		return nil, err
 	}
 	return resp.Gameround, nil
-}
-
-func (vp *PluginPAM) GetSettlementType() pam.SettlementType {
-	return vp.settlementType // This has been initialized in the Init() call
 }
 
 func (vp *PluginPAM) GetTransactionHandling() pam.TransactionHandling {

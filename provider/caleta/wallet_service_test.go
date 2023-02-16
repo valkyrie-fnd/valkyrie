@@ -538,10 +538,6 @@ func (pam *pamStub) GetGameRound(_ pam.GetGameRoundRequestMapper) (*pam.GameRoun
 	return pam.getGameRoundFn()
 }
 
-func (p *pamStub) GetSettlementType() pam.SettlementType {
-	return pam.GAMEWISE
-}
-
 func (pam *pamStub) GetTransactionHandling() pam.TransactionHandling {
 	return pam.getTransactionHandlingFn()
 }
