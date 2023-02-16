@@ -78,3 +78,9 @@ func (pp *VPluginRPCServer) GetGameRound(args any, resp *pam.GameRoundResponse) 
 	*resp = *result
 	return nil
 }
+
+func (pp *VPluginRPCServer) GetTransactionSupplier(args any, resp *pam.TransactionSupplier) error {
+	result := pp.Impl.GetTransactionSupplier()
+	*resp = result
+	return nil
+}
