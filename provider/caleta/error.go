@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
+	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
 func getCErrorStatus(err error) Status {
@@ -13,6 +14,11 @@ func getCErrorStatus(err error) Status {
 			return status
 		}
 	}
+
+	if errors.Is(err, rest.TimeoutError) {
+		return RSERRORTIMEOUT
+	}
+
 	return RSERRORUNKNOWN
 }
 
@@ -37,6 +43,5 @@ var errCodes = map[pam.ValkErrorCode]Status{
 
 // errors left:
 // RSERRORBETLIMITEXCEEDED
-// RSERRORTIMEOUT
 // RSERRORWRONGSYNTAX
 // RSERRORWRONGTYPES

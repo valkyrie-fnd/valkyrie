@@ -435,12 +435,14 @@ func Test_Rollback(t *testing.T) {
 }
 
 func Test_getRoundTransactions(t *testing.T) {
+	testError := fmt.Errorf("Error fetching transactions")
 	tests := []struct {
 		name                   string
 		transactionSupplier    pam.TransactionSupplier
 		round                  string
 		getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 		want                   *[]roundTransaction
+		wantErr                error
 	}{
 		{
 			name:                "Operator transaction supplier should not return any transactions",
@@ -475,9 +477,10 @@ func Test_getRoundTransactions(t *testing.T) {
 			transactionSupplier: pam.PROVIDER,
 			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
-				return nil, fmt.Errorf("Error fetching transactions")
+				return nil, testError
 			},
-			want: nil,
+			want:    nil,
+			wantErr: testError,
 		},
 		{
 			name:                "Provider transaction supplier but no transactions found",
@@ -496,8 +499,9 @@ func Test_getRoundTransactions(t *testing.T) {
 			pamstub := pamStub{getTransactionSupplierFn: func() pam.TransactionSupplier { return test.transactionSupplier }}
 			api := &mockAPIClient{getRoundTransactionsFn: test.getRoundTransactionsFn}
 			service := NewWalletService(&pamstub, api)
-			resp := service.getRoundTransactions(ctx, test.transactionSupplier, test.round)
+			resp, err := service.getRoundTransactions(ctx, test.transactionSupplier, test.round)
 			assert.Equal(tt, test.want, resp)
+			assert.Equal(tt, test.wantErr, err)
 		})
 	}
 

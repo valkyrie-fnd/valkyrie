@@ -131,7 +131,11 @@ func (s *WalletService) Transactionwin(ctx context.Context, request Transactionw
 	}
 
 	// If gamewise settlement, get the round transactions
-	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
+	roundTransactions, err := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
+	if err != nil {
+		errStatus := getCErrorStatus(err)
+		return Transactionwin200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
+	}
 
 	var tranRes *pam.TransactionResult
 	var requestMapper pam.AddTransactionRequestMapper
@@ -187,7 +191,11 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 	}
 
 	// If gamewise settlement, get the round transactions
-	roundTransactions := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
+	roundTransactions, err := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
+	if err != nil {
+		errStatus := getCErrorStatus(err)
+		return Walletrollback200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
+	}
 
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree != nil && *request.Body.IsFree {
@@ -222,15 +230,16 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 }
 
 // getRoundTransactions fetches all transactions linked to a given round (only if PAM transaction supplier is "PROVIDER")
-func (s *WalletService) getRoundTransactions(ctx context.Context, transactionSupplier pam.TransactionSupplier, round string) *[]roundTransaction {
+func (s *WalletService) getRoundTransactions(ctx context.Context, transactionSupplier pam.TransactionSupplier, round string) (*[]roundTransaction, error) {
 	var roundTransactions *[]roundTransaction
 	if transactionSupplier == pam.PROVIDER {
 		if rounds, err := s.APIClient.getRoundTransactions(ctx, round); err != nil {
 			log.Warn().Msg(fmt.Sprintf("Failed to get round transactions for ID %s, reason: %s", round, err.Error()))
+			return nil, err
 		} else {
 			roundTransactions = rounds.RoundTransactions
 		}
 	}
 
-	return roundTransactions
+	return roundTransactions, nil
 }
