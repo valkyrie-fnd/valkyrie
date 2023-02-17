@@ -11,14 +11,27 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Removed
+
+## [0.6.0] - 2023-02-17
+
+### Added
 - Provider config `base_path`. Base path for endpoints related to this provider.
 - Provider config `provider_specific`. Can be passed to the provider implementation
 - Config `operator_base_path`. General base path for all requests from operator side
 - Config `provider_base_path`. General base path for all request from provider side
-- Game round render endpoint for provider Caleta
 - Config `operator_api_key`. Optional configuration that enables api key authorization check on operator endpoints.
+- Game round render endpoint for provider Caleta
+- Added support for Google Cloud error reporting in logs
+- Added `GetTransactionSupplier()` to pam interface and implemented support for including round transactions in Caleta provider
+- Added example implementation for a game provider
 
 ### Changed
+
+- Retry connection closed errors in http client
 
 ### Removed
 
