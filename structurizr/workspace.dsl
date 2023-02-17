@@ -1,7 +1,9 @@
 workspace valkyrie {
     model {
+        user = person "Player" "User on a online casino"
+        game = element "Game" "Game UI provided by Game Provider. Bets etc communicated toward Game provider backend."
         casinoOperator = element "Casino operator" "Running one or more instances of Valkyrie"
-        gameProvider = element "Game Provider"
+        gameProvider = element "Game Provider" "Developing games and hosting gaming servers"
         valkyrie = softwareSystem "Valkyrie system" "Valkyrie open source igaming aggregator"{
             valk = container "Valkyrie"{
                 pam = component "PAM Wallet" "Implementation of PamClient. Making calls to operator, updating account balance etc."
@@ -16,25 +18,41 @@ workspace valkyrie {
             }
             pamVplugin = container "PAM Plugin" "OPTIONAL. PAM plugin running as a separate process"
         }
+
+        user -> casinoOperator "Finds games to play"
+        casinoOperator -> user "Gives url to Game"
+        user -> game "Playing"
+        game -> gameProvider "Makes api calls to"
         casinoOperator -> operatorServer "Makes api calls to"
         operatorServer -> operatorRouter "Routes to specific provider"
         operatorRouter -> providerClient "calls"
         providerClient -> gameProvider "Makes api calls to"
         providerServer -> providerRouter "Routes to specific provider"
         providerRouter -> pam "Calls"
-        pam -> casinoOperator "Makes api calls to"
+        pam -> casinoOperator "Makes wallet api calls"
         pam -> pamVplugin "Calls" 
         pamVplugin -> casinoOperator "Makes api calls to"
-        gameProvider -> providerServer "Makes api calls to"
+        gameProvider -> providerServer "Makes wallet api calls to"
 
     }
     views {
         theme default
-        systemLandscape {
-            !script groovy {
-                workspace.views.createDefaultViews()
-                workspace.views.views.each { it.disableAutomaticLayout() }
-            }
+        !script groovy {
+            workspace.views.views.each { it.disableAutomaticLayout() }
+        }
+        systemLandscape OnlineGaming "Online gaming with Valkyrie"{
+            include *
+        }
+        systemContext valkyrie "Valkyrie-System"{
+            include *
+        }
+
+        container valkyrie "Valkyrie-Containers"{
+            include *
+
+        }
+        component valk "Valkyrie-Components" {
+            include *
         }
     }
 }
