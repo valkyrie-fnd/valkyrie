@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 
@@ -29,6 +30,7 @@ func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamCli
 
 	// Register all configured providers
 	for _, c := range config.Providers {
+		c.Name = lCaseNoWhitespace(c.Name)
 		providerRouter, err := provider.ProviderFactory().
 			Build(c.Name, provider.ProviderArgs{
 				Config:     c,
@@ -75,4 +77,8 @@ func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, httpClient res
 	}
 
 	return nil
+}
+
+func lCaseNoWhitespace(str string) string {
+	return strings.ReplaceAll(strings.ToLower(str), " ", "")
 }

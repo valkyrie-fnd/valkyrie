@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ProviderName = "Red Tiger"
+	ProviderName = "redtiger"
 )
 
 func init() {
