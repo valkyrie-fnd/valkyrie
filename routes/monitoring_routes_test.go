@@ -13,9 +13,14 @@ func TestMonitoringRoutes(t *testing.T) {
 	app := fiber.New()
 	MonitoringRoutes(app)
 
-	assert.Equal(t, 4, int(app.HandlersCount()))
+	assert.Equal(t, 2, int(app.HandlersCount()))
+}
 
-	req := httptest.NewRequest(fiber.MethodGet, "/monitoring/ping", nil)
+func TestPing(t *testing.T) {
+	app := fiber.New()
+	app.Get("/ping", pingHandler)
+
+	req := httptest.NewRequest(fiber.MethodGet, "/ping", nil)
 	resp, err := app.Test(req)
 
 	assert.NoError(t, err, "ping route should work")
