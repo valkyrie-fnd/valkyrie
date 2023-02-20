@@ -65,7 +65,7 @@ func Test_OperatorRoutes(t *testing.T) {
 		{
 			name: "Evolution",
 			conf: configs.ProviderConf{
-				Name: "Evolution",
+				Name: "evolution",
 				Auth: map[string]any{
 					"api_key":      "",
 					"casino_token": "",
@@ -78,7 +78,7 @@ func Test_OperatorRoutes(t *testing.T) {
 		{
 			name: "Red Tiger",
 			conf: configs.ProviderConf{
-				Name: "Red Tiger",
+				Name: "redtiger",
 				Auth: map[string]any{
 					"api_key":     "",
 					"recon_token": "",

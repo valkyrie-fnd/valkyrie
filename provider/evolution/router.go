@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ProviderName      = "Evolution"
+	ProviderName      = "evolution"
 	apiTokenParamName = "authToken"
 )
 

@@ -53,12 +53,12 @@ func Test_betTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.WITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -86,12 +86,12 @@ func Test_betTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.WITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -145,12 +145,12 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMOWITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -178,12 +178,12 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMOWITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -239,12 +239,12 @@ func Test_winTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.DEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -273,12 +273,12 @@ func Test_winTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.DEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -334,12 +334,12 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMODEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -368,12 +368,12 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMODEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -429,12 +429,12 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMOCANCEL,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
 					ProviderBetRef:        utils.Ptr("ref"),
@@ -460,12 +460,12 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMOCANCEL,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
 					ProviderBetRef:        utils.Ptr("ref"),
