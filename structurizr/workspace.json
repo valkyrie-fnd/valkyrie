@@ -2,10 +2,9 @@
   "id" : 1,
   "name" : "valkyrie",
   "description" : "Description",
-  "lastModifiedDate" : "2023-02-17T15:32:12Z",
-  "lastModifiedAgent" : "structurizr-javascript",
+  "lastModifiedDate" : "2023-02-20T13:23:39Z",
   "properties" : {
-    "structurizr.dsl" : "d29ya3NwYWNlIHZhbGt5cmllIHsKICAgIG1vZGVsIHsKICAgICAgICB1c2VyID0gcGVyc29uICJQbGF5ZXIiICJVc2VyIG9uIGEgb25saW5lIGNhc2lubyIKICAgICAgICBnYW1lID0gZWxlbWVudCAiR2FtZSIgIkdhbWUgVUkgcHJvdmlkZWQgYnkgR2FtZSBQcm92aWRlci4gQmV0cyBldGMgY29tbXVuaWNhdGVkIHRvd2FyZCBHYW1lIHByb3ZpZGVyIGJhY2tlbmQuIgogICAgICAgIGNhc2lub09wZXJhdG9yID0gZWxlbWVudCAiQ2FzaW5vIG9wZXJhdG9yIiAiUnVubmluZyBvbmUgb3IgbW9yZSBpbnN0YW5jZXMgb2YgVmFsa3lyaWUiCiAgICAgICAgZ2FtZVByb3ZpZGVyID0gZWxlbWVudCAiR2FtZSBQcm92aWRlciIgIkRldmVsb3BpbmcgZ2FtZXMgYW5kIGhvc3RpbmcgZ2FtaW5nIHNlcnZlcnMiCiAgICAgICAgdmFsa3lyaWUgPSBzb2Z0d2FyZVN5c3RlbSAiVmFsa3lyaWUgc3lzdGVtIiAiVmFsa3lyaWUgb3BlbiBzb3VyY2UgaWdhbWluZyBhZ2dyZWdhdG9yInsKICAgICAgICAgICAgdmFsayA9IGNvbnRhaW5lciAiVmFsa3lyaWUiewogICAgICAgICAgICAgICAgcGFtID0gY29tcG9uZW50ICJQQU0gV2FsbGV0IiAiSW1wbGVtZW50YXRpb24gb2YgUGFtQ2xpZW50LiBNYWtpbmcgY2FsbHMgdG8gb3BlcmF0b3IsIHVwZGF0aW5nIGFjY291bnQgYmFsYW5jZSBldGMuIgogICAgICAgICAgICAgICAgb3BlcmF0b3JTZXJ2ZXIgPSBjb21wb25lbnQgIk9wZXJhdG9yIHNlcnZlciIgIkV4cG9zaW5nIHBvcnQgdXNlZCBieSBvcGVyYXRvciB0byBtYWtlIHJlcXVlc3RzIHRvd2FyZCBWYWxreXJpZSBhbmQgR2FtZSBwcm92aWRlcnMiCiAgICAgICAgICAgICAgICBwcm92aWRlclNlcnZlciA9IGNvbXBvbmVudCAiUHJvdmlkZXIgU2VydmVyIiAiRXhwb3NpbmcgcG9ydCB1c2VkIGJ5IGdhbWUgcHJvdmlkZXIgdG8gbWFrZSByZXF1ZXN0cyB0b3dhcmQgVmFsa3lyaWUiCiAgICAgICAgICAgICAgICBncm91cCBQcm92aWRlciB7CiAgICAgICAgICAgICAgICAgICAgb3BlcmF0b3JSb3V0ZXIgPSBjb21wb25lbnQgIk9wZXJhdG9yIFJvdXRlciIgIkltcGxlbWVudGluZyAnb3BlcmF0b3JfYXBpLnltbCcgb2FwaSBzcGVjaWZpY2F0aW9uIgogICAgICAgICAgICAgICAgICAgIHByb3ZpZGVyQ2xpZW50ID0gY29tcG9uZW50ICJQcm92aWRlciBDbGllbnQiICJIYW5kbGUgYXV0aGVudGljYXRpb24gdG93YXJkIGdhbWUgcHJvdmlkZXIiCiAgICAgICAgICAgICAgICAgICAgcHJvdmlkZXJSb3V0ZXIgPSBjb21wb25lbnQgIlByb3ZpZGVyIFJvdXRlciIgIkltcGxlbWVudGluZyB0aGUgc3BlY2lmaWMgcHJvdmlkZXIncyB3YWxsZXQgYXBpLiBNYXBzIHRoZSByZXF1ZXN0cyB0byBjb25mb3JtIHRvIFZhbGt5cmllIFBBTSBhcGkiCgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIHBhbVZwbHVnaW4gPSBjb250YWluZXIgIlBBTSBQbHVnaW4iICJPUFRJT05BTC4gUEFNIHBsdWdpbiBydW5uaW5nIGFzIGEgc2VwYXJhdGUgcHJvY2VzcyIKICAgICAgICB9CgogICAgICAgIHVzZXIgLT4gY2FzaW5vT3BlcmF0b3IgIkZpbmRzIGdhbWVzIHRvIHBsYXkiCiAgICAgICAgY2FzaW5vT3BlcmF0b3IgLT4gdXNlciAiR2l2ZXMgdXJsIHRvIEdhbWUiCiAgICAgICAgdXNlciAtPiBnYW1lICJQbGF5aW5nIgogICAgICAgIGdhbWUgLT4gZ2FtZVByb3ZpZGVyICJNYWtlcyBhcGkgY2FsbHMgdG8iCiAgICAgICAgY2FzaW5vT3BlcmF0b3IgLT4gb3BlcmF0b3JTZXJ2ZXIgIk1ha2VzIGFwaSBjYWxscyB0byIKICAgICAgICBvcGVyYXRvclNlcnZlciAtPiBvcGVyYXRvclJvdXRlciAiUm91dGVzIHRvIHNwZWNpZmljIHByb3ZpZGVyIgogICAgICAgIG9wZXJhdG9yUm91dGVyIC0+IHByb3ZpZGVyQ2xpZW50ICJjYWxscyIKICAgICAgICBwcm92aWRlckNsaWVudCAtPiBnYW1lUHJvdmlkZXIgIk1ha2VzIGFwaSBjYWxscyB0byIKICAgICAgICBwcm92aWRlclNlcnZlciAtPiBwcm92aWRlclJvdXRlciAiUm91dGVzIHRvIHNwZWNpZmljIHByb3ZpZGVyIgogICAgICAgIHByb3ZpZGVyUm91dGVyIC0+IHBhbSAiQ2FsbHMiCiAgICAgICAgcGFtIC0+IGNhc2lub09wZXJhdG9yICJNYWtlcyB3YWxsZXQgYXBpIGNhbGxzIgogICAgICAgIHBhbSAtPiBwYW1WcGx1Z2luICJDYWxscyIgCiAgICAgICAgcGFtVnBsdWdpbiAtPiBjYXNpbm9PcGVyYXRvciAiTWFrZXMgYXBpIGNhbGxzIHRvIgogICAgICAgIGdhbWVQcm92aWRlciAtPiBwcm92aWRlclNlcnZlciAiTWFrZXMgd2FsbGV0IGFwaSBjYWxscyB0byIKCiAgICB9CiAgICB2aWV3cyB7CiAgICAgICAgdGhlbWUgZGVmYXVsdAogICAgICAgICFzY3JpcHQgZ3Jvb3Z5IHsKICAgICAgICAgICAgIyB3b3Jrc3BhY2Uudmlld3MuY3JlYXRlRGVmYXVsdFZpZXdzKCkKICAgICAgICAgICAgd29ya3NwYWNlLnZpZXdzLnZpZXdzLmVhY2ggeyBpdC5kaXNhYmxlQXV0b21hdGljTGF5b3V0KCkgfQogICAgICAgIH0KICAgICAgICBzeXN0ZW1MYW5kc2NhcGUgT25saW5lR2FtaW5nICJPbmxpbmUgZ2FtaW5nIHdpdGggVmFsa3lyaWUiewogICAgICAgICAgICAjICFzY3JpcHQgZ3Jvb3Z5IHsKICAgICAgICAgICAgIyAgICAgZGlzYWJsZUF1dG9tYXRpY0xheW91dCgpCiAgICAgICAgICAgICMgfQogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICB9CiAgICAgICAgc3lzdGVtQ29udGV4dCB2YWxreXJpZSAiVmFsa3lyaWUtU3lzdGVtInsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgdmFsa3lyaWUgIlZhbGt5cmllLUNvbnRhaW5lcnMiewogICAgICAgICAgICBpbmNsdWRlICoKCiAgICAgICAgfQogICAgICAgIGNvbXBvbmVudCB2YWxrICJWYWxreXJpZS1Db21wb25lbnRzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgIH0KICAgIH0KfQo="
+    "structurizr.dsl" : "d29ya3NwYWNlIHZhbGt5cmllIHsKICAgIG1vZGVsIHsKICAgICAgICB1c2VyID0gcGVyc29uICJQbGF5ZXIiICJVc2VyIHdpdGggYSBHYW1pbmcgT3BlcmF0b3IsIGVnIGFuIG9ubGluZSBjYXNpbm8iCiAgICAgICAgZ2FtZSA9IGVsZW1lbnQgIkdhbWUiICJHYW1lIFVJIHByb3ZpZGVkIGJ5IEdhbWUgUHJvdmlkZXIuIEJldHMgZXRjIGNvbW11bmljYXRlZCB0b3dhcmQgR2FtZSBwcm92aWRlciBiYWNrZW5kLiIKICAgICAgICBjYXNpbm9PcGVyYXRvciA9IGVsZW1lbnQgIkdhbWluZyBvcGVyYXRvciIgIlJ1bm5pbmcgb25lIG9yIG1vcmUgaW5zdGFuY2VzIG9mIFZhbGt5cmllIgogICAgICAgIGdhbWVQcm92aWRlciA9IGVsZW1lbnQgIkdhbWUgUHJvdmlkZXIiICJEZXZlbG9waW5nIGdhbWVzIGFuZCBob3N0aW5nIGdhbWluZyBzZXJ2ZXJzIgogICAgICAgIHZhbGt5cmllID0gc29mdHdhcmVTeXN0ZW0gIlZhbGt5cmllIHN5c3RlbSIgIlZhbGt5cmllIG9wZW4gc291cmNlIGlnYW1pbmcgYWdncmVnYXRvciJ7CiAgICAgICAgICAgIHZhbGsgPSBjb250YWluZXIgIlZhbGt5cmllInsKICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgIkdvIgogICAgICAgICAgICAgICAgcGFtID0gY29tcG9uZW50ICJQQU0gQ2xpZW50IiAiSW1wbGVtZW50YXRpb24gb2YgUGFtQ2xpZW50LiBNYWtpbmcgY2FsbHMgdG8gb3BlcmF0b3IsIHVwZGF0aW5nIGFjY291bnQgYmFsYW5jZSBldGMuIgogICAgICAgICAgICAgICAgb3BlcmF0b3JTZXJ2ZXIgPSBjb21wb25lbnQgIk9wZXJhdG9yIHNlcnZlciIgIkV4cG9zaW5nIHBvcnQgdXNlZCBieSBvcGVyYXRvciB0byBtYWtlIHJlcXVlc3RzIHRvd2FyZCBWYWxreXJpZSBhbmQgR2FtZSBwcm92aWRlcnMiICJHbyBmaWJlciIKICAgICAgICAgICAgICAgIHByb3ZpZGVyU2VydmVyID0gY29tcG9uZW50ICJQcm92aWRlciBTZXJ2ZXIiICJFeHBvc2luZyBwb3J0IHVzZWQgYnkgZ2FtZSBwcm92aWRlciB0byBtYWtlIHJlcXVlc3RzIHRvd2FyZCBWYWxreXJpZSIgIkdvIGZpYmVyIgogICAgICAgICAgICAgICAgZ3JvdXAgIlByb3ZpZGVyIG1vZHVsZSIgewogICAgICAgICAgICAgICAgICAgIG9wZXJhdG9yUm91dGVyID0gY29tcG9uZW50ICJPcGVyYXRvciBSb3V0ZXIiICJJbXBsZW1lbnRpbmcgJ29wZXJhdG9yX2FwaS55bWwnIG9hcGkgc3BlY2lmaWNhdGlvbiIgIkdvIGZpYmVyIgogICAgICAgICAgICAgICAgICAgIHByb3ZpZGVyQ2xpZW50ID0gY29tcG9uZW50ICJQcm92aWRlciBDbGllbnQiICJIYW5kbGluZyBhdXRoZW50aWNhdGlvbiB0b3dhcmRzIGdhbWUgcHJvdmlkZXIiCiAgICAgICAgICAgICAgICAgICAgcHJvdmlkZXJNYXBwZXIgPSBjb21wb25lbnQgIlByb3ZpZGVyIE1hcHBlciIgIk1hcHBpbmcgdGhlIHByb3ZpZGVyIHdhbGxldCByZXF1ZXN0IHRvIFZhbGt5cmllIHN0YW5kYXJkIHJlcXVlc3RzIgogICAgICAgICAgICAgICAgICAgIHByb3ZpZGVyUm91dGVyID0gY29tcG9uZW50ICJQcm92aWRlciBSb3V0ZXIiICJJbXBsZW1lbnRpbmcgdGhlIHNwZWNpZmljIHByb3ZpZGVyJ3Mgd2FsbGV0IGFwaS4iICJHbyBmaWJlciIKCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcGFtVnBsdWdpbiA9IGNvbnRhaW5lciAiUEFNIFBsdWdpbiIgIk9QVElPTkFMLiBQQU0gcGx1Z2luIHJ1bm5pbmcgYXMgYSBzZXBhcmF0ZSBwcm9jZXNzLiBOZWVkcyB0byBpbXBsZW1lbnQgc3BlY2lmaWVkIHZwbHVnaW4gaW50ZXJmYWNlLiIKICAgICAgICB9CgogICAgICAgIHVzZXIgLT4gY2FzaW5vT3BlcmF0b3IgIkZpbmRzIGdhbWVzIHRvIHBsYXkiCiAgICAgICAgY2FzaW5vT3BlcmF0b3IgLT4gdXNlciAiR2l2ZXMgdXJsIHRvIEdhbWUiCiAgICAgICAgdXNlciAtPiBnYW1lICJQbGF5aW5nIgogICAgICAgIGdhbWUgLT4gZ2FtZVByb3ZpZGVyICJNYWtlcyBhcGkgY2FsbHMgdG8iCiAgICAgICAgY2FzaW5vT3BlcmF0b3IgLT4gb3BlcmF0b3JTZXJ2ZXIgIk1ha2VzIGFwaSBjYWxscyB0byIgIkhUVFBTIgogICAgICAgIG9wZXJhdG9yU2VydmVyIC0+IG9wZXJhdG9yUm91dGVyICJSb3V0ZXMgdG8gc3BlY2lmaWMgcHJvdmlkZXIiCiAgICAgICAgb3BlcmF0b3JSb3V0ZXIgLT4gcHJvdmlkZXJDbGllbnQgImNhbGxzIgogICAgICAgIHByb3ZpZGVyQ2xpZW50IC0+IGdhbWVQcm92aWRlciAiTWFrZXMgYXBpIGNhbGxzIHRvIiAiSFRUUFMiCiAgICAgICAgcHJvdmlkZXJTZXJ2ZXIgLT4gcHJvdmlkZXJSb3V0ZXIgIlJvdXRlcyB0byBzcGVjaWZpYyBwcm92aWRlciIKICAgICAgICBwcm92aWRlclJvdXRlciAtPiBwcm92aWRlck1hcHBlciAiQ2FsbHMiCiAgICAgICAgcHJvdmlkZXJNYXBwZXIgLT4gcGFtICJDYWxscyIKICAgICAgICBwYW0gLT4gY2FzaW5vT3BlcmF0b3IgIk1ha2VzIHdhbGxldCBhcGkgY2FsbHMiICJIVFRQUy9KU09OIgogICAgICAgIHBhbSAtPiBwYW1WcGx1Z2luICJDYWxscyIgIlJQQy9HUlBDIgogICAgICAgIHBhbVZwbHVnaW4gLT4gY2FzaW5vT3BlcmF0b3IgIk1ha2VzIHdhbGxldCBhcGkgY2FsbHMgdG8iCiAgICAgICAgZ2FtZVByb3ZpZGVyIC0+IHByb3ZpZGVyU2VydmVyICJNYWtlcyB3YWxsZXQgYXBpIGNhbGxzIHRvIiAiSFRUUFMiCgogICAgfQogICAgdmlld3MgewogICAgICAgIHRoZW1lIGRlZmF1bHQKICAgICAgICAhc2NyaXB0IGdyb292eSB7CiAgICAgICAgICAgIHdvcmtzcGFjZS52aWV3cy52aWV3cy5lYWNoIHsgaXQuZGlzYWJsZUF1dG9tYXRpY0xheW91dCgpIH0KICAgICAgICB9CiAgICAgICAgc3lzdGVtTGFuZHNjYXBlIE9ubGluZUdhbWluZyAiT25saW5lIGdhbWluZyB3aXRoIFZhbGt5cmllInsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgfQogICAgICAgIHN5c3RlbUNvbnRleHQgdmFsa3lyaWUgIlZhbGt5cmllLVN5c3RlbSJ7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHZhbGt5cmllICJWYWxreXJpZS1Db250YWluZXJzInsKICAgICAgICAgICAgaW5jbHVkZSAqCgogICAgICAgIH0KICAgICAgICBjb21wb25lbnQgdmFsayAiVmFsa3lyaWUtQ29tcG9uZW50cyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICB9CiAgICAgICAgc3R5bGVzIHsKICAgICAgICAgICAgZWxlbWVudCAiR3JvdXAiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM0NDQ0NDQKICAgICAgICAgICAgICAgIGZvbnRTaXplIDI4CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0K"
   },
   "configuration" : { },
   "model" : {
@@ -13,19 +12,19 @@
       "id" : "1",
       "tags" : "Element,Person",
       "name" : "Player",
-      "description" : "User on a online casino",
+      "description" : "User with a Gaming Operator, eg an online casino",
       "relationships" : [ {
-        "id" : "16",
-        "tags" : "Relationship",
-        "sourceId" : "1",
-        "destinationId" : "2",
-        "description" : "Playing"
-      }, {
-        "id" : "14",
+        "id" : "15",
         "tags" : "Relationship",
         "sourceId" : "1",
         "destinationId" : "3",
         "description" : "Finds games to play"
+      }, {
+        "id" : "17",
+        "tags" : "Relationship",
+        "sourceId" : "1",
+        "destinationId" : "2",
+        "description" : "Playing"
       } ],
       "location" : "Unspecified"
     } ],
@@ -35,17 +34,19 @@
       "name" : "Valkyrie system",
       "description" : "Valkyrie open source igaming aggregator",
       "relationships" : [ {
-        "id" : "25",
+        "id" : "26",
         "sourceId" : "5",
         "destinationId" : "4",
         "description" : "Makes api calls to",
-        "linkedRelationshipId" : "23"
+        "technology" : "HTTPS",
+        "linkedRelationshipId" : "24"
       }, {
-        "id" : "30",
+        "id" : "32",
         "sourceId" : "5",
         "destinationId" : "3",
         "description" : "Makes wallet api calls",
-        "linkedRelationshipId" : "28"
+        "technology" : "HTTPS/JSON",
+        "linkedRelationshipId" : "30"
       } ],
       "location" : "Unspecified",
       "containers" : [ {
@@ -53,83 +54,77 @@
         "tags" : "Element,Container",
         "name" : "Valkyrie",
         "relationships" : [ {
-          "id" : "24",
+          "id" : "25",
           "sourceId" : "6",
           "destinationId" : "4",
           "description" : "Makes api calls to",
-          "linkedRelationshipId" : "23"
+          "technology" : "HTTPS",
+          "linkedRelationshipId" : "24"
         }, {
-          "id" : "29",
+          "id" : "31",
           "sourceId" : "6",
           "destinationId" : "3",
           "description" : "Makes wallet api calls",
-          "linkedRelationshipId" : "28"
+          "technology" : "HTTPS/JSON",
+          "linkedRelationshipId" : "30"
         }, {
-          "id" : "32",
+          "id" : "34",
           "sourceId" : "6",
-          "destinationId" : "13",
+          "destinationId" : "14",
           "description" : "Calls",
-          "linkedRelationshipId" : "31"
+          "technology" : "RPC/GRPC",
+          "linkedRelationshipId" : "33"
         } ],
+        "technology" : "Go",
         "components" : [ {
-          "id" : "9",
+          "id" : "12",
           "tags" : "Element,Component",
-          "name" : "Provider Server",
-          "description" : "Exposing port used by game provider to make requests toward Valkyrie",
+          "name" : "Provider Mapper",
+          "description" : "Mapping the provider wallet request to Valkyrie standard requests",
           "relationships" : [ {
-            "id" : "26",
+            "id" : "29",
             "tags" : "Relationship",
-            "sourceId" : "9",
-            "destinationId" : "12",
-            "description" : "Routes to specific provider"
+            "sourceId" : "12",
+            "destinationId" : "7",
+            "description" : "Calls"
           } ],
+          "group" : "Provider module",
           "size" : 0
         }, {
           "id" : "11",
           "tags" : "Element,Component",
           "name" : "Provider Client",
-          "description" : "Handle authentication toward game provider",
+          "description" : "Handling authentication towards game provider",
           "relationships" : [ {
-            "id" : "23",
+            "id" : "24",
             "tags" : "Relationship",
             "sourceId" : "11",
             "destinationId" : "4",
-            "description" : "Makes api calls to"
+            "description" : "Makes api calls to",
+            "technology" : "HTTPS"
           } ],
-          "group" : "Provider",
+          "group" : "Provider module",
           "size" : 0
         }, {
           "id" : "7",
           "tags" : "Element,Component",
-          "name" : "PAM Wallet",
+          "name" : "PAM Client",
           "description" : "Implementation of PamClient. Making calls to operator, updating account balance etc.",
           "relationships" : [ {
-            "id" : "28",
+            "id" : "30",
             "tags" : "Relationship",
             "sourceId" : "7",
             "destinationId" : "3",
-            "description" : "Makes wallet api calls"
+            "description" : "Makes wallet api calls",
+            "technology" : "HTTPS/JSON"
           }, {
-            "id" : "31",
+            "id" : "33",
             "tags" : "Relationship",
             "sourceId" : "7",
-            "destinationId" : "13",
-            "description" : "Calls"
+            "destinationId" : "14",
+            "description" : "Calls",
+            "technology" : "RPC/GRPC"
           } ],
-          "size" : 0
-        }, {
-          "id" : "10",
-          "tags" : "Element,Component",
-          "name" : "Operator Router",
-          "description" : "Implementing 'operator_api.yml' oapi specification",
-          "relationships" : [ {
-            "id" : "22",
-            "tags" : "Relationship",
-            "sourceId" : "10",
-            "destinationId" : "11",
-            "description" : "calls"
-          } ],
-          "group" : "Provider",
           "size" : 0
         }, {
           "id" : "8",
@@ -137,40 +132,71 @@
           "name" : "Operator server",
           "description" : "Exposing port used by operator to make requests toward Valkyrie and Game providers",
           "relationships" : [ {
-            "id" : "21",
+            "id" : "22",
             "tags" : "Relationship",
             "sourceId" : "8",
             "destinationId" : "10",
             "description" : "Routes to specific provider"
           } ],
+          "technology" : "Go fiber",
           "size" : 0
         }, {
-          "id" : "12",
+          "id" : "10",
           "tags" : "Element,Component",
-          "name" : "Provider Router",
-          "description" : "Implementing the specific provider's wallet api. Maps the requests to conform to Valkyrie PAM api",
+          "name" : "Operator Router",
+          "description" : "Implementing 'operator_api.yml' oapi specification",
+          "relationships" : [ {
+            "id" : "23",
+            "tags" : "Relationship",
+            "sourceId" : "10",
+            "destinationId" : "11",
+            "description" : "calls"
+          } ],
+          "group" : "Provider module",
+          "technology" : "Go fiber",
+          "size" : 0
+        }, {
+          "id" : "9",
+          "tags" : "Element,Component",
+          "name" : "Provider Server",
+          "description" : "Exposing port used by game provider to make requests toward Valkyrie",
           "relationships" : [ {
             "id" : "27",
             "tags" : "Relationship",
-            "sourceId" : "12",
-            "destinationId" : "7",
+            "sourceId" : "9",
+            "destinationId" : "13",
+            "description" : "Routes to specific provider"
+          } ],
+          "technology" : "Go fiber",
+          "size" : 0
+        }, {
+          "id" : "13",
+          "tags" : "Element,Component",
+          "name" : "Provider Router",
+          "description" : "Implementing the specific provider's wallet api.",
+          "relationships" : [ {
+            "id" : "28",
+            "tags" : "Relationship",
+            "sourceId" : "13",
+            "destinationId" : "12",
             "description" : "Calls"
           } ],
-          "group" : "Provider",
+          "group" : "Provider module",
+          "technology" : "Go fiber",
           "size" : 0
         } ],
         "documentation" : { }
       }, {
-        "id" : "13",
+        "id" : "14",
         "tags" : "Element,Container",
         "name" : "PAM Plugin",
-        "description" : "OPTIONAL. PAM plugin running as a separate process",
+        "description" : "OPTIONAL. PAM plugin running as a separate process. Needs to implement specified vplugin interface.",
         "relationships" : [ {
-          "id" : "33",
+          "id" : "35",
           "tags" : "Relationship",
-          "sourceId" : "13",
+          "sourceId" : "14",
           "destinationId" : "3",
-          "description" : "Makes api calls to"
+          "description" : "Makes wallet api calls to"
         } ],
         "documentation" : { }
       } ],
@@ -181,7 +207,7 @@
       "tags" : "Element",
       "name" : "Game",
       "relationships" : [ {
-        "id" : "17",
+        "id" : "18",
         "tags" : "Relationship",
         "sourceId" : "2",
         "destinationId" : "4",
@@ -191,31 +217,34 @@
     }, {
       "id" : "3",
       "tags" : "Element",
-      "name" : "Casino operator",
+      "name" : "Gaming operator",
       "relationships" : [ {
-        "id" : "15",
+        "id" : "16",
         "tags" : "Relationship",
         "sourceId" : "3",
         "destinationId" : "1",
         "description" : "Gives url to Game"
       }, {
-        "id" : "18",
+        "id" : "19",
         "tags" : "Relationship",
         "sourceId" : "3",
         "destinationId" : "8",
-        "description" : "Makes api calls to"
-      }, {
-        "id" : "19",
-        "sourceId" : "3",
-        "destinationId" : "6",
         "description" : "Makes api calls to",
-        "linkedRelationshipId" : "18"
+        "technology" : "HTTPS"
       }, {
         "id" : "20",
         "sourceId" : "3",
+        "destinationId" : "6",
+        "description" : "Makes api calls to",
+        "technology" : "HTTPS",
+        "linkedRelationshipId" : "19"
+      }, {
+        "id" : "21",
+        "sourceId" : "3",
         "destinationId" : "5",
         "description" : "Makes api calls to",
-        "linkedRelationshipId" : "18"
+        "technology" : "HTTPS",
+        "linkedRelationshipId" : "19"
       } ],
       "metadata" : "Running one or more instances of Valkyrie"
     }, {
@@ -223,23 +252,26 @@
       "tags" : "Element",
       "name" : "Game Provider",
       "relationships" : [ {
-        "id" : "34",
+        "id" : "36",
         "tags" : "Relationship",
         "sourceId" : "4",
         "destinationId" : "9",
-        "description" : "Makes wallet api calls to"
+        "description" : "Makes wallet api calls to",
+        "technology" : "HTTPS"
       }, {
-        "id" : "35",
+        "id" : "37",
         "sourceId" : "4",
         "destinationId" : "6",
         "description" : "Makes wallet api calls to",
-        "linkedRelationshipId" : "34"
+        "technology" : "HTTPS",
+        "linkedRelationshipId" : "36"
       }, {
-        "id" : "36",
+        "id" : "38",
         "sourceId" : "4",
         "destinationId" : "5",
         "description" : "Makes wallet api calls to",
-        "linkedRelationshipId" : "34"
+        "technology" : "HTTPS",
+        "linkedRelationshipId" : "36"
       } ],
       "metadata" : "Developing games and hosting gaming servers"
     } ]
@@ -255,6 +287,47 @@
         "height" : 1710
       },
       "enterpriseBoundaryVisible" : true,
+      "relationships" : [ {
+        "id" : "18"
+      }, {
+        "id" : "17"
+      }, {
+        "id" : "16",
+        "vertices" : [ {
+          "x" : 734,
+          "y" : 230
+        } ]
+      }, {
+        "id" : "15",
+        "vertices" : [ {
+          "x" : 809,
+          "y" : 495
+        } ]
+      }, {
+        "id" : "26",
+        "vertices" : [ {
+          "x" : 964,
+          "y" : 1115
+        } ]
+      }, {
+        "id" : "21",
+        "vertices" : [ {
+          "x" : 1023,
+          "y" : 602
+        } ]
+      }, {
+        "id" : "32",
+        "vertices" : [ {
+          "x" : 1334,
+          "y" : 600
+        } ]
+      }, {
+        "id" : "38",
+        "vertices" : [ {
+          "x" : 1344,
+          "y" : 1115
+        } ]
+      } ],
       "elements" : [ {
         "id" : "1",
         "x" : 239,
@@ -275,47 +348,6 @@
         "id" : "5",
         "x" : 949,
         "y" : 710
-      } ],
-      "relationships" : [ {
-        "id" : "17"
-      }, {
-        "id" : "16"
-      }, {
-        "id" : "15",
-        "vertices" : [ {
-          "x" : 734,
-          "y" : 230
-        } ]
-      }, {
-        "id" : "14",
-        "vertices" : [ {
-          "x" : 809,
-          "y" : 495
-        } ]
-      }, {
-        "id" : "36",
-        "vertices" : [ {
-          "x" : 1344,
-          "y" : 1115
-        } ]
-      }, {
-        "id" : "25",
-        "vertices" : [ {
-          "x" : 964,
-          "y" : 1115
-        } ]
-      }, {
-        "id" : "20",
-        "vertices" : [ {
-          "x" : 1023,
-          "y" : 602
-        } ]
-      }, {
-        "id" : "30",
-        "vertices" : [ {
-          "x" : 1334,
-          "y" : 600
-        } ]
       } ]
     } ],
     "systemContextViews" : [ {
@@ -328,6 +360,31 @@
         "height" : 1916
       },
       "enterpriseBoundaryVisible" : true,
+      "relationships" : [ {
+        "id" : "26",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 1258
+        } ]
+      }, {
+        "id" : "21",
+        "vertices" : [ {
+          "x" : 283,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "32",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 658
+        } ]
+      }, {
+        "id" : "38",
+        "vertices" : [ {
+          "x" : 583,
+          "y" : 1258
+        } ]
+      } ],
       "elements" : [ {
         "id" : "3",
         "x" : 208,
@@ -340,31 +397,6 @@
         "id" : "5",
         "x" : 208,
         "y" : 808
-      } ],
-      "relationships" : [ {
-        "id" : "36",
-        "vertices" : [ {
-          "x" : 583,
-          "y" : 1258
-        } ]
-      }, {
-        "id" : "25",
-        "vertices" : [ {
-          "x" : 283,
-          "y" : 1258
-        } ]
-      }, {
-        "id" : "20",
-        "vertices" : [ {
-          "x" : 283,
-          "y" : 658
-        } ]
-      }, {
-        "id" : "30",
-        "vertices" : [ {
-          "x" : 583,
-          "y" : 658
-        } ]
       } ]
     } ],
     "containerViews" : [ {
@@ -376,14 +408,47 @@
         "height" : 1789
       },
       "externalSoftwareSystemBoundariesVisible" : true,
-      "elements" : [ {
-        "id" : "13",
-        "x" : 852,
-        "y" : 709
+      "relationships" : [ {
+        "id" : "37",
+        "vertices" : [ {
+          "x" : 620,
+          "y" : 1273
+        } ]
       }, {
+        "id" : "25",
+        "vertices" : [ {
+          "x" : 280,
+          "y" : 1253
+        } ]
+      }, {
+        "id" : "35",
+        "vertices" : [ {
+          "x" : 922,
+          "y" : 524
+        } ]
+      }, {
+        "id" : "34"
+      }, {
+        "id" : "20",
+        "vertices" : [ {
+          "x" : 282,
+          "y" : 579
+        } ]
+      }, {
+        "id" : "31",
+        "vertices" : [ {
+          "x" : 607,
+          "y" : 609
+        } ]
+      } ],
+      "elements" : [ {
         "id" : "3",
         "x" : 207,
         "y" : 199
+      }, {
+        "id" : "14",
+        "x" : 852,
+        "y" : 709
       }, {
         "id" : "4",
         "x" : 232,
@@ -392,97 +457,29 @@
         "id" : "6",
         "x" : 225,
         "y" : 712
-      } ],
-      "relationships" : [ {
-        "id" : "29",
-        "vertices" : [ {
-          "x" : 607,
-          "y" : 609
-        } ]
-      }, {
-        "id" : "35",
-        "vertices" : [ {
-          "x" : 620,
-          "y" : 1273
-        } ]
-      }, {
-        "id" : "24",
-        "vertices" : [ {
-          "x" : 280,
-          "y" : 1253
-        } ]
-      }, {
-        "id" : "33",
-        "vertices" : [ {
-          "x" : 922,
-          "y" : 524
-        } ]
-      }, {
-        "id" : "32"
-      }, {
-        "id" : "19",
-        "vertices" : [ {
-          "x" : 282,
-          "y" : 579
-        } ]
       } ]
     } ],
     "componentViews" : [ {
       "key" : "Valkyrie-Components",
       "order" : 4,
       "dimensions" : {
-        "width" : 2095,
-        "height" : 3015
+        "width" : 2094,
+        "height" : 3016
       },
       "containerId" : "6",
       "externalContainerBoundariesVisible" : true,
-      "elements" : [ {
-        "id" : "11",
-        "x" : 250,
-        "y" : 1535
-      }, {
-        "id" : "12",
-        "x" : 805,
-        "y" : 1344
-      }, {
-        "id" : "13",
-        "x" : 1445,
-        "y" : 654
-      }, {
-        "id" : "3",
-        "x" : 695,
-        "y" : 199
-      }, {
-        "id" : "4",
-        "x" : 491,
-        "y" : 2515
-      }, {
-        "id" : "7",
-        "x" : 800,
-        "y" : 664
-      }, {
-        "id" : "8",
-        "x" : 220,
-        "y" : 669
-      }, {
-        "id" : "9",
-        "x" : 820,
-        "y" : 1929
-      }, {
-        "id" : "10",
-        "x" : 249,
-        "y" : 1128
-      } ],
       "relationships" : [ {
-        "id" : "18"
+        "id" : "29"
       }, {
         "id" : "28"
       }, {
         "id" : "27"
       }, {
-        "id" : "26"
+        "id" : "36"
       }, {
-        "id" : "34"
+        "id" : "24"
+      }, {
+        "id" : "35"
       }, {
         "id" : "23"
       }, {
@@ -490,17 +487,63 @@
       }, {
         "id" : "22"
       }, {
-        "id" : "21"
+        "id" : "30"
       }, {
-        "id" : "31"
+        "id" : "19"
+      } ],
+      "elements" : [ {
+        "id" : "11",
+        "x" : 260,
+        "y" : 1586
+      }, {
+        "id" : "12",
+        "x" : 795,
+        "y" : 1130
+      }, {
+        "id" : "13",
+        "x" : 810,
+        "y" : 1581
+      }, {
+        "id" : "14",
+        "x" : 1495,
+        "y" : 645
+      }, {
+        "id" : "3",
+        "x" : 695,
+        "y" : 200
+      }, {
+        "id" : "4",
+        "x" : 491,
+        "y" : 2516
+      }, {
+        "id" : "7",
+        "x" : 800,
+        "y" : 665
+      }, {
+        "id" : "8",
+        "x" : 220,
+        "y" : 670
+      }, {
+        "id" : "9",
+        "x" : 815,
+        "y" : 2071
+      }, {
+        "id" : "10",
+        "x" : 249,
+        "y" : 1129
       } ]
     } ],
     "configuration" : {
       "branding" : { },
-      "styles" : { },
+      "styles" : {
+        "elements" : [ {
+          "tag" : "Group",
+          "color" : "#444444",
+          "fontSize" : 28
+        } ]
+      },
       "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ],
       "terminology" : { },
-      "metadataSymbols" : "SquareBrackets",
       "lastSavedView" : "Valkyrie-Components"
     }
   }
