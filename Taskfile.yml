@@ -229,9 +229,11 @@ tasks:
     vars:
       DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
       TAG: '{{ default "latest" .VERSION }}'
-      SED: '{{if eq .OS "Windows_NT"}}%{$_ -replace "\.git$",""}{{else}}sed "s/\.git$//g" {{end}}' # Remove ".git" from remote url
+      WIN_SED: git ls-remote --get-url | %{$_ -replace "\.git$",""}
+      SED: git ls-remote --get-url | sed "s/\.git$//g"
+      REMOTE: '{{if eq .OS "Windows_NT"}} ''{{.WIN_SED}}'' {{else}} {{.SED}} {{end}}' # Remove ".git" from remote url
       SRC_REPO:
-        sh: "{{.SHELL}} 'git ls-remote --get-url | {{.SED}}'"
+        sh: "{{.SHELL}} {{.REMOTE}}"
     cmds:
       - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --tag "{{.DOCKER_REPO}}/{{.NAME}}:latest" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
 
