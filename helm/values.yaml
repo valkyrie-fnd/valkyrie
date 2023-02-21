@@ -109,3 +109,20 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+otel:
+  enabled: false
+  config:
+  containers:
+    - name: otel-collector-sidecar
+      image: otel/opentelemetry-collector-contrib
+      ports:
+        - containerPort: 4318
+          name: otlp-http
+          protocol: TCP
+      args:
+        - --config=/etc/otel/collector.yaml
+      volumeMounts:
+        - mountPath: /etc/otel
+          name: config-map
+          readOnly: true

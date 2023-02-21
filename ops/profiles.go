@@ -58,7 +58,7 @@ func (p *Profiles) deduce() {
 	if _, found := os.LookupEnv("KUBERNETES_SERVICE_HOST"); found {
 		p.profiles["k8s"] = true
 	}
-	if _, found := os.LookupEnv("GOOGLE_COMPUTE_METADATA"); found {
+	if _, found := os.LookupEnv("GOOGLE_COMPUTE_METADATA"); found || OnGCE() {
 		p.profiles["gcp"] = true
 		p.profiles["cloud"] = true
 	}

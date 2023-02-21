@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    command: --config=/etc/otel-collector-sample-docker.yaml
+    volumes:
+      - ./otel-collector-sample-docker.yaml:/etc/otel-collector-sample-docker.yaml
+    ports:
+      - "4318:4318" # OTLP over HTTP receiver
+    depends_on:
+      - jaeger
+  
+  # Jaeger - for tracing
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "14250:14250" # Collector gRPC
+      - "16686:16686" # Web HTTP

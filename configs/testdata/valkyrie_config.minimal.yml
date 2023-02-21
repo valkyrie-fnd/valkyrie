@@ -17,10 +17,11 @@ logging: {}
 
 # tracing configuration, see https://opentelemetry.io/docs/concepts/what-is-opentelemetry/
 tracing: {}
-#  type: stdout # jeager, googleCloudTrace
+#  type: stdout # otlptracehttp
 #  service_name: traceServiceName #
-#  url: "https://tracing-server-url"
-#  google_project_id: xyz # if you're using googleCloudTrace
+#  url: "https://tracing-server-url" # optional
+#  google_project_id: xyz # if you're using google cloud
+#  sample_ratio: 0.01 # sample 1% of traces
 
 # configure the player account management (PAM aka Wallet system) to use
 pam: {}

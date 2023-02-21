@@ -14,24 +14,12 @@ func TestTracing(t *testing.T) {
 		want *TracingConfig
 	}{
 		{
-			name: "Jaeger config selected",
+			name: "OLTP config selected",
 			want: &TracingConfig{
-				Exporter: Jaeger,
+				Exporter: OTLPTraceHTTP,
 				TraceConfig: configs.TraceConfig{
-					TraceType:   "jaeger",
-					URL:         "the.jaeger.host:222/path",
+					TraceType:   "otlptracehttp",
 					ServiceName: "my-service",
-				},
-			},
-		},
-		{
-			name: "Google config selected",
-			want: &TracingConfig{
-				Exporter: Google,
-				TraceConfig: configs.TraceConfig{
-					TraceType:       "googleCloudTrace",
-					ServiceName:     "my-service",
-					GoogleProjectID: "my-project",
 				},
 			},
 		},
