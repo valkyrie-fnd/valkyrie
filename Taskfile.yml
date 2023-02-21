@@ -14,7 +14,7 @@ dotenv: [".env", ".env.local"]
 # * Environment variables
 vars:
   NAME: valkyrie
-  BUILD_DIR: '{{if eq .OS "Windows_NT"}}${pwd}/build{{else}}build{{end}}'
+  BUILD_DIR: '{{if eq .OS "Windows_NT"}}$PWD/build{{else}}build{{end}}'
   GIT_VERSION:
     sh: bash .github/tools/version.sh
   VERSION: "{{ coalesce .VERSION .GIT_VERSION }}" # pick first non-empty version
@@ -335,7 +335,5 @@ tasks:
 
   c4model:
     desc: run structurizr lite on localhost:8090 for viewing and editing the c4 model of Valkyrie
-    vars:
-      PWD: '{{if eq .OS "Windows_NT"}}${pwd}{{else}}$PWD{{end}}'
     cmds:
-      - docker run -it --rm -p 8090:8080 -v {{.PWD}}/structurizr:/usr/local/structurizr structurizr/lite
+      - docker run -it --rm -p 8090:8080 -v $PWD/structurizr:/usr/local/structurizr structurizr/lite
