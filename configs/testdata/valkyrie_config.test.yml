@@ -17,7 +17,7 @@ tracing:
   type: stdout # otlptracehttp
   service_name: traceServiceName #
   url: "https://tracing-server-url"
-  google_project_id: xyz # if you're using googleCloudTrace
+  google_project_id: xyz # if you're using google cloud
   sample_ratio: 0.01 # sample 1% of traces
 pam: # player account management
   name: generic # check /pam-folder for available PAMs

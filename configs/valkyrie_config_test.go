@@ -52,13 +52,13 @@ var tests = []testWrapper{
 		envFilePath: "",
 		yamlData: `
 tracing:
-  type: jaeger
+  type: otlptracehttp
   url: 'http://localhost'
   service_name: my-service
 `,
 		want: &ValkyrieConfig{
 			Tracing: TraceConfig{
-				TraceType:   "jaeger",
+				TraceType:   "otlptracehttp",
 				URL:         "http://localhost",
 				ServiceName: "my-service",
 				SampleRatio: 0.01,
@@ -73,13 +73,13 @@ tracing:
 		envFilePath: "",
 		yamlData: `
 tracing:
-  type: jaeger
+  type: otlptracehttp
   url: ${ENV_THAT_DOESNT_EXIST}
   service_name: my-service
 `,
 		want: &ValkyrieConfig{
 			Tracing: TraceConfig{
-				TraceType:   "jaeger",
+				TraceType:   "otlptracehttp",
 				URL:         "",
 				ServiceName: "my-service",
 				SampleRatio: 0.01,
@@ -94,13 +94,13 @@ tracing:
 		envFilePath: "",
 		yamlData: `
 tracing:
-  type: jaeger
+  type: otlptracehttp
   service_name: my-service
   sample_ratio: 1.0
 `,
 		want: &ValkyrieConfig{
 			Tracing: TraceConfig{
-				TraceType:   "jaeger",
+				TraceType:   "otlptracehttp",
 				URL:         "",
 				ServiceName: "my-service",
 				SampleRatio: 1.0,

@@ -110,9 +110,13 @@ tolerations: []
 
 affinity: {}
 
+# configuration for OpenTelemetry Collector sidecar
+# https://opentelemetry.io/docs/collector/
 otel:
   enabled: false
+  # https://opentelemetry.io/docs/collector/configuration/
   config:
+  # default otel-collector-sidecar will listen to otlp over http
   containers:
     - name: otel-collector-sidecar
       image: otel/opentelemetry-collector-contrib

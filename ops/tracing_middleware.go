@@ -132,17 +132,37 @@ func createProviderExporter(cfg *TracingConfig) (tracesdk.SpanExporter, error) {
 	)
 	switch cfg.Exporter {
 	case OTLPTraceHTTP:
-		options := []otlptracehttp.Option{
-			otlptracehttp.WithCompression(otlptracehttp.GzipCompression),
-			otlptracehttp.WithInsecure(),
-		}
-		if cfg.URL != "" {
-			options = append(options, otlptracehttp.WithEndpoint(cfg.URL))
-		}
-		exp, err = otlptracehttp.New(context.Background(), options...)
+		exp, err = otlptracehttp.New(context.Background(), getOTLPOptions(cfg.URL)...)
 	case StdOut:
 		exp, err = stdouttrace.New()
 	}
 
 	return exp, err
+}
+
+// getOTLPOptions returns options given a tracing URL
+func getOTLPOptions(url string) []otlptracehttp.Option {
+	options := []otlptracehttp.Option{
+		otlptracehttp.WithCompression(otlptracehttp.GzipCompression), // enable compression by default
+	}
+
+	if url == "" {
+		options = append(options, otlptracehttp.WithInsecure()) // use HTTP by default
+		return options
+	}
+
+	if scheme, remainder, found := strings.Cut(url, "://"); found {
+		if scheme == "http" {
+			options = append(options, otlptracehttp.WithInsecure())
+		}
+		url = remainder
+	}
+
+	if endpoint, path, found := strings.Cut(url, "/"); found {
+		options = append(options, otlptracehttp.WithEndpoint(endpoint), otlptracehttp.WithURLPath(path))
+	} else {
+		options = append(options, otlptracehttp.WithEndpoint(endpoint))
+	}
+
+	return options
 }
