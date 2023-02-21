@@ -21,6 +21,7 @@ vars:
   BUILD_CMD: CGO_ENABLED=0 go build -ldflags="-w -s -X main.appVersion={{.VERSION}}"
   # workaround to use built-in windows commands
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
+  FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
 
 # https://taskfile.dev/usage/#watch-tasks
 interval: "500ms"
@@ -108,8 +109,6 @@ tasks:
   build:prepare:
     internal: true
     run: once
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}"
 
@@ -132,16 +131,12 @@ tasks:
     desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - build:prepare
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/linux-amd64"
       - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
 
   build:windows:
     desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     deps:
       - build:prepare
     cmds:
@@ -158,8 +153,6 @@ tasks:
   build:osx:amd64:
     desc: build OSX amd64 binary
     internal: true
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/darwin-amd64"
       - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
@@ -167,8 +160,6 @@ tasks:
   build:osx:arm64:
     desc: build OSX arm64 binary
     internal: true
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/darwin-arm64"
       - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
