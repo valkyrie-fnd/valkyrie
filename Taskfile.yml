@@ -14,13 +14,14 @@ dotenv: [".env", ".env.local"]
 # * Environment variables
 vars:
   NAME: valkyrie
-  BUILD_DIR: build
+  BUILD_DIR: '{{if eq .OS "Windows_NT"}}${pwd}/build{{else}}build{{end}}'
   GIT_VERSION:
     sh: bash .github/tools/version.sh
-  VERSION: '{{ coalesce .VERSION .GIT_VERSION }}' # pick first non-empty version
+  VERSION: "{{ coalesce .VERSION .GIT_VERSION }}" # pick first non-empty version
   BUILD_CMD: CGO_ENABLED=0 go build -ldflags="-w -s -X main.appVersion={{.VERSION}}"
   # workaround to use built-in windows commands
   SHELL: '{{if eq .OS "Windows_NT"}}powershell{{end}}'
+  FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
 
 # https://taskfile.dev/usage/#watch-tasks
 interval: "500ms"
@@ -114,8 +115,6 @@ tasks:
   build:prepare:
     internal: true
     run: once
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     cmds:
       - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}"
 
@@ -127,23 +126,23 @@ tasks:
     sources:
       - ./**/*.go
       - go.mod
+    vars:
+      FILE: '{{if eq .OS "Windows_NT"}}.exe{{end}}'
     generates:
-      - "{{.BUILD_DIR}}/{{.NAME}}"
+      - "{{.BUILD_DIR}}/{{.NAME}}{{.FILE}}"
     cmds:
-      - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}"
+      - "go build {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}{{.FILE}}"
 
   build:linux:
     desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
     deps:
       - build:prepare
     cmds:
-      - mkdir -p {{.BUILD_DIR}}/linux-amd64
+      - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/linux-amd64"
       - GOOS=linux GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/linux-amd64/{{.NAME}}
 
   build:windows:
     desc: build windows binary. Use cli args to build dev variant "-- -tags=dev"
-    vars:
-      FORCE: '{{if eq .OS "Windows_NT"}}-fo{{end}}'
     deps:
       - build:prepare
     cmds:
@@ -161,14 +160,14 @@ tasks:
     desc: build OSX amd64 binary
     internal: true
     cmds:
-      - mkdir -p {{.BUILD_DIR}}/darwin-amd64
+      - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/darwin-amd64"
       - GOOS=darwin GOARCH=amd64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-amd64/{{.NAME}}
 
   build:osx:arm64:
     desc: build OSX arm64 binary
     internal: true
     cmds:
-      - mkdir -p {{.BUILD_DIR}}/darwin-arm64
+      - "{{.SHELL}} mkdir {{.FORCE}} -p {{.BUILD_DIR}}/darwin-arm64"
       - GOOS=darwin GOARCH=arm64 {{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/darwin-arm64/{{.NAME}}
 
   build:all:
@@ -183,8 +182,9 @@ tasks:
     deps:
       - build:linux
     cmds:
-      - cp scripts/* {{.BUILD_DIR}}/linux-amd64
-      - cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/linux-amd64/config.yml
+      - "{{.SHELL}} cp scripts/svc.sh {{.BUILD_DIR}}/linux-amd64"
+      - "{{.SHELL}} cp scripts/valkyrie.service.template {{.BUILD_DIR}}/linux-amd64"
+      - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/linux-amd64/config.yml"
       - tar -C {{.BUILD_DIR}}/linux-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-linux-amd64.tar.gz {{.NAME}} svc.sh valkyrie.service.template config.yml
 
   package:windows:
@@ -192,15 +192,18 @@ tasks:
     deps:
       - build:windows
     cmds:
-      - zip {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-windows-amd64.zip {{.BUILD_DIR}}/windows-amd64/{{.NAME}}.exe
+      - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/windows-amd64/config.yml"
+      - tar -C {{.BUILD_DIR}}/windows-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-windows-amd64.tar.gz {{.NAME}}.exe config.yml
 
   package:osx:
     desc: package osx binary
     deps:
       - build:osx
     cmds:
-      - tar -C {{.BUILD_DIR}}/darwin-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-amd64.tar.gz {{.NAME}}
-      - tar -C {{.BUILD_DIR}}/darwin-arm64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-arm64.tar.gz {{.NAME}}
+      - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/darwin-amd64/config.yml"
+      - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/darwin-arm64/config.yml"
+      - tar -C {{.BUILD_DIR}}/darwin-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-amd64.tar.gz {{.NAME}} config.yml
+      - tar -C {{.BUILD_DIR}}/darwin-arm64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-arm64.tar.gz {{.NAME}} config.yml
 
   package:all:
     desc: package all binaries
@@ -232,8 +235,11 @@ tasks:
     vars:
       DOCKER_REPO: '{{ default "localhost:5000" .DOCKER_REPO }}'
       TAG: '{{ default "latest" .VERSION }}'
+      WIN_SED: git ls-remote --get-url | %{$_ -replace "\.git$",""}
+      SED: git ls-remote --get-url | sed "s/\.git$//g"
+      REMOTE: '{{if eq .OS "Windows_NT"}} ''{{.WIN_SED}}'' {{else}} {{.SED}} {{end}}' # Remove ".git" from remote url
       SRC_REPO:
-        sh: git ls-remote --get-url | sed 's/\.git$//g'
+        sh: "{{.SHELL}} {{.REMOTE}}"
     cmds:
       - docker build --tag "{{.DOCKER_REPO}}/{{.NAME}}:{{.TAG}}" --tag "{{.DOCKER_REPO}}/{{.NAME}}:latest" --label="org.opencontainers.image.source={{.SRC_REPO}}" --build-arg VERSION={{.VERSION}} .
 
@@ -278,7 +284,7 @@ tasks:
   dependency:outdated:
     desc: list directly dependent modules that can be upgraded
     cmds:
-      - go list -u -m $(go list -m -f '{{`{{.Indirect}} {{.}}`}}' all | grep '^false' | cut -d ' ' -f2) | grep '\['
+      - bash ./scripts/dependency-outdated.sh
 
   dependency:graph:
     desc: graph of upstream modules with gmchart
@@ -294,12 +300,15 @@ tasks:
 
   binmap:
     desc: treemap breakdown of binary
+    vars:
+      FILE: '{{if eq .OS "Windows_NT"}}.exe{{end}}'
+      OPEN: '{{if eq .OS "Windows_NT"}}start{{else}}open{{end}}'
     deps:
       - build
     cmds:
       - go install github.com/nikolaydubina/go-binsize-treemap@latest
-      - go tool nm -size ./build/valkyrie | go-binsize-treemap > ./build/binsize.svg
-      - open ./build/binsize.svg
+      - go tool nm -size ./build/valkyrie{{.FILE}} | go-binsize-treemap > ./build/binsize.svg
+      - "{{.SHELL}} {{.OPEN}} ./build/binsize.svg"
 
   dependency:vulncheck:
     desc: analyze dependencies for known vulnerabilities
