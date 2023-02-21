@@ -20,3 +20,6 @@ tmp/
 
 # taskfile
 .task
+
+# Struturizr
+.structurizr

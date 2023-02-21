@@ -62,6 +62,7 @@ func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, httpClient res
 
 	// Register all configured providers
 	for _, c := range config.Providers {
+		c.Name = lCaseNoWhitespace(c.Name)
 		operatorRouter, err := provider.OperatorFactory().
 			Build(c.Name, provider.OperatorArgs{
 				Config:     c,
