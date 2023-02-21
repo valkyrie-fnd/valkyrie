@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
+
+	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
@@ -51,12 +53,12 @@ func Test_betTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.WITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -84,12 +86,12 @@ func Test_betTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.WITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -143,12 +145,12 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMOWITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -176,12 +178,12 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMOWITHDRAW,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -237,12 +239,12 @@ func Test_winTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.DEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -271,12 +273,12 @@ func Test_winTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.DEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					CashAmount:            toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -332,12 +334,12 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMODEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -366,12 +368,12 @@ func Test_promoWinTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMODEPOSIT,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					PromoAmount:           toPamAmount(1),
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
@@ -427,12 +429,12 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   now,
 					TransactionType:       pam.PROMOCANCEL,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
 					ProviderBetRef:        utils.Ptr("ref"),
@@ -458,12 +460,12 @@ func Test_cancelTransactionMapper(t *testing.T) {
 			want: &pam.AddTransactionRequest{
 				Params: pam.AddTransactionParams{
 					XPlayerToken: "tkn",
-					Provider:     "Caleta",
+					Provider:     "caleta",
 				},
 				Body: pam.Transaction{
 					TransactionDateTime:   time.Now(),
 					TransactionType:       pam.PROMOCANCEL,
-					Provider:              "Caleta",
+					Provider:              "caleta",
 					Currency:              "EUR",
 					ProviderTransactionId: "id",
 					ProviderBetRef:        utils.Ptr("ref"),
@@ -518,7 +520,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 						RequestUUID:              "req-uuid",
 						SupplierUser:             "supp-usr",
 						TransactionUUID:          "trans-uuid",
-						ReferenceTransactionUUID: "ref-trans-uuid",
+						ReferenceTransactionUUID: testutils.Ptr("ref-trans-uuid"),
 						GameID:                   1,
 						Amount:                   200000,
 						RoundClosed:              true,
@@ -536,7 +538,10 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					ProviderTransactionId: utils.Ptr("trans-uuid"),
 					CashAmount:            utils.Ptr(toPamAmount(200000)),
 					IsGameOver:            utils.Ptr(true),
-					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					TransactionDateTime:   utils.Ptr(now),
+					ProviderBetRef:        utils.Ptr("ref-trans-uuid"),
+					TransactionType:       pam.DEPOSIT,
+					BetCode:               utils.Ptr("zero"),
 				},
 			},
 		},
@@ -609,7 +614,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 						RequestUUID:              "req-uuid-2",
 						SupplierUser:             "supp-usr",
 						TransactionUUID:          "txn-uuid-2",
-						ReferenceTransactionUUID: "txn-uuid-0",
+						ReferenceTransactionUUID: testutils.Ptr("txn-uuid-0"),
 						GameID:                   1,
 						Amount:                   200000,
 						RoundClosed:              true,
@@ -627,23 +632,100 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					ProviderTransactionId: utils.Ptr("txn-uuid-0"),
 					CashAmount:            utils.Ptr(toPamAmount(200000)),
 					IsGameOver:            utils.Ptr(false),
-					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					TransactionDateTime:   utils.Ptr(now),
 					JackpotContribution:   utils.Ptr(toPamAmount(2000)),
+					TransactionType:       pam.WITHDRAW,
+					BetCode:               utils.Ptr("Base"),
 				},
 				{
 					ProviderTransactionId: utils.Ptr("txn-uuid-1"),
 					CashAmount:            utils.Ptr(toPamAmount(300000)),
 					IsGameOver:            utils.Ptr(false),
-					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					TransactionDateTime:   utils.Ptr(now),
 					JackpotContribution:   utils.Ptr(toPamAmount(3000)),
+					TransactionType:       pam.WITHDRAW,
+					BetCode:               utils.Ptr("Extra Ball"),
 				},
 				{
 					ProviderTransactionId: utils.Ptr("txn-uuid-2"),
 					CashAmount:            utils.Ptr(toPamAmount(200000)),
 					IsGameOver:            utils.Ptr(true),
-					TransactionDateTime:   utils.Ptr(now.Add(1 + time.Second)),
+					TransactionDateTime:   utils.Ptr(now),
+					ProviderBetRef:        utils.Ptr("txn-uuid-0"),
+					TransactionType:       pam.DEPOSIT,
+					BetCode:               utils.Ptr("zero"),
 				},
 			},
+		},
+		{
+			name: "cancel transaction",
+			input: &[]roundTransaction{
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid",
+					Payload: payload{
+						Round:                    "CG-303",
+						Token:                    "token",
+						GameCode:                 "gc",
+						RequestUUID:              "req-uuid",
+						SupplierUser:             "supp-usr",
+						TransactionUUID:          "trans-uuid",
+						ReferenceTransactionUUID: testutils.Ptr("ref-trans-uuid"),
+						GameID:                   1,
+						Amount:                   200000,
+						RoundClosed:              true,
+						IsFree:                   false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       200000,
+				},
+			},
+			want: &[]pam.RoundTransaction{
+				{
+					ProviderTransactionId: utils.Ptr("trans-uuid"),
+					CashAmount:            utils.Ptr(toPamAmount(200000)),
+					IsGameOver:            utils.Ptr(true),
+					TransactionDateTime:   utils.Ptr(now),
+					ProviderBetRef:        utils.Ptr("ref-trans-uuid"),
+					TransactionType:       pam.CANCEL,
+				},
+			},
+		},
+		{
+			name: "unknown transaction type",
+			input: &[]roundTransaction{
+				{
+					ID:          303,
+					CreatedTime: now,
+					ClosedTime:  now.Add(1 + time.Second),
+					TxnUUID:     "txn-uuid",
+					Payload: payload{
+						Round:                    "CG-303",
+						Token:                    "token",
+						GameCode:                 "gc",
+						Currency:                 "EUR",
+						RequestUUID:              "req-uuid",
+						SupplierUser:             "supp-usr",
+						TransactionUUID:          "trans-uuid",
+						ReferenceTransactionUUID: testutils.Ptr("ref-trans-uuid"),
+						GameID:                   1,
+						Amount:                   200000,
+						RoundClosed:              true,
+						IsFree:                   false,
+					},
+					RoundID:      101,
+					TxnType:      0,
+					Status:       909,
+					CacheEntryID: 606,
+					Amount:       200000,
+				},
+			},
+			want: new([]pam.RoundTransaction),
 		},
 	}
 

@@ -79,8 +79,8 @@ func (pp *VPluginRPCServer) GetGameRound(args any, resp *pam.GameRoundResponse) 
 	return nil
 }
 
-func (pp *VPluginRPCServer) GetSettlementType(args any, resp *pam.SettlementType) error {
-	result := pp.Impl.GetSettlementType()
+func (pp *VPluginRPCServer) GetTransactionSupplier(args any, resp *pam.TransactionSupplier) error {
+	result := pp.Impl.GetTransactionSupplier()
 	*resp = result
 	return nil
 }

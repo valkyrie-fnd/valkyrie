@@ -59,12 +59,12 @@ spec:
           livenessProbe:
             initialDelaySeconds: 10
             httpGet:
-              path: /monitoring/ping
+              path: /ping
               port: http-operator
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:
-              path: /monitoring/ping
+              path: /ping
               port: http-operator
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

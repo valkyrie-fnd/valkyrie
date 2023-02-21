@@ -47,6 +47,7 @@ RwIDAQAB
 
 const testBody = `{"user":"test","country":"BR","currency":"BTC","operator_id":1,"token":"d5dcb4f6-db06-4ab1-9c63-d1f7dc12694e","game_id":10,"lang":"en","lobby_url":"https://casinosample.com","deposit_url":"https://casinosample.com/deposit"}`
 const expectedSig = "eLAVF38xYGp4KyHnybr3vEkKY9l7+G3VJusrY5k+FbseYBXZsRcH6EDP9PTUCkAQNftnq61HAo3fyjPKPxJpRQwBJjZpvSHgf5K/VLquf3GU92kXxQwVC1UQzhboKSfk9Ub9tRRt0sQlfRUdYtLSWYDRrWGuDElTOAgE5uhR6Mlkc5UXSKye1JaQHPxrJyVryHCTgFJd+HCy2QYVMQeEl7yF6RYRqmQPGZuawTbvTvz8nRVu5/z5zFFmEHZc2MPQMQAuweP28FjaGnljMWUE89KH5PxiY5CAYZJmez2WXoL9/Voc4c3PJjntAlIOEzLLQ26NNGRKMLwjUsq8ScEEmA=="
+const expectedEmptySig = "hw32xPm+J5f24V2zC3s/poBPXNJoli04FG+vs4FaFlA6X+zpSx7lpnkcQUwk1JDgh8MQeFLB75zj5jwJ3fM97XKld0kxXGyGmFXY02FHNHkKXZAqZ2+9t8/2AqiMcLWbqS4UgDH0k3SFUch1Uws9kA+5SxXQUzm9vuTIqnAc2bCZCPKMJqPTjG1si6T439UCkUUUSDTHGzEJtj8iglgHkq9ryzsog9kZ32F0gLN/HsonbKQZphhdjZ5KVwDnaASLCTA4gFzsDDfN/d/vQ9npXNqcqV9vGLg64WuMOILLA1a1kYmudb8oyLuPiTsSGB/VZ67xszV/Pn4/E/yeCs0NIw=="
 
 func Test_Sign(t *testing.T) {
 	sut, err := NewSigner([]byte(testingPrivateKey))
@@ -57,10 +58,44 @@ func Test_Sign(t *testing.T) {
 	assert.Equal(t, string(signature), expectedSig)
 }
 
+func Test_Sign_Empty_Body(t *testing.T) {
+	sut, err := NewSigner([]byte(testingPrivateKey))
+	assert.NoError(t, err)
+	signature, err := sut.Sign([]byte{})
+	assert.NoError(t, err)
+
+	assert.Equal(t, expectedEmptySig, string(signature))
+}
+
+func Test_Sign_Nil_Body(t *testing.T) {
+	sut, err := NewSigner([]byte(testingPrivateKey))
+	assert.NoError(t, err)
+	signature, err := sut.Sign(nil)
+	assert.NoError(t, err)
+
+	assert.Equal(t, expectedEmptySig, string(signature))
+}
+
 func Test_Verify(t *testing.T) {
 	sut, err := NewVerifier([]byte(testingPublicKey))
 	assert.NoError(t, err)
 	err = sut.Verify(expectedSig, []byte(testBody))
+	// no error means the public key could verify the signature was correct
+	assert.NoError(t, err)
+}
+
+func Test_Verify_Empty_Body(t *testing.T) {
+	sut, err := NewVerifier([]byte(testingPublicKey))
+	assert.NoError(t, err)
+	err = sut.Verify(expectedEmptySig, []byte{})
+	// no error means the public key could verify the signature was correct
+	assert.NoError(t, err)
+}
+
+func Test_Verify_Nil_Body(t *testing.T) {
+	sut, err := NewVerifier([]byte(testingPublicKey))
+	assert.NoError(t, err)
+	err = sut.Verify(expectedEmptySig, nil)
 	// no error means the public key could verify the signature was correct
 	assert.NoError(t, err)
 }

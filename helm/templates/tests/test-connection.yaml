@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "valkyrie.fullname" . }}-operator:{{ .Values.operatorService.port }}/monitoring/ping']
+      args: ['{{ include "valkyrie.fullname" . }}-operator:{{ .Values.operatorService.port }}/ping']
   restartPolicy: Never

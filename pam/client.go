@@ -4,12 +4,18 @@ import (
 	"context"
 )
 
-// Enum for valid settlement types
-type SettlementType string
+// TransactionSupplier How the PAM expect the transaction handling to be done.
+//
+// Either the PAM keeps track of transactions that should be grouped together
+// or the PAM expects relevant transactions be included in transaction.RoundTransactions field.
+type TransactionSupplier string
 
 const (
-	MIXED    SettlementType = "MIXED"
-	GAMEWISE SettlementType = "GAMEWISE"
+	// OPERATOR Expects the operator to keep track of what transactions need to be grouped together
+	OPERATOR TransactionSupplier = "OPERATOR"
+	// PROVIDER Expects the provider to supply all transactions needed grouped together.
+	// Make use of transaction.RoundTransactions to provide the PAM with relevant data
+	PROVIDER TransactionSupplier = "PROVIDER"
 )
 
 // RefreshSessionRequest bundles everything needed to make a request
@@ -81,8 +87,8 @@ type PamClient interface {
 	AddTransaction(AddTransactionRequestMapper) (*TransactionResult, error)
 	// GetGameRound gets gameRound from PAM
 	GetGameRound(GetGameRoundRequestMapper) (*GameRound, error)
-	// GetSettlementType returns the type of settlement the PAM supports
-	GetSettlementType() SettlementType
+	// GetTransactionSupplier return the type of transaction supplier the PAM supports
+	GetTransactionSupplier() TransactionSupplier
 }
 
 // AmountRounder provides rounding requirements and is used for verifying

@@ -24,7 +24,7 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.10
-	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230209130924-d94d53318e43
+	github.com/valkyrie-fnd/valkyrie-stubs v0.0.0-20230220131541-7329394fb318
 	github.com/valyala/fasthttp v1.44.0
 	go.opentelemetry.io/otel v1.13.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.13.0
@@ -79,10 +79,10 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
-	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.4.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/api v0.108.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa // indirect

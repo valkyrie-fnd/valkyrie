@@ -26,7 +26,7 @@ info:
       }
     }
     ```
-  version: 0.6.0
+  version: 0.7.0
 servers:
   - url: http://pam-url
     description: operator pam server
@@ -549,6 +549,14 @@ components:
           type: boolean
         jackpotContribution:
           $ref: "#/components/schemas/Amount"
+        transactionType:
+          $ref: "#/components/schemas/TransactionType"
+        providerBetRef:
+          $ref: "#/components/schemas/ProviderBetRef"
+        betCode:
+          $ref: "#/components/schemas/BetCode"
+      required:
+        - transactionType
     Transaction:
       type: object
       properties:
@@ -589,6 +597,9 @@ components:
         tip:
           $ref: "#/components/schemas/Tip"
         roundTransactions:
+          description: |
+            Optional. In case the PAM does not handle grouping of transaction by itself, Valkyrie needs to provide 
+            transactions related to the round.
           type: array
           items:
             $ref: "#/components/schemas/RoundTransaction"

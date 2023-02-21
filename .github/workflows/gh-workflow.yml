@@ -110,8 +110,9 @@ jobs:
           tags: ${{ steps.meta_v.outputs.tags }}
           labels: ${{ steps.meta_v.outputs.labels }}
       - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push chart to registry
         run: |
           task helm:push

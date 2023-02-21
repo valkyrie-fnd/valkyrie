@@ -8,14 +8,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 )
 
+var pingHandler = func(_ *fiber.Ctx) error { return nil }
+
 // MonitoringRoutes func for mounting monitoring routes.
 func MonitoringRoutes(a *fiber.App) {
 
 	// Create routes group.
 	route := a.Group("/monitoring")
-
-	// Ping for liveness checks
-	route.Get("/ping", func(_ *fiber.Ctx) error { return nil })
 
 	// Monitoring
 	route.Get("/metrics", monitor.New(monitor.Config{Title: "Valkyrie Metrics"}))

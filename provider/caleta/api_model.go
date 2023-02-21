@@ -12,6 +12,11 @@ type gameRoundRenderResponse struct {
 	Code    int
 }
 
+type transactionRequestBody struct {
+	RoundID    string `json:"round_id"`
+	OperatorID string `json:"operator_id"`
+}
+
 type transactionResponse struct {
 	RoundTransactions *[]roundTransaction `json:"transactions,omitempty"`
 	Message           string              `json:"message"`
@@ -33,20 +38,20 @@ type roundTransaction struct {
 }
 
 type payload struct {
-	Bet                      string          `json:"bet"`
-	Round                    Round           `json:"round"`
-	Token                    Token           `json:"token"`
-	Currency                 Currency        `json:"currency"`
-	GameCode                 GameCode        `json:"game_code"`
-	RequestUUID              RequestUuid     `json:"request_uuid"`
-	SupplierUser             SupplierUser    `json:"supplier_user"`
-	TransactionUUID          TransactionUuid `json:"transaction_uuid"`
-	ReferenceTransactionUUID TransactionUuid `json:"reference_transaction_uuid"`
-	GameID                   GameId          `json:"game_id"`
-	JackpotContribution      MoneyAmount     `json:"jackpot_contribution"`
-	Amount                   MoneyAmount     `json:"amount"`
-	RoundClosed              RoundClosed     `json:"round_closed"`
-	IsFree                   IsFree          `json:"is_free"`
+	ReferenceTransactionUUID *TransactionUuid `json:"reference_transaction_uuid,omitempty"`
+	Bet                      string           `json:"bet"`
+	Round                    Round            `json:"round"`
+	Token                    Token            `json:"token"`
+	Currency                 Currency         `json:"currency"`
+	GameCode                 GameCode         `json:"game_code"`
+	RequestUUID              RequestUuid      `json:"request_uuid"`
+	SupplierUser             SupplierUser     `json:"supplier_user"`
+	TransactionUUID          TransactionUuid  `json:"transaction_uuid"`
+	GameID                   GameId           `json:"game_id"`
+	JackpotContribution      MoneyAmount      `json:"jackpot_contribution"`
+	Amount                   MoneyAmount      `json:"amount"`
+	RoundClosed              RoundClosed      `json:"round_closed"`
+	IsFree                   IsFree           `json:"is_free"`
 }
 
 type gameURLQuery struct {

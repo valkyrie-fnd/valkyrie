@@ -111,13 +111,13 @@ func (vp *VPluginRPC) GetGameRound(req pam.GetGameRoundRequest) *pam.GameRoundRe
 	return &response
 }
 
-func (vp *VPluginRPC) GetSettlementType() pam.SettlementType {
-	var settlementType pam.SettlementType
-	if err := callWithLogging(vp.client, "Plugin.GetSettlementType", new(interface{}), &settlementType); err != nil {
+func (vp *VPluginRPC) GetTransactionSupplier() pam.TransactionSupplier {
+	var transactionSupplier pam.TransactionSupplier
+	if err := callWithLogging(vp.client, "Plugin.GetTransactionSupplier", new(interface{}), &transactionSupplier); err != nil {
 		return ""
 	}
 
-	return settlementType
+	return transactionSupplier
 }
 
 type VPlugin struct {

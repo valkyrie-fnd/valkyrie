@@ -176,7 +176,6 @@ func (v *Valkyrie) Run(ready func()) {
 	case <-v.ctx.Done():
 	case e := <-errs:
 		log.Error().Err(e).Msg("listener failed")
-		// FIXME: child contexts(like dwh_writer) will not always be given enough time to shutdown
 		v.cancel()
 	}
 
