@@ -1,22 +1,12 @@
 # Valkyrie Game Aggregator
 
-An open source game aggregator written in Go.
+## An open source game aggregator written in Go.
+For general information about Valkyrie, please check [this](https://valkyrie.bet/about) out!
 
-Valkyrie software presents an easy way to integrate game providers to gaming operators in order to remove the need for additional licensed aggregator software and potentially standardizing the integration. Valkyrie provides a generic interface for operators to integrate with, and have game provider specific modules which can be enabled on a per provider basis.
-
-In it's current shape, Valkyrie is a thread safe, stateless, high performant adapter plug connecting providers and operators.
-
-The software consists of a set of core functions together with a standardized operator interface client and provider specific modules. Valkyrie runs as a service with endpoints for provider wallet transactions, a client communicating with operators' wallet and endpoints for server-to-server game launches for those operators/providers who prefer this game launch flavour. In addition, Valkyrie offers some utilities for front end game client interaction. 
-
-Optional integrations to proprietary operators' protocols can be handled on a case to case basis.
-
-Valkyrie is configurable with respect to providers, operators, logging, tracing and communication timeouts.
-
-For integration testing and kick start purposes, there is an additional project, valkyrie-stubs, avaliable. Valkyrie-stubs contains a mock test bench simulating a boiler plate casino wallet (/genericpam). The valkyrie-stubs wallet publishes services according to Valkyrie OAPI3 PAM client specification, some basic business logic and an in-memory, simple datastore (/memorydatastore). Test benches simulating providers are available in the Valkyrie project itself (/provider/{provider}/test). In other words, Valkyrie project, together with valkyrie-stubs, constitute an environment enabling integration tests of the Valkyrie software in any isolated environment.  
-
-The software is available as a Go binary file, packaged in container or as raw code for anyone to compile and use. Valkyrie is recommended to execute within operators' networks but it can optionally be deployed virtually anywhere.
+Information for developers and other interested parties is found below.
 
 ## Installing
+**Note**: Windows users are recommended to use PowerShell. Custom tasks may be used for build purposes, etc. To run most of these in Windows you need to have installed [wsl](https://www.microsoft.com/store/productId/9P9TQF7MRM4R) to enable `bash`. Another helpful tool is [Chocolatey](https://chocolatey.org/), which can be used on windows to install other programs, like Task.
 
 Valkyrie is built from source by running:
 
@@ -29,9 +19,10 @@ You can then run Valkyrie using:
 ```shell
 ./valkyrie -config path/to/config.yml
 ```
+Two template config files come with the Valkyrie software. These can be found [here](configs/testdata).
 
 ### Swagger
-To include swagger ui to view all exposed endpoints in valkyrie you can use the build tag `dev`
+To include swagger ui to view all exposed endpoints in Valkyrie you can use the build tag `dev`. After starting Valkyrie, simply direct your web browser to localhost:$<port>$/swagger and take a look at the appropriate endpoints
 
 ```shell
 go build -tags=dev
@@ -39,7 +30,7 @@ go build -tags=dev
 
 ### Custom tasks
 
-Valkyrie uses [Task](https://taskfile.dev/) as a task runner, to get the tool please refer to its [installation](https://taskfile.dev/installation/) page.
+Valkyrie uses [Task](https://taskfile.dev/) as a task runner, e.g. for building the application. To use the tool please refer to its [installation](https://taskfile.dev/installation/) page.
 
 A `Taskfile.yml` is located in the project root which describes custom tasks that can be run for the project.
 
