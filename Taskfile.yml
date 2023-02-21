@@ -126,7 +126,7 @@ tasks:
     generates:
       - "{{.BUILD_DIR}}/{{.NAME}}{{.FILE}}"
     cmds:
-      - "{{.BUILD_CMD}} {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}{{.FILE}}"
+      - "go build {{.CLI_ARGS}} -o {{.BUILD_DIR}}/{{.NAME}}{{.FILE}}"
 
   build:linux:
     desc: build linux binary. Use cli args to build dev variant "-- -tags=dev"
@@ -300,12 +300,15 @@ tasks:
 
   binmap:
     desc: treemap breakdown of binary
+    vars:
+      FILE: '{{if eq .OS "Windows_NT"}}.exe{{end}}'
+      OPEN: '{{if eq .OS "Windows_NT"}}start{{else}}open{{end}}'
     deps:
       - build
     cmds:
       - go install github.com/nikolaydubina/go-binsize-treemap@latest
-      - go tool nm -size ./build/valkyrie | go-binsize-treemap > ./build/binsize.svg
-      - open ./build/binsize.svg
+      - go tool nm -size ./build/valkyrie{{.FILE}} | go-binsize-treemap > ./build/binsize.svg
+      - "{{.SHELL}} {{.OPEN}} ./build/binsize.svg"
 
   dependency:vulncheck:
     desc: analyze dependencies for known vulnerabilities
