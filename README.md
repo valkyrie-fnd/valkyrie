@@ -40,8 +40,6 @@ To list available tasks run:
 task -l
 ```
 
-TODO: Some tasks cannot be executed on windows?? E.g. task docker:build
-
 ### Docker
 
 Valkyrie image is built using:
