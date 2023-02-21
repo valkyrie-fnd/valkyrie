@@ -1,21 +1,27 @@
 package evolution
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
 const (
-	ProviderName      = "Evolution"
+	ProviderName      = "evolution"
 	apiTokenParamName = "authToken"
 )
 
 func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
+			if args.PamClient.GetTransactionSupplier() == pam.PROVIDER {
+				return nil, fmt.Errorf("Unsupported transaction supplier")
+			}
 			service := NewService(args.PamClient)
 			controller := NewProviderController(service)
 			return NewProviderRouter(args.Config, controller)

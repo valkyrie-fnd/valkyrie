@@ -5,7 +5,7 @@ pamApiToken: pam-api-token
 
 providers:
   - &provider
-    provider: Red Tiger
+    provider: redtiger
     providerId: 4
 
 providerApiKeys:

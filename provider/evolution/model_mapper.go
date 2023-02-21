@@ -10,7 +10,7 @@ import (
 // Functions encapsulating the work of mapping provider specific requests (plus additionally
 // fetched data, if required) to pam equivalents
 
-func (service *ProviderService) balanceRequestMapper(r RequestBase) pam.GetBalanceRequestMapper {
+func (service *WalletService) balanceRequestMapper(r RequestBase) pam.GetBalanceRequestMapper {
 	return func() (context.Context, pam.GetBalanceRequest, error) {
 		return service.ctx, pam.GetBalanceRequest{
 			Params: pam.GetBalanceParams{
@@ -23,7 +23,7 @@ func (service *ProviderService) balanceRequestMapper(r RequestBase) pam.GetBalan
 	}
 }
 
-func (service *ProviderService) refreshSessionRequestMapper(r CheckRequest) pam.RefreshSessionRequestMapper {
+func (service *WalletService) refreshSessionRequestMapper(r CheckRequest) pam.RefreshSessionRequestMapper {
 	return func() (context.Context, pam.RefreshSessionRequest, error) {
 		return service.ctx, pam.RefreshSessionRequest{
 			Params: pam.RefreshSessionParams{
@@ -35,7 +35,7 @@ func (service *ProviderService) refreshSessionRequestMapper(r CheckRequest) pam.
 	}
 }
 
-func (service *ProviderService) debitRequestMapper(r DebitRequest, transTime time.Time) pam.AddTransactionRequestMapper {
+func (service *WalletService) debitRequestMapper(r DebitRequest, transTime time.Time) pam.AddTransactionRequestMapper {
 	return func(rounder pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		cashAmt, roundingErr := rounder(r.Transaction.Amount.toAmt())
 		if roundingErr != nil {
@@ -66,7 +66,7 @@ func (service *ProviderService) debitRequestMapper(r DebitRequest, transTime tim
 	}
 }
 
-func (service *ProviderService) creditTransRequestMapper(r CreditRequest, transTime time.Time) pam.AddTransactionRequestMapper {
+func (service *WalletService) creditTransRequestMapper(r CreditRequest, transTime time.Time) pam.AddTransactionRequestMapper {
 	return func(rounder pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		cashAmt, roundingErr := rounder(r.Transaction.Amount.toAmt())
 		if roundingErr != nil {
@@ -97,7 +97,7 @@ func (service *ProviderService) creditTransRequestMapper(r CreditRequest, transT
 	}
 }
 
-func (service *ProviderService) cancelTransRequestMapper(r CancelRequest, transTime time.Time) pam.AddTransactionRequestMapper {
+func (service *WalletService) cancelTransRequestMapper(r CancelRequest, transTime time.Time) pam.AddTransactionRequestMapper {
 	return func(rounder pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		cashAmt, roundingErr := rounder(r.Transaction.Amount.toAmt())
 		if roundingErr != nil {
@@ -128,7 +128,7 @@ func (service *ProviderService) cancelTransRequestMapper(r CancelRequest, transT
 	}
 }
 
-func (service *ProviderService) promoPayoutTransRequestMapper(r PromoPayoutRequest, transTime time.Time) pam.AddTransactionRequestMapper {
+func (service *WalletService) promoPayoutTransRequestMapper(r PromoPayoutRequest, transTime time.Time) pam.AddTransactionRequestMapper {
 	return func(round pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		roundedPromoAmount, roundingErr := round(r.PromoTransaction.Amount.toAmt())
 
@@ -159,7 +159,7 @@ func (service *ProviderService) promoPayoutTransRequestMapper(r PromoPayoutReque
 	}
 }
 
-func (service *ProviderService) findTransForCreditRequestMapper(r CreditRequest) pam.GetTransactionsRequestMapper {
+func (service *WalletService) findTransForCreditRequestMapper(r CreditRequest) pam.GetTransactionsRequestMapper {
 	return func() (context.Context, pam.GetTransactionsRequest, error) {
 		return service.ctx, pam.GetTransactionsRequest{
 			PlayerID: r.UserID,
@@ -173,7 +173,7 @@ func (service *ProviderService) findTransForCreditRequestMapper(r CreditRequest)
 	}
 }
 
-func (service *ProviderService) findTransForCancelRequestMapper(r CancelRequest) pam.GetTransactionsRequestMapper {
+func (service *WalletService) findTransForCancelRequestMapper(r CancelRequest) pam.GetTransactionsRequestMapper {
 	return func() (context.Context, pam.GetTransactionsRequest, error) {
 		return service.ctx, pam.GetTransactionsRequest{
 			PlayerID: r.UserID,

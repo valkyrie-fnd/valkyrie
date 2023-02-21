@@ -7,7 +7,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-func (s *ProviderService) refreshSessionRequestMapper(req AuthRequest) pam.RefreshSessionRequestMapper {
+func (s *WalletService) refreshSessionRequestMapper(req AuthRequest) pam.RefreshSessionRequestMapper {
 	return func() (context.Context, pam.RefreshSessionRequest, error) {
 		return s.ctx, pam.RefreshSessionRequest{
 			Params: pam.RefreshSessionParams{
@@ -18,7 +18,7 @@ func (s *ProviderService) refreshSessionRequestMapper(req AuthRequest) pam.Refre
 	}
 }
 
-func (s *ProviderService) getBalanceMapper(req BaseRequest) pam.GetBalanceRequestMapper {
+func (s *WalletService) getBalanceMapper(req BaseRequest) pam.GetBalanceRequestMapper {
 	return func() (context.Context, pam.GetBalanceRequest, error) {
 		return s.ctx, pam.GetBalanceRequest{
 			Params: pam.GetBalanceParams{
@@ -30,7 +30,7 @@ func (s *ProviderService) getBalanceMapper(req BaseRequest) pam.GetBalanceReques
 	}
 }
 
-func (s *ProviderService) getTransactionsMapper(req BaseRequest, providerTransactionID string) pam.GetTransactionsRequestMapper {
+func (s *WalletService) getTransactionsMapper(req BaseRequest, providerTransactionID string) pam.GetTransactionsRequestMapper {
 	return func() (context.Context, pam.GetTransactionsRequest, error) {
 		return s.ctx, pam.GetTransactionsRequest{
 			PlayerID: req.UserID,
@@ -43,7 +43,7 @@ func (s *ProviderService) getTransactionsMapper(req BaseRequest, providerTransac
 	}
 }
 
-func (s *ProviderService) getGameRoundMapper(req BaseRequest, gameRoundID string) pam.GetGameRoundRequestMapper {
+func (s *WalletService) getGameRoundMapper(req BaseRequest, gameRoundID string) pam.GetGameRoundRequestMapper {
 	return func() (context.Context, pam.GetGameRoundRequest, error) {
 		return s.ctx, pam.GetGameRoundRequest{
 			PlayerID:        req.UserID,
@@ -56,7 +56,7 @@ func (s *ProviderService) getGameRoundMapper(req BaseRequest, gameRoundID string
 	}
 }
 
-func (s *ProviderService) getPayoutTransactionMapper(req PayoutRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
+func (s *WalletService) getPayoutTransactionMapper(req PayoutRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
 	return func(pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		// Promo payouts are not necessarily tied to a game round. If no game round ID is passed,
 		// we set it to nil and avoids closing the round
@@ -88,7 +88,7 @@ func (s *ProviderService) getPayoutTransactionMapper(req PayoutRequest, transTyp
 		}, nil
 	}
 }
-func (s *ProviderService) getStakeTransactionMapper(req StakeRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
+func (s *WalletService) getStakeTransactionMapper(req StakeRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
 	return func(pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		return s.ctx, &pam.AddTransactionRequest{
 			PlayerID: req.UserID,
@@ -112,7 +112,7 @@ func (s *ProviderService) getStakeTransactionMapper(req StakeRequest, transType 
 		}, nil
 	}
 }
-func (s *ProviderService) getRefundTransactionMapper(req RefundRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
+func (s *WalletService) getRefundTransactionMapper(req RefundRequest, transType pam.TransactionType) pam.AddTransactionRequestMapper {
 	return func(pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		return s.ctx, &pam.AddTransactionRequest{
 			PlayerID: req.UserID,

@@ -140,18 +140,18 @@ func Test_Check(t *testing.T) {
 func Test_Bet(t *testing.T) {
 	playerID := "Player1"
 	tests := []struct {
-		name           string
-		sessionFn      func() (*pam.Session, error)
-		addTranFn      func() (*pam.TransactionResult, error)
-		settlementType pam.SettlementType
-		request        WalletbetRequestObject
-		want           WalletbetResponseObject
+		name                string
+		sessionFn           func() (*pam.Session, error)
+		addTranFn           func() (*pam.TransactionResult, error)
+		transactionSupplier pam.TransactionSupplier
+		request             WalletbetRequestObject
+		want                WalletbetResponseObject
 	}{
 		{
 			"Return error from session",
 			func() (*pam.Session, error) { return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrAuth} },
 			nil,
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletbetRequestObject{
 				Body: &WalletBetBody{
 					Token: "123",
@@ -167,7 +167,7 @@ func Test_Bet(t *testing.T) {
 			func() (*pam.TransactionResult, error) {
 				return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrOpBetNotAllowed}
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletbetRequestObject{
 				Body: &WalletBetBody{
 					Token: "123",
@@ -183,7 +183,7 @@ func Test_Bet(t *testing.T) {
 			func() (*pam.TransactionResult, error) {
 				return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrOpRoundNotFound}
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletbetRequestObject{
 				Body: &WalletBetBody{
 					Token: "123",
@@ -202,7 +202,7 @@ func Test_Bet(t *testing.T) {
 					Balance:       &pam.Balance{CashAmount: testutils.NewFloatAmount(150.5)},
 					TransactionId: &tranID}, nil
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletbetRequestObject{
 				Body: &WalletBetBody{
 					Token:        "123",
@@ -225,7 +225,7 @@ func Test_Bet(t *testing.T) {
 			pamstub := pamStub{}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
-			pamstub.getSettlementTypeFn = func() pam.SettlementType { return test.settlementType }
+			pamstub.getTransactionSupplierFn = func() pam.TransactionSupplier { return test.transactionSupplier }
 			sut := NewWalletService(&pamstub, nil)
 
 			resp, err := sut.Walletbet(ctx, test.request)
@@ -238,18 +238,18 @@ func Test_Bet(t *testing.T) {
 func Test_Win(t *testing.T) {
 	playerID := "Player2"
 	tests := []struct {
-		name           string
-		sessionFn      func() (*pam.Session, error)
-		addTranFn      func() (*pam.TransactionResult, error)
-		settlementType pam.SettlementType
-		request        TransactionwinRequestObject
-		want           TransactionwinResponseObject
+		name                string
+		sessionFn           func() (*pam.Session, error)
+		addTranFn           func() (*pam.TransactionResult, error)
+		transactionSupplier pam.TransactionSupplier
+		request             TransactionwinRequestObject
+		want                TransactionwinResponseObject
 	}{
 		{
 			"Return error from session",
 			func() (*pam.Session, error) { return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrAuth} },
 			nil,
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			TransactionwinRequestObject{
 				Body: &WalletWinBody{
 					Token: "123",
@@ -265,7 +265,7 @@ func Test_Win(t *testing.T) {
 			func() (*pam.TransactionResult, error) {
 				return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrOpBetNotAllowed}
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			TransactionwinRequestObject{
 				Body: &WalletWinBody{
 					Token: "123",
@@ -284,7 +284,7 @@ func Test_Win(t *testing.T) {
 					Balance:       &pam.Balance{CashAmount: testutils.NewFloatAmount(150.5)},
 					TransactionId: &tranID}, nil
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			TransactionwinRequestObject{
 				Body: &WalletWinBody{
 					Token:        "123",
@@ -307,7 +307,7 @@ func Test_Win(t *testing.T) {
 			pamstub := pamStub{}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
-			pamstub.getSettlementTypeFn = func() pam.SettlementType { return test.settlementType }
+			pamstub.getTransactionSupplierFn = func() pam.TransactionSupplier { return test.transactionSupplier }
 			api := &mockAPIClient{getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				return &transactionResponse{}, nil
 			}}
@@ -323,18 +323,18 @@ func Test_Win(t *testing.T) {
 func Test_Rollback(t *testing.T) {
 	playerID := "Player3"
 	tests := []struct {
-		name           string
-		sessionFn      func() (*pam.Session, error)
-		addTranFn      func() (*pam.TransactionResult, error)
-		settlementType pam.SettlementType
-		request        WalletrollbackRequestObject
-		want           WalletrollbackResponseObject
+		name                string
+		sessionFn           func() (*pam.Session, error)
+		addTranFn           func() (*pam.TransactionResult, error)
+		transactionSupplier pam.TransactionSupplier
+		request             WalletrollbackRequestObject
+		want                WalletrollbackResponseObject
 	}{
 		{
 			"Return error from session",
 			func() (*pam.Session, error) { return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrAuth} },
 			nil,
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletrollbackRequestObject{
 				Body: &WalletRollbackBody{
 					Token: "123",
@@ -352,7 +352,7 @@ func Test_Rollback(t *testing.T) {
 					CashAmount: testutils.NewFloatAmount(150.5),
 				}}, pam.ValkyrieError{ValkErrorCode: pam.ValkErrOpBetNotAllowed}
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletrollbackRequestObject{
 				Body: &WalletRollbackBody{
 					Token:       "123",
@@ -374,7 +374,7 @@ func Test_Rollback(t *testing.T) {
 			func() (*pam.TransactionResult, error) {
 				return nil, pam.ValkyrieError{ValkErrorCode: pam.ValkErrOpBetNotAllowed}
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletrollbackRequestObject{
 				Body: &WalletRollbackBody{
 					Token:       "123",
@@ -399,7 +399,7 @@ func Test_Rollback(t *testing.T) {
 					Balance:       &pam.Balance{CashAmount: testutils.NewFloatAmount(150.5)},
 					TransactionId: &tranID}, nil
 			},
-			pam.GAMEWISE,
+			pam.PROVIDER,
 			WalletrollbackRequestObject{
 				Body: &WalletRollbackBody{
 					Token:       "123",
@@ -419,7 +419,7 @@ func Test_Rollback(t *testing.T) {
 	ctx := context.Background()
 	for _, test := range tests {
 		t.Run(test.name, func(tt *testing.T) {
-			pamstub := pamStub{getSettlementTypeFn: func() pam.SettlementType { return test.settlementType }}
+			pamstub := pamStub{getTransactionSupplierFn: func() pam.TransactionSupplier { return test.transactionSupplier }}
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
 			api := &mockAPIClient{getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
@@ -435,22 +435,24 @@ func Test_Rollback(t *testing.T) {
 }
 
 func Test_getRoundTransactions(t *testing.T) {
+	testError := fmt.Errorf("Error fetching transactions")
 	tests := []struct {
 		name                   string
-		settlementType         pam.SettlementType
+		transactionSupplier    pam.TransactionSupplier
 		round                  string
 		getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 		want                   *[]roundTransaction
+		wantErr                error
 	}{
 		{
-			name:           "Mixed settlement should not return any transactions",
-			settlementType: pam.MIXED,
-			round:          "909",
+			name:                "Operator transaction supplier should not return any transactions",
+			transactionSupplier: pam.OPERATOR,
+			round:               "909",
 		},
 		{
-			name:           "Gamewise settlement should return round transactions",
-			settlementType: pam.GAMEWISE,
-			round:          "909",
+			name:                "Provider transaction should return round transactions",
+			transactionSupplier: pam.PROVIDER,
+			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				id, _ := strconv.Atoi(gameRoundID)
 				return &transactionResponse{
@@ -471,18 +473,19 @@ func Test_getRoundTransactions(t *testing.T) {
 			},
 		},
 		{
-			name:           "Failed getting transactions",
-			settlementType: pam.GAMEWISE,
-			round:          "909",
+			name:                "Failed getting transactions",
+			transactionSupplier: pam.PROVIDER,
+			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
-				return nil, fmt.Errorf("Error fetching transactions")
+				return nil, testError
 			},
-			want: nil,
+			want:    nil,
+			wantErr: testError,
 		},
 		{
-			name:           "Gamewise settlement but no transactions found",
-			settlementType: pam.GAMEWISE,
-			round:          "909",
+			name:                "Provider transaction supplier but no transactions found",
+			transactionSupplier: pam.PROVIDER,
+			round:               "909",
 			getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
 				return &transactionResponse{Code: 1016, Message: "Invalid Round"}, nil
 			},
@@ -493,11 +496,12 @@ func Test_getRoundTransactions(t *testing.T) {
 	ctx := context.Background()
 	for _, test := range tests {
 		t.Run(test.name, func(tt *testing.T) {
-			pamstub := pamStub{getSettlementTypeFn: func() pam.SettlementType { return test.settlementType }}
+			pamstub := pamStub{getTransactionSupplierFn: func() pam.TransactionSupplier { return test.transactionSupplier }}
 			api := &mockAPIClient{getRoundTransactionsFn: test.getRoundTransactionsFn}
 			service := NewWalletService(&pamstub, api)
-			resp := service.getRoundTransactions(ctx, test.settlementType, test.round)
+			resp, err := service.getRoundTransactions(ctx, test.transactionSupplier, test.round)
 			assert.Equal(tt, test.want, resp)
+			assert.Equal(tt, test.wantErr, err)
 		})
 	}
 
@@ -505,13 +509,13 @@ func Test_getRoundTransactions(t *testing.T) {
 
 type pamStub struct {
 	pam.PamClient
-	balanceFn           func() (*pam.Balance, error)
-	refreshSessionFn    func() (*pam.Session, error)
-	sessionFn           func() (*pam.Session, error)
-	addTransFn          func() (*pam.TransactionResult, error)
-	getTransFn          func() ([]pam.Transaction, error)
-	getGameRoundFn      func() (*pam.GameRound, error)
-	getSettlementTypeFn func() pam.SettlementType
+	balanceFn                func() (*pam.Balance, error)
+	refreshSessionFn         func() (*pam.Session, error)
+	sessionFn                func() (*pam.Session, error)
+	addTransFn               func() (*pam.TransactionResult, error)
+	getTransFn               func() ([]pam.Transaction, error)
+	getGameRoundFn           func() (*pam.GameRound, error)
+	getTransactionSupplierFn func() pam.TransactionSupplier
 }
 
 func (pam *pamStub) RefreshSession(_ pam.RefreshSessionRequestMapper) (*pam.Session, error) {
@@ -538,6 +542,6 @@ func (pam *pamStub) GetGameRound(_ pam.GetGameRoundRequestMapper) (*pam.GameRoun
 	return pam.getGameRoundFn()
 }
 
-func (pam *pamStub) GetSettlementType() pam.SettlementType {
-	return pam.getSettlementTypeFn()
+func (pam *pamStub) GetTransactionSupplier() pam.TransactionSupplier {
+	return pam.getTransactionSupplierFn()
 }

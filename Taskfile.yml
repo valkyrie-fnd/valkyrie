@@ -61,9 +61,13 @@ tasks:
       - go generate ./...
 
   lint:
+    desc: run linters
+    cmds:
+      - task: lint:go
+      - task: lint:docker
+        
+  lint:go:
     desc: run linters configured by .golangci.yml
-    aliases:
-      - lint:go
     sources:
       - ./**/*.go
       - go.mod
@@ -80,6 +84,8 @@ tasks:
 
   lint:docker:
     desc: lint Dockerfile
+    sources:
+      - Dockerfile
     cmds:
       - docker run --rm -i hadolint/hadolint hadolint - < ./Dockerfile
 

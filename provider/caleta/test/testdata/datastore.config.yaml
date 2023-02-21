@@ -4,7 +4,7 @@
 pamApiToken: pam-api-token
 
 providers:
-  - provider: Caleta
+  - provider: caleta
     providerId: 5
 
 games:

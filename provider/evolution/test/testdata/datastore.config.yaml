@@ -5,7 +5,7 @@ pamApiToken: pam-api-token
 
 providers:
   - &provider
-    provider: Evolution
+    provider: evolution
     providerId: 3
 
 providerApiKeys:

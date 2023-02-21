@@ -332,6 +332,9 @@ type ProviderTransactionId = string
 
 // RoundTransaction A transaction that's part of a game round. It has a limited set of fields as its intended use is when doing gamewise settlement.
 type RoundTransaction struct {
+	// BetCode metadata about what kind of bet/transaction it is
+	BetCode *BetCode `json:"betCode,omitempty"`
+
 	// CashAmount Amount in some currency, rounded to 6 decimal places
 	CashAmount *Amount `json:"cashAmount,omitempty"`
 	IsGameOver *bool   `json:"isGameOver,omitempty"`
@@ -339,11 +342,23 @@ type RoundTransaction struct {
 	// JackpotContribution Amount in some currency, rounded to 6 decimal places
 	JackpotContribution *Amount `json:"jackpotContribution,omitempty"`
 
+	// ProviderBetRef Provider bet reference for grouping or matching transactions. Either this or `providerTransactionId` is required. This one is prioritized if both are present. It is used for RGS:s that encapsulate many transactions in a wrapper transaction.
+	ProviderBetRef *ProviderBetRef `json:"providerBetRef,omitempty"`
+
 	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 	ProviderTransactionId *ProviderTransactionId `json:"providerTransactionId,omitempty"`
 
 	// TransactionDateTime A date and time in IS0 8601 format
 	TransactionDateTime *Timestamp `json:"transactionDateTime,omitempty"`
+
+	// TransactionType Transaction types according to:
+	// * `DEPOSIT` - for adding funds
+	// * `WITHDRAW` - subtract funds from an account balance. Generally for placing bets
+	// * `CANCEL` - reverting a previous transaction
+	// * `PROMODEPOSIT` - payout from promo and similar offerings programs
+	// * `PROMOWITHDRAW` - buyin to promo and similar offerings programs
+	// * `PROMOCANCEL` - reverting a previous promo transaction
+	TransactionType TransactionType `json:"transactionType"`
 }
 
 // Session defines model for Session.
@@ -424,8 +439,11 @@ type Transaction struct {
 
 	// ProviderTransactionId The RGS transaction identifier. Unique for each provider. Either this or `providerBetRef` is required. `providerBetRef` will be prioritized if both are present.
 	ProviderTransactionId ProviderTransactionId `json:"providerTransactionId"`
-	RoundTransactions     *[]RoundTransaction   `json:"roundTransactions,omitempty"`
-	Tip                   *Tip                  `json:"tip,omitempty"`
+
+	// RoundTransactions Optional. In case the PAM does not handle grouping of transaction by itself, Valkyrie needs to provide
+	// transactions related to the round.
+	RoundTransactions *[]RoundTransaction `json:"roundTransactions,omitempty"`
+	Tip               *Tip                `json:"tip,omitempty"`
 
 	// TransactionDateTime A date and time in IS0 8601 format
 	TransactionDateTime Timestamp `json:"transactionDateTime"`
