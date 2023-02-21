@@ -6,7 +6,7 @@ For general information about Valkyrie, please check [this](https://valkyrie.bet
 Information for developers and other interested parties is found below.
 
 ## Installing
-**Note**: Windows users are recommended to use PowerShell. Custom tasks may be used for build purposes, e.t.c. To handle that in Windows it's a good idea to be prepared having installed `bash`. This can be done using a package manager (e.g. `Chocolatey`) and install a Linux subsystem (e.g. `WSL`).
+**Note**: Windows users are recommended to use PowerShell. Custom tasks may be used for build purposes, etc. To run most of these in Windows you need to have installed [wsl](https://www.microsoft.com/store/productId/9P9TQF7MRM4R) to enable `bash`. Another helpful tool is [Chocolatey](https://chocolatey.org/), which can be used on windows to install other programs, like Task.
 
 Valkyrie is built from source by running:
 

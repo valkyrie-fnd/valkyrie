@@ -204,6 +204,7 @@ tasks:
       - build:osx
     cmds:
       - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/darwin-amd64/config.yml"
+      - "{{.SHELL}} cp configs/testdata/valkyrie_config.minimal.yml {{.BUILD_DIR}}/darwin-arm64/config.yml"
       - tar -C {{.BUILD_DIR}}/darwin-amd64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-amd64.tar.gz {{.NAME}} config.yml
       - tar -C {{.BUILD_DIR}}/darwin-arm64 -zcf {{.BUILD_DIR}}/{{.NAME}}-{{.VERSION}}-darwin-arm64.tar.gz {{.NAME}} config.yml
 
