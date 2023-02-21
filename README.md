@@ -70,6 +70,19 @@ Valkyrie can be installed as `systemd` service by these steps:
 ## Documentation
 Check [documentation site](https://valkyrie.bet/docs/) for the latest and most extensive information.
 
+### Architecture
+You can view the project following the c4 model by starting a [structurizr](https://structurizr.com/) server on [localhost:8090](http://localhost:8090) using task:
+```shell
+task c4model
+```
+System landscape view where Valkyrie fits in:
+
+![system landscape](/structurizr/structurizr-1-OnlineGaming.png)
+
+Components view of Valkyrie, how the internals connect to each other.
+![components view](/structurizr/structurizr-1-Valkyrie-Components.png)
+
+
 ## Performance
 Valkyrie aims to be lightweight and fast. While running single instances of Valkyrie and a PAM, we are able to generate and process the following number of bet requests (a.k.a debit/withdraw/stake) for the respective provider implementations (all run locally on an 2021 Macbook Pro w/ M1 MAX CPU, no tracing enabled and INFO log level).
 
