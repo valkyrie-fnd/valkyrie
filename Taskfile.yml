@@ -284,7 +284,7 @@ tasks:
   dependency:outdated:
     desc: list directly dependent modules that can be upgraded
     cmds:
-      - go list -u -m $(go list -m -f '{{`{{.Indirect}} {{.}}`}}' all | grep '^false' | cut -d ' ' -f2) | grep '\['
+      - bash ./scripts/dependency-outdated.sh
 
   dependency:graph:
     desc: graph of upstream modules with gmchart
