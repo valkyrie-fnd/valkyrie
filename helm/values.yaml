@@ -119,7 +119,7 @@ otel:
   # default otel-collector-sidecar will listen to otlp over http
   containers:
     - name: otel-collector-sidecar
-      image: otel/opentelemetry-collector-contrib
+      image: otel/opentelemetry-collector-contrib:0.71.0
       ports:
         - containerPort: 4318
           name: otlp-http
