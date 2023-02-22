@@ -20,7 +20,7 @@ import (
 )
 
 // ConfigureLogging configures the logging framework
-func ConfigureLogging(logConfig configs.LogConfig) {
+func ConfigureLogging(logConfig configs.LogConfig, profiles *Profiles) {
 	level, err := zerolog.ParseLevel(logConfig.Level)
 	if err != nil {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
@@ -61,7 +61,6 @@ func ConfigureLogging(logConfig configs.LogConfig) {
 	}
 
 	// pretty logs for local use
-	profiles := NewProfiles().Load()
 	if profiles.Has("local") && logConfig.Output.Type != "file" {
 		log.Logger = log.With().Caller().Logger().
 			Output(zerolog.ConsoleWriter{Out: writer, TimeFormat: time.RFC3339Nano})

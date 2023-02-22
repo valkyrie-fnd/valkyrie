@@ -109,3 +109,24 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# configuration for OpenTelemetry Collector sidecar
+# https://opentelemetry.io/docs/collector/
+otel:
+  enabled: false
+  # https://opentelemetry.io/docs/collector/configuration/
+  config:
+  # default otel-collector-sidecar will listen to otlp over http
+  containers:
+    - name: otel-collector-sidecar
+      image: otel/opentelemetry-collector-contrib:0.71.0
+      ports:
+        - containerPort: 4318
+          name: otlp-http
+          protocol: TCP
+      args:
+        - --config=/etc/otel/collector.yaml
+      volumeMounts:
+        - mountPath: /etc/otel
+          name: config-map
+          readOnly: true

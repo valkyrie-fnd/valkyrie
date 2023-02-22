@@ -9,10 +9,9 @@ import (
 type ExporterType string
 
 const (
-	Jaeger ExporterType = "jaeger"
-	Google ExporterType = "googleCloudTrace"
-	StdOut ExporterType = "stdout"
-	None   ExporterType = ""
+	StdOut        ExporterType = "stdout"
+	OTLPTraceHTTP ExporterType = "otlptracehttp"
+	None          ExporterType = ""
 )
 
 // noTracingConfig default empty TracingConfig
@@ -28,12 +27,10 @@ func Tracing(vTracing configs.TraceConfig) *TracingConfig {
 	cfg := TracingConfig{}
 	cfg.TraceConfig = vTracing
 	switch ExporterType(vTracing.TraceType) {
-	case Jaeger:
-		cfg.Exporter = Jaeger
-	case Google:
-		cfg.Exporter = Google
 	case StdOut:
 		cfg.Exporter = StdOut
+	case OTLPTraceHTTP:
+		cfg.Exporter = OTLPTraceHTTP
 	case None:
 		cfg.Exporter = None
 		return &noTracingConfig

@@ -1,6 +1,7 @@
 package ops
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -8,12 +9,11 @@ import (
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel/trace"
 
-	google "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"github.com/gofiber/contrib/otelfiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -31,7 +31,7 @@ func TracingMiddleware(cfg *TracingConfig, apps ...*fiber.App) {
 		app.Use(filterPath("/ping", otelfiber.Middleware(otelfiber.WithServerName(cfg.ServiceName))))
 	}
 
-	if cfg.Exporter == Google {
+	if cfg.GoogleProjectID != "" {
 		for _, app := range apps {
 			app.Use(googleTraceLogging(cfg.GoogleProjectID))
 		}
@@ -68,7 +68,7 @@ func ConfigureTracing(cfg *TracingConfig) error {
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
-	if cfg.Exporter == Google {
+	if cfg.GoogleProjectID != "" {
 		// Add googleErrorHook to global logger, so that it's inherited by child loggers
 		log.Logger = log.Hook(googleErrorHook{})
 	}
@@ -131,13 +131,38 @@ func createProviderExporter(cfg *TracingConfig) (tracesdk.SpanExporter, error) {
 		err error
 	)
 	switch cfg.Exporter {
-	case Jaeger:
-		exp, err = jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.URL)))
-	case Google:
-		exp, err = google.New(google.WithProjectID(cfg.GoogleProjectID))
+	case OTLPTraceHTTP:
+		exp, err = otlptracehttp.New(context.Background(), getOTLPOptions(cfg.URL)...)
 	case StdOut:
 		exp, err = stdouttrace.New()
 	}
 
 	return exp, err
+}
+
+// getOTLPOptions returns options given a tracing URL
+func getOTLPOptions(url string) []otlptracehttp.Option {
+	options := []otlptracehttp.Option{
+		otlptracehttp.WithCompression(otlptracehttp.GzipCompression), // enable compression by default
+	}
+
+	if url == "" {
+		options = append(options, otlptracehttp.WithInsecure()) // use HTTP by default
+		return options
+	}
+
+	if scheme, remainder, found := strings.Cut(url, "://"); found {
+		if scheme == "http" {
+			options = append(options, otlptracehttp.WithInsecure())
+		}
+		url = remainder
+	}
+
+	if endpoint, path, found := strings.Cut(url, "/"); found {
+		options = append(options, otlptracehttp.WithEndpoint(endpoint), otlptracehttp.WithURLPath(path))
+	} else {
+		options = append(options, otlptracehttp.WithEndpoint(endpoint))
+	}
+
+	return options
 }

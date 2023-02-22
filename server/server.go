@@ -100,8 +100,11 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 }
 
 func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) {
+	// Profile
+	profiles := ops.NewProfiles().Load()
+
 	// Configure logging
-	ops.ConfigureLogging(cfg.Logging)
+	ops.ConfigureLogging(cfg.Logging, profiles)
 
 	// Get tracing config
 	tracing := ops.Tracing(cfg.Tracing)

@@ -65,3 +65,38 @@ func Test_GoogleErrorHook_Inherited(t *testing.T) {
 	assert.Contains(t, logMessage, "@type")
 	assert.Contains(t, logMessage, "ReportedErrorEvent")
 }
+
+func Test_getOTLPOptions(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		// otlptracehttp.Option uses internal struct otlpconfig.Config, making testing hopeless
+		// just assert num options for now
+		want int
+	}{
+		{
+			name: "empty url",
+			want: 2,
+		},
+		{
+			name: "https endpoint path",
+			url:  "https://test/foo",
+			want: 3,
+		},
+		{
+			name: "http endpoint path",
+			url:  "http://test/foo",
+			want: 4,
+		},
+		{
+			name: "https endpoint",
+			url:  "https://test",
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, len(getOTLPOptions(tt.url)), "getOTLPOptions(%v)", tt.url)
+		})
+	}
+}

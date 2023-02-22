@@ -1,0 +1,30 @@
+# otel-collector configured to export to local telemetry systems defined by docker-compose-local.yaml
+
+receivers:
+  otlp:
+    protocols:
+      http:
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 32
+  batch:
+
+exporters:
+  logging: # stdout/stderr
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging, jaeger]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging]

@@ -103,7 +103,7 @@ func TestConfigureLogging(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ConfigureLogging(tt.config)
+			ConfigureLogging(tt.config, NewProfiles())
 			_ = file.Truncate(0) // clear file
 
 			tt.eventFn(log.Log()).Send()
