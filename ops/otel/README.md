@@ -11,4 +11,7 @@ You can test running a local setup of otel-collector using:
 docker-compose -f docker-compose-local.yaml up
 ```
 
-The local also includes a Jaeger instance for visualising traces that otel-collector will export its tracing data to.
+The local also includes:
+
+* Jaeger for visualising traces exported by otel-collector
+* Prometheus for collecting metrics from otel-collector

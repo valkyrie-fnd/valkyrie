@@ -13,12 +13,17 @@ logging:
     #                                 # timestamp encoded in their filename
     # max_backups: 3                  # the maximum number of old log files to retain
     # compress: false                 # determines if the rotated log files should be compressed using gzip
-tracing:
-  type: stdout # otlptracehttp
-  service_name: traceServiceName #
-  url: "https://tracing-server-url"
-  google_project_id: xyz # if you're using google cloud
-  sample_ratio: 0.01 # sample 1% of traces
+telemetry:
+  service_name: serviceName
+  namespace: namespace
+  tracing:
+    type: stdout # otlptracehttp
+    url: "https://tracing-server-url"
+    google_project_id: xyz # if you're using google cloud
+    sample_ratio: 0.01 # sample 1% of traces
+  metric:
+    type: stdout # otlpmetrichttp
+    url: "https://metric-server-url"
 pam: # player account management
   name: generic # check /pam-folder for available PAMs
   api_key: pam-api-key # api key to PAM

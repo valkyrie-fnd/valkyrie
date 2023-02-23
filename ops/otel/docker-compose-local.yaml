@@ -9,8 +9,10 @@ services:
       - ./otel-collector-sample-docker.yaml:/etc/otel-collector-sample-docker.yaml
     ports:
       - "4318:4318" # OTLP over HTTP receiver
+      - "9464:9464" # Prometheus exporter
     depends_on:
       - jaeger
+      - prometheus
   
   # Jaeger - for tracing
   jaeger:
@@ -18,3 +20,13 @@ services:
     ports:
       - "14250:14250" # Collector gRPC
       - "16686:16686" # Web HTTP
+
+    # Prometheus
+  prometheus:
+    image: prom/prometheus:v2.42.0
+    command:
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+    volumes:
+      - ./prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "9090:9090" # Prometheus Web UI
