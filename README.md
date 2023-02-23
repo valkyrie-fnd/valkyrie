@@ -89,27 +89,29 @@ When starting a Valkyrie instance you provide it with a config yaml file contain
 In the root `<provider>`-folder is the implementations of `provider/docs/operator_api.yml`. It is the specification the operator can use to send request to Valkyrie that will be forwarded toward the provider. You can read more [here](https://valkyrie.bet/docs/operator/valkyrie-operator-api).
 
 `<pam>` contains implemented PAMs that are available. Each provider is using `pam.PamClient` found in `/pam/client.go` to communicate with the PAM. The available PAMs should implement this interface. Similar to the providers, what PAM is used is based on the configuration file provided at runtime. There is an oapi specification that is used by `<genericpam>` called `pam_api.yml` that can be read [here](https://valkyrie.bet/docs/wallet/valkyrie-pam/valkyrie-pam-api). 
-Fulfilling this specification will enable you to use `<genericpam>`. In the diagram above, `<genericpam>` and `<vplugin>` would be the "PAM Client". In the case of `<vplugin>` is when "PAM Plugin" would also be used. `<vplugin>` is utilizing hashicorp go-plugin to keep the pam implementation in a separate process from Valkyrie. More on this can be read [here](https://valkyrie.bet/docs/wallet/vplugin/vplugin-introduction).
+Fulfilling this specification will enable you to use `<genericpam>`. In the diagram above, `<genericpam>` and `<vplugin>` would be the "PAM Client".
+"PAM Plugin", from the diagram, would be used in the case of `<vplugin>`. `<vplugin>` is utilizing hashicorp go-plugin to keep the pam implementation in a separate process from Valkyrie. This enables you to keep your own private implementation of a PAM. More on this can be read [here](https://valkyrie.bet/docs/wallet/vplugin/vplugin-introduction).
 ``` text
-+ configs/          # The parsing of configuration yaml
-+ example/          # An example provider module information about the different components needed to make your own provider module
-+ internal/         # Some shared utility packages
-+ ops/              # Logging and tracing
++ configs/                # The parsing of configuration yaml
++ example/                # Code examples
+  + example-game-provider # An example provider module with information about the different components needed to make your own provider module
++ internal/               # Shared utility packages
++ ops/                    # Logging and tracing
 + pam/
-  + generic_pam/    # PAM following pam_api.yaml specification
-  + vplugin/        # PAM plugin
-    - client.go     # Contains the interface the plugin need to follow
-  - generate.go     # used to generate the models defined in pam_api.yml, using oapi-codegen
-  - client.go       # Contains interface the pam must fulfil. The interface that is used by the game provider modules.
+  + generic_pam/          # PAM following pam_api.yaml specification
+  + vplugin/              # PAM plugin
+    - client.go           # Contains the interface the plugin need to follow
+  - generate.go           # used to generate the models defined in pam_api.yml, using oapi-codegen
+  - client.go             # Contains interface the pam must fulfil. The interface that is used by the game provider modules.
 + provider/
-  + gameProvider_X/ # Game provider modules
+  + gameProvider_X/       # Game provider modules
   + gameProvider_Y/
   + evolution/
   + redtiger/
-  - z_controller.go # Handler functions for operator_api.yml
-+ rest/             # Http client for making requests
-+ routes/           # Setting up the routes for each provider and the operator
-+ server/           # Starting the Valkyrie servers, exposed toward Operator and Providers
+  - xyz_controller.go     # Handler functions for operator_api.yml
++ rest/                   # Http client for making requests
++ routes/                 # Setting up the routes for each provider and the operator
++ server/                 # Starting the Valkyrie servers, exposed toward Operator and Providers
 ```
 "Provider Server" and "Operator Server" from the Component diagram above would be in `routes/routes.go` where the operator and provider routes are setup. It utilizes `provider/registry.go` to add the routes to the `fiber.App`. Each provider needs to implement both "Operator Router" and "Provider Router". They are implemented under `{gameProvider}/router.go`. For more details on all the "Provider Module"-components the [example game provider](./example/README.md) can be viewed, with documentation through out the example.
 
