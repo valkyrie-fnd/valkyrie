@@ -24,7 +24,7 @@ for the feature or fix added.
 
 ## Coding standard
 - `go fmt` is used to format the code.
-- You can use `task lint`, which will run linting using `golangci-lint`.
+- You can use `task lint`, which will run linting using `golangci-lint`. Make sure to be on the same lint version as the github action.
 - Each package contains a `doc.go` that has the package documentation.
 - File names follow snake_case.
 - Write tests for your code.
