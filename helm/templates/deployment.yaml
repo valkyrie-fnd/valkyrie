@@ -36,6 +36,14 @@ spec:
             items:
               - key: "valkyrie_config.yml"
                 path: "valkyrie_config.yml"
+        {{- if .Values.otel.enabled }}
+        - name: otel-config-map
+          configMap:
+            name: {{ include "valkyrie.fullname" . }}
+            items:
+              - key: "collector.yaml"
+                path: "collector.yaml"
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

@@ -128,5 +128,5 @@ otel:
         - --config=/etc/otel/collector.yaml
       volumeMounts:
         - mountPath: /etc/otel
-          name: config-map
+          name: otel-config-map
           readOnly: true
