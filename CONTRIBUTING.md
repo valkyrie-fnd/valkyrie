@@ -22,6 +22,19 @@ We welcome pull requests! Please include the following in the description:
 Please be aware that your pull request should pass existing tests and linting, and also contain corresponding tests
 for the feature or fix added.
 
+## Coding standard
+`go fmt` is used to format the code.
+
+You can use `task lint`, which will run linting using `golangci-lint`.
+
+Each package contains a `doc.go` that has the package documentation.
+
+File names follow snake_case.
+
+Write tests for your code.
+
+All exported functions and structs should be documented.
+
 ## Copyright
 
 This project is licensed under MIT license. All contributions to this project are made under the terms of the license.
