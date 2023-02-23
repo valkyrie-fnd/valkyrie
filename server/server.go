@@ -106,8 +106,13 @@ func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) {
 	// Configure logging
 	ops.ConfigureLogging(cfg.Logging, profiles)
 
+	// Metrics config
+	if err := ops.ConfigureMetrics(cfg); err != nil {
+		log.Fatal().Err(err).Msg("Failed to configure metrics")
+	}
+
 	// Get tracing config
-	tracing := ops.Tracing(cfg.Tracing)
+	tracing := ops.Tracing(cfg)
 
 	// Middlewares
 	fiberMiddleware(v.provider, v.operator)

@@ -15,13 +15,21 @@ logging: {}
 #    # max_backups: 3                  # the maximum number of old log files to retain
 #    # compress: false                 # determines if the rotated log files should be compressed using gzip
 
-# tracing configuration, see https://opentelemetry.io/docs/concepts/what-is-opentelemetry/
+# telemetry configuration, see https://opentelemetry.io/docs/concepts/what-is-opentelemetry/
+# configures general telemetry metadata
+telemetry: {}
+#  service_name: serviceName
+#  namespace: namespace
+
 tracing: {}
 #  type: stdout # otlptracehttp
-#  service_name: traceServiceName #
 #  url: "https://tracing-server-url" # optional
 #  google_project_id: xyz # if you're using google cloud
 #  sample_ratio: 0.01 # sample 1% of traces
+
+metric: {}
+#  type: stdout # otlpmetrichttp
+#  url: "https://metric-server-url # optional
 
 # configure the player account management (PAM aka Wallet system) to use
 pam: {}

@@ -45,10 +45,20 @@ spec:
           args:
             - "-config"
             - "/etc/valkyrie/valkyrie_config.yml"
-          {{- with .Values.env }}
           env:
+            # add pod and namespace as environment variables
+            - name: VALKYRIE_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: VALKYRIE_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # add environment variables configured in values file
+            {{- with .Values.env }}
             {{- toYaml . | nindent 10 }}
-          {{- end }}
+            {{- end }}
           ports:
             - name: http-operator
               containerPort: 8084

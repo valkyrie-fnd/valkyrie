@@ -5,7 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2/utils"
 	"github.com/valyala/fasthttp"
-	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
+	"go.opentelemetry.io/otel/semconv/v1.17.0"
+	"go.opentelemetry.io/otel/semconv/v1.17.0/httpconv"
 	"go.opentelemetry.io/otel/trace"
 
 	"go.opentelemetry.io/otel"
@@ -41,5 +42,5 @@ func TraceHTTPAttributes(span trace.Span, req *fasthttp.Request, resp *fasthttp.
 		semconv.HTTPResponseContentLengthKey.Int(resp.Header.ContentLength()),
 	)
 
-	span.SetStatus(semconv.SpanStatusFromHTTPStatusCodeAndSpanKind(resp.StatusCode(), trace.SpanKindClient))
+	span.SetStatus(httpconv.ClientStatus(resp.StatusCode()))
 }

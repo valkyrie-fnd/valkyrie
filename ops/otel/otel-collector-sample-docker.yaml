@@ -17,6 +17,8 @@ exporters:
     endpoint: jaeger:14250
     tls:
       insecure: true
+  prometheus:
+    endpoint: otel-collector:9464
 
 service:
   pipelines:
@@ -27,4 +29,4 @@ service:
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [logging]
+      exporters: [logging, prometheus]
