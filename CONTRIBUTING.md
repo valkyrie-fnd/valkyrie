@@ -23,17 +23,12 @@ Please be aware that your pull request should pass existing tests and linting, a
 for the feature or fix added.
 
 ## Coding standard
-`go fmt` is used to format the code.
-
-You can use `task lint`, which will run linting using `golangci-lint`.
-
-Each package contains a `doc.go` that has the package documentation.
-
-File names follow snake_case.
-
-Write tests for your code.
-
-All exported functions and structs should be documented.
+- `go fmt` is used to format the code.
+- You can use `task lint`, which will run linting using `golangci-lint`.
+- Each package contains a `doc.go` that has the package documentation.
+- File names follow snake_case.
+- Write tests for your code.
+- All exported functions and structs should be documented.
 
 ## Copyright
 
