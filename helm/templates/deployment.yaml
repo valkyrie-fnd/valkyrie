@@ -36,6 +36,14 @@ spec:
             items:
               - key: "valkyrie_config.yml"
                 path: "valkyrie_config.yml"
+        {{- if .Values.otel.enabled }}
+        - name: otel-config-map
+          configMap:
+            name: {{ include "valkyrie.fullname" . }}
+            items:
+              - key: "collector.yaml"
+                path: "collector.yaml"
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -57,7 +65,7 @@ spec:
                   fieldPath: metadata.namespace
             # add environment variables configured in values file
             {{- with .Values.env }}
-            {{- toYaml . | nindent 10 }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: http-operator
