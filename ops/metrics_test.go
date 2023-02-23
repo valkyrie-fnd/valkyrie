@@ -14,9 +14,9 @@ func Test_ConfigureMetric(t *testing.T) {
 	err := ConfigureMetrics(&configs.ValkyrieConfig{
 		Telemetry: configs.TelemetryConfig{
 			ServiceName: "test",
-		},
-		Metric: configs.MetricConfig{
-			ExporterType: "stdout",
+			Metric: configs.MetricConfig{
+				ExporterType: "stdout",
+			},
 		},
 	})
 
@@ -36,21 +36,20 @@ func Test_metricConfig(t *testing.T) {
 		Telemetry: configs.TelemetryConfig{
 			ServiceName: "service",
 			Namespace:   "namespace",
+			Metric: configs.MetricConfig{
+				ExporterType: "otlpmetrichttp",
+			},
 		},
-		Metric: configs.MetricConfig{
-			ExporterType: "otlpmetrichttp",
-		},
+
 		Version: "0.1.1",
 	}
 	expectedMetricConfig := MetricConfig{
-		Exporter: MetricOTLPHTTP,
-		Version:  "0.1.1",
+		Exporter:    MetricOTLPHTTP,
+		Version:     "0.1.1",
+		ServiceName: "service",
+		Namespace:   "namespace",
 		MetricConfig: configs.MetricConfig{
 			ExporterType: "otlpmetrichttp",
-		},
-		TelemetryConfig: configs.TelemetryConfig{
-			ServiceName: "service",
-			Namespace:   "namespace",
 		},
 	}
 

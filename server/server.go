@@ -77,7 +77,7 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 		Client:      httpClient,
 		Config:      cfg.Pam,
 		LogConfig:   cfg.Logging,
-		TraceConfig: cfg.Tracing,
+		TraceConfig: cfg.Telemetry.Tracing,
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error getting pam client")

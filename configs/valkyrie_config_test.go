@@ -48,6 +48,7 @@ var defaultTraceConfig = TraceConfig{
 
 var defaultTelemetryConfig = TelemetryConfig{
 	ServiceName: "valkyrie",
+	Tracing:     defaultTraceConfig,
 }
 
 var tests = []testWrapper{
@@ -55,17 +56,20 @@ var tests = []testWrapper{
 		name:        "yaml parsed successfully",
 		envFilePath: "",
 		yamlData: `
-tracing:
-  type: otlptracehttp
-  url: 'http://localhost'
-  service_name: my-service
+telemetry:
+  tracing:
+    type: otlptracehttp
+    url: 'http://localhost'
+    service_name: my-service
 `,
 		want: &ValkyrieConfig{
-			Telemetry: defaultTelemetryConfig,
-			Tracing: TraceConfig{
-				TraceType:   "otlptracehttp",
-				URL:         "http://localhost",
-				SampleRatio: 0.01,
+			Telemetry: TelemetryConfig{
+				ServiceName: "valkyrie",
+				Tracing: TraceConfig{
+					TraceType:   "otlptracehttp",
+					URL:         "http://localhost",
+					SampleRatio: 0.01,
+				},
 			},
 			Logging:    defaultLogConfig,
 			HTTPServer: defaultHTTPServerConfig,
@@ -76,17 +80,19 @@ tracing:
 		name:        "yaml parsed with ",
 		envFilePath: "",
 		yamlData: `
-tracing:
-  type: otlptracehttp
-  url: ${ENV_THAT_DOESNT_EXIST}
-  service_name: my-service
+telemetry:
+  tracing:
+    type: otlptracehttp
+    url: ${ENV_THAT_DOESNT_EXIST}
+    service_name: my-service
 `,
 		want: &ValkyrieConfig{
-			Telemetry: defaultTelemetryConfig,
-			Tracing: TraceConfig{
-				TraceType:   "otlptracehttp",
-				URL:         "",
-				SampleRatio: 0.01,
+			Telemetry: TelemetryConfig{
+				ServiceName: "valkyrie",
+				Tracing: TraceConfig{
+					TraceType:   "otlptracehttp",
+					SampleRatio: 0.01,
+				},
 			},
 			Logging:    defaultLogConfig,
 			HTTPServer: defaultHTTPServerConfig,
@@ -97,17 +103,42 @@ tracing:
 		name:        "yaml parsed with sampleRatio",
 		envFilePath: "",
 		yamlData: `
-tracing:
-  type: otlptracehttp
-  service_name: my-service
-  sample_ratio: 1.0
+telemetry:
+  tracing:
+    type: otlptracehttp
+    service_name: my-service
+    sample_ratio: 1.0
 `,
 		want: &ValkyrieConfig{
-			Telemetry: defaultTelemetryConfig,
-			Tracing: TraceConfig{
-				TraceType:   "otlptracehttp",
-				URL:         "",
-				SampleRatio: 1.0,
+			Telemetry: TelemetryConfig{
+				ServiceName: "valkyrie",
+				Tracing: TraceConfig{
+					TraceType:   "otlptracehttp",
+					SampleRatio: 1.0,
+				},
+			},
+			Logging:    defaultLogConfig,
+			HTTPServer: defaultHTTPServerConfig,
+			HTTPClient: defaultHTTPClientConfig,
+		},
+	},
+	{
+		name:        "yaml parsed with metrics config",
+		envFilePath: "",
+		yamlData: `
+telemetry:
+  metric:
+    type: otlpmetrichttp
+    url: https://some-url
+`,
+		want: &ValkyrieConfig{
+			Telemetry: TelemetryConfig{
+				ServiceName: "valkyrie",
+				Tracing:     defaultTraceConfig,
+				Metric: MetricConfig{
+					ExporterType: "otlpmetrichttp",
+					URL:          "https://some-url",
+				},
 			},
 			Logging:    defaultLogConfig,
 			HTTPServer: defaultHTTPServerConfig,
@@ -135,7 +166,6 @@ providers:
 				"url":     "http://pam.url",
 			},
 			Telemetry: defaultTelemetryConfig,
-			Tracing:   TraceConfig{SampleRatio: 0.01},
 			Providers: []ProviderConf{
 				{
 					Name: "providerA",
@@ -171,7 +201,6 @@ providers:
 				"url":     "http://pam.url",
 			},
 			Telemetry: defaultTelemetryConfig,
-			Tracing:   TraceConfig{SampleRatio: 0.01},
 			Providers: []ProviderConf{
 				{
 					Name: "providerA",
@@ -215,7 +244,6 @@ http_client:
 				Output: OutputLogConfig{Type: "stdout"},
 			},
 			Telemetry: defaultTelemetryConfig,
-			Tracing:   TraceConfig{SampleRatio: 0.01},
 			HTTPServer: HTTPServerConfig{
 				ReadTimeout:     2 * time.Second,
 				WriteTimeout:    100 * time.Millisecond,
@@ -251,7 +279,6 @@ providers:
 			Logging:    defaultLogConfig,
 			HTTPServer: defaultHTTPServerConfig,
 			HTTPClient: defaultHTTPClientConfig,
-			Tracing:    TraceConfig{SampleRatio: 0.01},
 		},
 	},
 	{
@@ -285,7 +312,6 @@ logging:
 				},
 			},
 			Telemetry:  defaultTelemetryConfig,
-			Tracing:    defaultTraceConfig,
 			HTTPServer: defaultHTTPServerConfig,
 			HTTPClient: defaultHTTPClientConfig,
 		},
@@ -302,7 +328,6 @@ operator_base_path: "/operator"
 			ProviderBasePath: "/providers",
 			Logging:          defaultLogConfig,
 			Telemetry:        defaultTelemetryConfig,
-			Tracing:          defaultTraceConfig,
 			HTTPServer:       defaultHTTPServerConfig,
 			HTTPClient:       defaultHTTPClientConfig,
 		},
@@ -341,16 +366,16 @@ func TestValkConfigFile(t *testing.T) {
 		Telemetry: TelemetryConfig{
 			ServiceName: "serviceName",
 			Namespace:   "namespace",
-		},
-		Tracing: TraceConfig{
-			TraceType:       "stdout",
-			GoogleProjectID: "xyz",
-			URL:             "https://tracing-server-url",
-			SampleRatio:     0.01,
-		},
-		Metric: MetricConfig{
-			ExporterType: "stdout",
-			URL:          "https://metric-server-url",
+			Tracing: TraceConfig{
+				TraceType:       "stdout",
+				GoogleProjectID: "xyz",
+				URL:             "https://tracing-server-url",
+				SampleRatio:     0.01,
+			},
+			Metric: MetricConfig{
+				ExporterType: "stdout",
+				URL:          "https://metric-server-url",
+			},
 		},
 		Pam: PamConf{
 			"name":    "generic",

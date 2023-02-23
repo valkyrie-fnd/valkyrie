@@ -54,8 +54,10 @@ type OutputLogConfig struct {
 
 // TelemetryConfig holds general configuration for telemetry (tracing & metrics)
 type TelemetryConfig struct {
-	ServiceName string `yaml:"service_name" default:"valkyrie"`
-	Namespace   string `yaml:"namespace,omitempty"`
+	Metric      MetricConfig `yaml:"metric,omitempty"`
+	ServiceName string       `yaml:"service_name" default:"valkyrie"`
+	Namespace   string       `yaml:"namespace,omitempty"`
+	Tracing     TraceConfig  `yaml:"tracing,omitempty"`
 }
 
 // TraceConfig Configuration setup for tracing
@@ -94,8 +96,6 @@ type ValkyrieConfig struct {
 	HTTPServer       HTTPServerConfig `yaml:"http_server"`
 	Pam              PamConf          `yaml:"pam"`
 	Telemetry        TelemetryConfig  `yaml:"telemetry,omitempty"`
-	Tracing          TraceConfig      `yaml:"tracing,omitempty"`
-	Metric           MetricConfig     `yaml:"metric,omitempty"`
 	Providers        []ProviderConf   `yaml:"providers,flow"`
 	ProviderBasePath string           `yaml:"provider_base_path,omitempty"`
 	// APIKey used as bearer token to access operator endpoints

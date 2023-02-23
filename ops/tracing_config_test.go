@@ -17,7 +17,9 @@ func TestTracing(t *testing.T) {
 		{
 			name: "OLTP config selected",
 			config: &configs.ValkyrieConfig{
-				Tracing: configs.TraceConfig{TraceType: "otlptracehttp"},
+				Telemetry: configs.TelemetryConfig{
+					Tracing: configs.TraceConfig{TraceType: "otlptracehttp"},
+				},
 			},
 			want: &TracingConfig{
 				Exporter: OTLPTraceHTTP,

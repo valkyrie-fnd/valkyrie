@@ -29,20 +29,22 @@ const (
 var noTracingConfig = TracingConfig{}
 
 type TracingConfig struct {
-	Exporter ExporterType
-	Version  string
-	configs.TelemetryConfig
+	Exporter    ExporterType
+	Version     string
+	ServiceName string
+	Namespace   string
 	configs.TraceConfig
 }
 
 // Tracing returns a TracingConfig based on the provided Valkyrie config
 func Tracing(vConf *configs.ValkyrieConfig) *TracingConfig {
 	cfg := TracingConfig{}
-	cfg.TraceConfig = vConf.Tracing
+	cfg.TraceConfig = vConf.Telemetry.Tracing
 	cfg.Version = vConf.Version
-	cfg.TelemetryConfig = vConf.Telemetry
+	cfg.ServiceName = vConf.Telemetry.ServiceName
+	cfg.Namespace = vConf.Telemetry.Namespace
 
-	switch ExporterType(vConf.Tracing.TraceType) {
+	switch ExporterType(cfg.TraceType) {
 	case StdOut:
 		cfg.Exporter = StdOut
 	case OTLPTraceHTTP:
@@ -51,7 +53,7 @@ func Tracing(vConf *configs.ValkyrieConfig) *TracingConfig {
 		cfg.Exporter = None
 		return &noTracingConfig
 	default:
-		log.Warn().Msgf("unsupported tracing type [%s]", vConf.Tracing.TraceType)
+		log.Warn().Msgf("unsupported tracing type [%s]", cfg.TraceType)
 		return &noTracingConfig
 	}
 

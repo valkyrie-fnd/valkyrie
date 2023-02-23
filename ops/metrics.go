@@ -28,10 +28,11 @@ const (
 var noMetricConfig = MetricConfig{}
 
 type MetricConfig struct {
-	Exporter MetricExporterType
-	Version  string
+	Exporter    MetricExporterType
+	Version     string
+	ServiceName string
+	Namespace   string
 	configs.MetricConfig
-	configs.TelemetryConfig
 }
 
 // ConfigureMetrics configures metrics, including exporter and instrumentation
@@ -67,7 +68,7 @@ func ConfigureMetrics(vConf *configs.ValkyrieConfig) error {
 
 	global.SetMeterProvider(mp)
 
-	log.Info().Msg("Configured metrics")
+	log.Info().Msgf("Configured metrics using exporter=%s", cfg.Exporter)
 
 	err = configureInstrumentation()
 	if err != nil {
@@ -81,11 +82,12 @@ func ConfigureMetrics(vConf *configs.ValkyrieConfig) error {
 func metricConfig(vConf *configs.ValkyrieConfig) *MetricConfig {
 	cfg := MetricConfig{}
 
-	cfg.MetricConfig = vConf.Metric
+	cfg.MetricConfig = vConf.Telemetry.Metric
 	cfg.Version = vConf.Version
-	cfg.TelemetryConfig = vConf.Telemetry
+	cfg.ServiceName = vConf.Telemetry.ServiceName
+	cfg.Namespace = vConf.Telemetry.Namespace
 
-	switch MetricExporterType(vConf.Metric.ExporterType) {
+	switch MetricExporterType(cfg.ExporterType) {
 	case MetricStdOut:
 		cfg.Exporter = MetricStdOut
 	case MetricOTLPHTTP:
@@ -94,7 +96,7 @@ func metricConfig(vConf *configs.ValkyrieConfig) *MetricConfig {
 		cfg.Exporter = MetricNone
 		return &noMetricConfig
 	default:
-		log.Warn().Msgf("unsupported metric exporter type [%s]", vConf.Metric.ExporterType)
+		log.Warn().Msgf("unsupported metric exporter type [%s]", cfg.ExporterType)
 		return &noMetricConfig
 	}
 
