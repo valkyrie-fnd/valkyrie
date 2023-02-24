@@ -55,7 +55,7 @@ func valueOrNow(t *MsgTimestamp) time.Time {
 	}
 }
 
-func betTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.AddTransactionRequestMapper {
+func betTransactionMapper(ctx context.Context, r *WalletbetRequestObject, roundTransactions *[]roundTransaction) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
@@ -77,11 +77,12 @@ func betTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.Ad
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.WITHDRAW,
 				BetCode:               r.Body.Bet,
+				RoundTransactions:     roundTransactionsMapper(roundTransactions),
 			},
 		}, nil
 	}
 }
-func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject) pam.AddTransactionRequestMapper {
+func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject, roundTransactions *[]roundTransaction) pam.AddTransactionRequestMapper {
 	return func(_ pam.AmountRounder) (context.Context, *pam.AddTransactionRequest, error) {
 		amt := toPamAmount(r.Body.Amount)
 		return ctx, &pam.AddTransactionRequest{
@@ -103,6 +104,7 @@ func promoBetTransactionMapper(ctx context.Context, r *WalletbetRequestObject) p
 				TransactionDateTime:   valueOrNow(r.Params.XMsgTimestamp),
 				TransactionType:       pam.PROMOWITHDRAW,
 				BetCode:               r.Body.Bet,
+				RoundTransactions:     roundTransactionsMapper(roundTransactions),
 			},
 		}, nil
 	}

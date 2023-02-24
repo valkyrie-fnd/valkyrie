@@ -29,10 +29,11 @@ var laterDate dateAssert = func(t *testing.T, start time.Time, actual time.Time)
 func Test_betTransactionMapper(t *testing.T) {
 
 	tests := []struct {
-		name        string
-		request     *WalletbetRequestObject
-		want        *pam.AddTransactionRequest
-		dateCompare dateAssert
+		name              string
+		request           *WalletbetRequestObject
+		roundTransactions *[]roundTransaction
+		want              *pam.AddTransactionRequest
+		dateCompare       dateAssert
 	}{
 		{
 			name: "basic",
@@ -105,7 +106,7 @@ func Test_betTransactionMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, res, err := betTransactionMapper(context.TODO(), tt.request)(dummyAmtReader)
+			_, res, err := betTransactionMapper(context.TODO(), tt.request, tt.roundTransactions)(dummyAmtReader)
 
 			tt.dateCompare(t, tt.want.Body.TransactionDateTime, res.Body.TransactionDateTime)
 
@@ -121,10 +122,11 @@ func Test_betTransactionMapper(t *testing.T) {
 
 func Test_promoBetTransactionMapper(t *testing.T) {
 	tests := []struct {
-		name        string
-		request     *WalletbetRequestObject
-		want        *pam.AddTransactionRequest
-		dateCompare dateAssert
+		name              string
+		request           *WalletbetRequestObject
+		roundTransactions *[]roundTransaction
+		want              *pam.AddTransactionRequest
+		dateCompare       dateAssert
 	}{
 		{
 			name: "basic",
@@ -197,7 +199,7 @@ func Test_promoBetTransactionMapper(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, res, err := promoBetTransactionMapper(context.TODO(), tt.request)(dummyAmtReader)
+			_, res, err := promoBetTransactionMapper(context.TODO(), tt.request, tt.roundTransactions)(dummyAmtReader)
 
 			tt.dateCompare(t, tt.want.Body.TransactionDateTime, res.Body.TransactionDateTime)
 
