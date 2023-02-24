@@ -28,7 +28,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: latest
+          version: v1.51.2
           args: --timeout 3m
 
   Test:
@@ -37,7 +37,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      id-token: 'write'
+      id-token: "write"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -67,7 +67,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-            fetch-depth: 0 # fetch all revision and tags, necessary for .github/tools/version.sh
+          fetch-depth: 0 # fetch all revision and tags, necessary for .github/tools/version.sh
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
