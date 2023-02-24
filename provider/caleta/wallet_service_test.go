@@ -226,7 +226,10 @@ func Test_Bet(t *testing.T) {
 			pamstub.sessionFn = test.sessionFn
 			pamstub.addTransFn = test.addTranFn
 			pamstub.getTransactionSupplierFn = func() pam.TransactionSupplier { return test.transactionSupplier }
-			sut := NewWalletService(&pamstub, nil)
+			api := &mockAPIClient{getRoundTransactionsFn: func(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
+				return &transactionResponse{}, nil
+			}}
+			sut := NewWalletService(&pamstub, api)
 
 			resp, err := sut.Walletbet(ctx, test.request)
 			assert.Nil(tt, err, "Error should always be nil")

@@ -91,11 +91,17 @@ func (s *WalletService) Walletbet(ctx context.Context, request WalletbetRequestO
 		return Walletbet200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
 
+	roundTransactions, err := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
+	if err != nil {
+		errStatus := getCErrorStatus(err)
+		return Walletbet200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
+	}
+
 	var tranRes *pam.TransactionResult
 	if request.Body.IsFree {
-		tranRes, err = s.PamClient.AddTransaction(promoBetTransactionMapper(ctx, &request))
+		tranRes, err = s.PamClient.AddTransaction(promoBetTransactionMapper(ctx, &request, roundTransactions))
 	} else {
-		tranRes, err = s.PamClient.AddTransaction(betTransactionMapper(ctx, &request))
+		tranRes, err = s.PamClient.AddTransaction(betTransactionMapper(ctx, &request, roundTransactions))
 	}
 	if err != nil {
 		errStatus := getCErrorStatus(err)
@@ -130,7 +136,6 @@ func (s *WalletService) Transactionwin(ctx context.Context, request Transactionw
 		return Transactionwin200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
 
-	// If gamewise settlement, get the round transactions
 	roundTransactions, err := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
 	if err != nil {
 		errStatus := getCErrorStatus(err)
@@ -190,7 +195,6 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 		return Walletrollback200JSONResponse{Status: errStatus, RequestUuid: request.Body.RequestUuid}, nil
 	}
 
-	// If gamewise settlement, get the round transactions
 	roundTransactions, err := s.getRoundTransactions(ctx, s.PamClient.GetTransactionSupplier(), request.Body.Round)
 	if err != nil {
 		errStatus := getCErrorStatus(err)
@@ -232,6 +236,8 @@ func (s *WalletService) Walletrollback(ctx context.Context, request Walletrollba
 // getRoundTransactions fetches all transactions linked to a given round (only if PAM transaction supplier is "PROVIDER")
 func (s *WalletService) getRoundTransactions(ctx context.Context, transactionSupplier pam.TransactionSupplier, round string) (*[]roundTransaction, error) {
 	var roundTransactions *[]roundTransaction
+
+	// If provider is expected to supply transactions, get the round transactions
 	if transactionSupplier == pam.PROVIDER {
 		if rounds, err := s.APIClient.getRoundTransactions(ctx, round); err != nil {
 			log.Warn().Msg(fmt.Sprintf("Failed to get round transactions for ID %s, reason: %s", round, err.Error()))
