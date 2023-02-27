@@ -213,6 +213,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 			txID := t.Payload.TransactionUUID
 			isGameOver := t.Payload.RoundClosed
 			refTx := t.Payload.ReferenceTransactionUUID
+			dateTime := t.CreatedTime
 
 			// Detect transaction type
 			var transactionType pam.TransactionType
@@ -237,7 +238,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 				ProviderTransactionId: &txID,
 				CashAmount:            &amt,
 				IsGameOver:            &isGameOver,
-				TransactionDateTime:   &t.CreatedTime,
+				TransactionDateTime:   &dateTime,
 				ProviderBetRef:        refTx,
 				TransactionType:       transactionType,
 				BetCode:               betCode,

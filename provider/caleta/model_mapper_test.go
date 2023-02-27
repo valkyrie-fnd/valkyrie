@@ -553,7 +553,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 				{
 					ID:          303,
 					CreatedTime: now,
-					ClosedTime:  now.Add(1 + time.Second),
+					ClosedTime:  now,
 					TxnUUID:     "txn-uuid-0",
 					Payload: payload{
 						Bet:                 "Base",
@@ -578,8 +578,8 @@ func Test_roundTransactionsMapper(t *testing.T) {
 				},
 				{
 					ID:          303,
-					CreatedTime: now,
-					ClosedTime:  now.Add(1 + time.Second),
+					CreatedTime: now.Add(1 * time.Second),
+					ClosedTime:  now.Add(1 * time.Second),
 					TxnUUID:     "txn-uuid-1",
 					Payload: payload{
 						Bet:                 "Extra Ball",
@@ -604,8 +604,8 @@ func Test_roundTransactionsMapper(t *testing.T) {
 				},
 				{
 					ID:          303,
-					CreatedTime: now,
-					ClosedTime:  now.Add(1 + time.Second),
+					CreatedTime: now.Add(2 * time.Second),
+					ClosedTime:  now.Add(2 * time.Second),
 					TxnUUID:     "txn-uuid-2",
 					Payload: payload{
 						Bet:                      "zero",
@@ -643,7 +643,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					ProviderTransactionId: utils.Ptr("txn-uuid-1"),
 					CashAmount:            utils.Ptr(toPamAmount(300000)),
 					IsGameOver:            utils.Ptr(false),
-					TransactionDateTime:   utils.Ptr(now),
+					TransactionDateTime:   utils.Ptr(now.Add(1 * time.Second)),
 					JackpotContribution:   utils.Ptr(toPamAmount(3000)),
 					TransactionType:       pam.WITHDRAW,
 					BetCode:               utils.Ptr("Extra Ball"),
@@ -652,7 +652,7 @@ func Test_roundTransactionsMapper(t *testing.T) {
 					ProviderTransactionId: utils.Ptr("txn-uuid-2"),
 					CashAmount:            utils.Ptr(toPamAmount(200000)),
 					IsGameOver:            utils.Ptr(true),
-					TransactionDateTime:   utils.Ptr(now),
+					TransactionDateTime:   utils.Ptr(now.Add(2 * time.Second)),
 					ProviderBetRef:        utils.Ptr("txn-uuid-0"),
 					TransactionType:       pam.DEPOSIT,
 					BetCode:               utils.Ptr("zero"),
