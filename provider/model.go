@@ -35,10 +35,15 @@ type GameLaunchResponse struct {
 	GameURL string `json:"gameUrl"`
 }
 
+type GameRoundRenderRequest struct {
+	GameRoundID string
+	CasinoID    string
+}
+
 // ProviderService Contains Provider exposed features
 type ProviderService interface {
 	// GameLaunch returns url to game session
 	GameLaunch(*fiber.Ctx, *GameLaunchRequest, *GameLaunchHeaders) (string, error)
 	// GetGameRoundRender Returns url where a specific game round result is rendered to be viewed
-	GetGameRoundRender(*fiber.Ctx, string) (string, error)
+	GetGameRoundRender(*fiber.Ctx, GameRoundRenderRequest) (string, error)
 }

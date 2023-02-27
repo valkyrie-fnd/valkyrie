@@ -56,7 +56,7 @@ func (api *mockAPIClient) requestGameLaunch(ctx context.Context, body GameUrlBod
 	return api.requestGameLaunchFn(ctx, body)
 }
 
-func (api *mockAPIClient) getGameRoundRender(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+func (api *mockAPIClient) getGameRoundRender(ctx context.Context, gameRoundID, casinoID string) (*gameRoundRenderResponse, error) {
 	return api.getGameRoundRenderFn(ctx, gameRoundID)
 }
 
@@ -264,7 +264,7 @@ func Test_Requesting_Gameround_Render_Page(t *testing.T) {
 	assert.NoError(t, err)
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, _ := service.GetGameRoundRender(ctx, "gameRoundId")
+	res, _ := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
 	assert.Equal(t, "successUrl", res)
 }
 
@@ -275,7 +275,7 @@ func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
 	assert.NoError(t, err)
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
 	assert.Equal(t, "", res)
 	assert.EqualError(t, err, "HTTP 400: 0: ")
 }
@@ -287,7 +287,7 @@ func Test_Requesting_Gameround_Render_Page_error_from_response(t *testing.T) {
 	assert.NoError(t, err)
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
 	assert.Equal(t, "", res)
 	assert.EqualError(t, err, "HTTP 400: 100: Bad Stuff")
 }
@@ -299,7 +299,7 @@ func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {
 	assert.NoError(t, err)
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-	res, err := service.GetGameRoundRender(ctx, "gameRoundId")
+	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
 	assert.Equal(t, "", res)
 	assert.EqualError(t, err, "Some network error")
 }

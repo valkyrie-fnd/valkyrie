@@ -15,7 +15,7 @@ import (
 
 type API interface {
 	requestGameLaunch(ctx context.Context, body GameUrlBody) (*InlineResponse200, error)
-	getGameRoundRender(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error)
+	getGameRoundRender(ctx context.Context, gameRoundID, casinoID string) (*gameRoundRenderResponse, error)
 	getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 }
 
@@ -112,10 +112,13 @@ func (apiClient *apiClient) requestGameLaunch(ctx context.Context, body GameUrlB
 	return &resp, err
 }
 
-func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
+func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID, casinoID string) (*gameRoundRenderResponse, error) {
 	body := GameroundJSONRequestBody{
 		Round:      &gameRoundID,
 		OperatorId: apiClient.operatorID,
+	}
+	if casinoID != "" {
+		body.SubPartnerId = &casinoID
 	}
 	req := &rest.HTTPRequest{
 		URL:     fmt.Sprintf("%s%s", apiClient.url, "/api/game/round"),
@@ -131,7 +134,6 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID 
 	resp := gameRoundRenderResponse{}
 	err = apiClient.rest.PostJSON(ctx, req, &resp)
 	return &resp, err
-
 }
 
 func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error) {

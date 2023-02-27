@@ -94,6 +94,6 @@ func TestGameLaunch(t *testing.T) {
 
 func TestGameRoundRender(t *testing.T) {
 	sut := RedTigerService{}
-	_, err := sut.GetGameRoundRender(nil, "")
+	_, err := sut.GetGameRoundRender(nil, provider.GameRoundRenderRequest{})
 	assert.EqualError(t, err, "Not available")
 }
