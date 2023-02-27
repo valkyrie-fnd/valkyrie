@@ -132,7 +132,7 @@ func (gs ProviderServiceMock) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h 
 	}
 	return "", nil
 }
-func (gs ProviderServiceMock) GetGameRoundRender(*fiber.Ctx, string) (string, error) {
+func (gs ProviderServiceMock) GetGameRoundRender(*fiber.Ctx, GameRoundRenderRequest) (string, error) {
 	return "", fmt.Errorf("Not Available")
 }
 

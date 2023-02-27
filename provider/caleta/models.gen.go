@@ -584,6 +584,9 @@ type GameRoundBody struct {
 	// Round Game round id. Used to relate all bets and wins in one round. All transactions related to the same round will have the same value in this field. It's unique through whole system.
 	Round *Round `json:"round,omitempty"`
 
+	// SubPartnerId Id of Operator's sub-partner (brand, whitelabel, site, etc.) which uses same integration and credentials as Operator.
+	SubPartnerId *SubPartnerId `json:"sub_partner_id,omitempty"`
+
 	// TransactionUuid Unique wallet transaction.
 	TransactionUuid *TransactionUuid `json:"transaction_uuid,omitempty"`
 

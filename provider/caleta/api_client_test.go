@@ -220,7 +220,7 @@ func Test_getGameRoundRender(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			api, err := NewAPIClient(mockRestClient{JSONFunc: test.jsonFn}, test.config)
 			assert.NoError(t, err)
-			result, err := api.getGameRoundRender(context.TODO(), test.gameRoundID)
+			result, err := api.getGameRoundRender(context.TODO(), test.gameRoundID, "")
 			if test.e != nil {
 				assert.EqualError(t, err, test.e.Error())
 			}

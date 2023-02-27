@@ -48,7 +48,7 @@ paths:
                 type: string
               example: Bad game launch call
         "401":
-          $ref: '#/components/responses/UnauthorizedResponse'
+          $ref: "#/components/responses/UnauthorizedResponse"
   /{provider}/gamerounds/{gameRoundId}/render:
     get:
       description: Optional. Returns a rendered representation of the specified game round.
@@ -69,11 +69,18 @@ paths:
           example: xyz123
           schema:
             type: string
+        - in: query
+          name: casinoId
+          description: casino id requesting to see the game round being rendered
+          example: xyz10101
+          required: false
+          schema:
+            type: string
       responses:
         "302":
           description: Redirect to provider specific url with rendered result
-        "401": 
-          $ref: '#/components/responses/UnauthorizedResponse'
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "500":
           description: Something went wrong fetching the rendered page
 components:
@@ -130,7 +137,7 @@ components:
       example: 7ca10daf12f2cac9fecf559b11f0f0c8bd21ae43
       minLength: 1
       maxLength: 40
-  responses: 
+  responses:
     UnauthorizedResponse:
       description: Operator API Key is missing or invalid
   securitySchemes:

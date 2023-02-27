@@ -50,7 +50,7 @@ func (service RedTigerService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRe
 		launchConfQuery.Encode())
 	return url, nil
 }
-func (service RedTigerService) GetGameRoundRender(*fiber.Ctx, string) (string, error) {
+func (service RedTigerService) GetGameRoundRender(*fiber.Ctx, provider.GameRoundRenderRequest) (string, error) {
 	return "", fmt.Errorf("Not available")
 }
 func getLaunchConfig(conf map[string]interface{}) (*rtGameLaunchConfig, error) {

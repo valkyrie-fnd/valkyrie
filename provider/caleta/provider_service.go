@@ -33,8 +33,8 @@ func NewCaletaService(apiClient API, config configs.ProviderConf) (*caletaServic
 }
 
 // GetGameRoundRender returns a game render for a given game round
-func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundID string) (string, error) {
-	resp, err := service.apiClient.getGameRoundRender(ctx.UserContext(), gameRoundID)
+func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundRenderReq provider.GameRoundRenderRequest) (string, error) {
+	resp, err := service.apiClient.getGameRoundRender(ctx.UserContext(), gameRoundRenderReq.GameRoundID, gameRoundRenderReq.CasinoID)
 	if err != nil {
 		return "", err
 	}

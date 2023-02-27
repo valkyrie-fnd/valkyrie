@@ -1498,6 +1498,8 @@ components:
           $ref: '#/components/schemas/user'
         round:
           $ref: '#/components/schemas/round'
+        sub_partner_id:
+          $ref: '#/components/schemas/sub_partner_id'
     wallet_check_body:
       required:
       - token
