@@ -22,13 +22,6 @@ You can then run Valkyrie using:
 ```
 Two template config files come with the Valkyrie software. These can be found [here](configs/testdata).
 
-### Swagger
-To include swagger ui to view all exposed endpoints in Valkyrie you can use the build tag `dev`. After starting Valkyrie, simply direct your web browser to localhost:$<port>$/swagger and take a look at the appropriate endpoints
-
-```shell
-go build -tags=dev
-```
-
 ### Custom tasks
 
 Valkyrie uses [Task](https://taskfile.dev/) as a task runner, e.g. for building the application.
@@ -40,6 +33,11 @@ to enable `bash`. Another helpful tool is [Chocolatey](https://chocolatey.org/),
 install other programs, like Task.
 
 A `Taskfile.yml` is located in the project root which describes custom tasks that can be run for the project.
+
+To run the default tasks (generate, lint & test), simply run:
+```shell
+task
+```
 
 To list available tasks run:
 
@@ -73,6 +71,16 @@ Valkyrie can be installed as `systemd` service by these steps:
 - obtaining a linux [release package of valkyrie](/releases/latest/), named like `valkyrie-X.X.X-linux-amd64.tar.gz`
 - unpacking and setting up a configuration file named `config.yml`
 - executing `./svc.sh install` to setup the service
+
+### Swagger
+
+To include swagger ui to view all exposed endpoints in Valkyrie you can use the build tag `dev`.
+After starting Valkyrie, simply direct your web browser to localhost:<port>/swagger and take a look at the
+appropriate endpoints.
+
+```shell
+go build -tags=dev
+```
 
 ## Documentation
 
@@ -122,6 +130,29 @@ Fulfilling this specification will enable you to use `<genericpam>`. In the diag
 + server/                 # Starting the Valkyrie servers, exposed toward Operator and Providers
 ```
 "Provider Server" and "Operator Server" from the Component diagram above would be in `routes/routes.go` where the operator and provider routes are setup. It utilizes `provider/registry.go` to add the routes to the `fiber.App`. Each provider needs to implement both "Operator Router" and "Provider Router". They are implemented under `{gameProvider}/router.go`. For more details on all the "Provider Module"-components the [example game provider](./example/README.md) can be viewed, with documentation through out the example.
+
+### CI
+
+Valkyrie uses GitHub actions for continuous integration, which is described under [workflows](./.github/workflows).
+
+Pull requests will trigger Lint and Test jobs which are expected to pass before merging.
+
+Commits to main branch will rerun Lint and Test, and if successful it will also build a pre-release
+version (`x.y.z-pre.revno`), which is uploaded to Docker Hub.
+
+### Releasing
+
+1. Choose a suitable release version following the [Semantic Versioning](https://semver.org/spec/v2.0.0.html) format
+2. Before creating the release, make sure to update [CHANGELOG.md](./CHANGELOG.md), moving the entries from `Unreleased`
+   to your release version and describe any new notable changes since the previous release.
+3. Finally, trigger the `Release` workflow in GitHub Actions and specify the version as argument.
+
+The GitHub actions workflow will perform the following steps:
+* Run the full CI suite
+* Build and push container to Docker Hub
+* Build and push helm chart to Docker Hub
+* Build binaries for various platforms and upload to GitHub releases
+* Tag the version in git
 
 ## Performance
 Valkyrie aims to be lightweight and fast. While running single instances of Valkyrie and a PAM, we are able to generate and process the following number of bet requests (a.k.a debit/withdraw/stake) for the respective provider implementations (all run locally on an 2021 MacBook Pro w/ M1 MAX CPU, no tracing enabled and INFO log level).
