@@ -5,14 +5,15 @@ For general information about Valkyrie, please check [this](https://valkyrie.bet
 
 Information for developers and other interested parties is found below.
 
-## Installing
-**Note**: Windows users are recommended to use PowerShell. Custom tasks may be used for build purposes, etc. To run most of these in Windows you need to have installed [wsl](https://www.microsoft.com/store/productId/9P9TQF7MRM4R) to enable `bash`. Another helpful tool is [Chocolatey](https://chocolatey.org/), which can be used on windows to install other programs, like Task.
+## Building
 
 Valkyrie is built from source by running:
 
 ```shell
 go build
 ```
+
+## Running
 
 You can then run Valkyrie using:
 
@@ -30,7 +31,13 @@ go build -tags=dev
 
 ### Custom tasks
 
-Valkyrie uses [Task](https://taskfile.dev/) as a task runner, e.g. for building the application. To use the tool please refer to its [installation](https://taskfile.dev/installation/) page.
+Valkyrie uses [Task](https://taskfile.dev/) as a task runner, e.g. for building the application.
+To use the tool please refer to its [installation](https://taskfile.dev/installation/) page.
+
+> **Note**: Windows users are recommended to use PowerShell. Custom tasks may be used for build purposes, etc.
+To run most of these in Windows you need to have installed [wsl](https://www.microsoft.com/store/productId/9P9TQF7MRM4R)
+to enable `bash`. Another helpful tool is [Chocolatey](https://chocolatey.org/), which can be used on windows to
+install other programs, like Task.
 
 A `Taskfile.yml` is located in the project root which describes custom tasks that can be run for the project.
 
@@ -68,6 +75,7 @@ Valkyrie can be installed as `systemd` service by these steps:
 - executing `./svc.sh install` to setup the service
 
 ## Documentation
+
 Check [documentation site](https://valkyrie.bet/docs/) for the latest and most extensive information.
 
 ### Architecture
@@ -83,12 +91,12 @@ Components view of Valkyrie, how the internals connect to each other.
 ![components view](/structurizr/structurizr-1-Valkyrie-Components.png)
 
 ### Codebase structure
-Going through the code there are two folders that are more important than others, `<providers>` and `<pam>`. In these you will find the relevant components that makes Valkyrie modular. 
-In `<providers>` you will find each available game provider module that is integrated with Valkyrie. More in detail how to create a new provider module and the code structure of them can be found [here](./example/README.md). 
+Going through the code there are two folders that are more important than others, `<providers>` and `<pam>`. In these you will find the relevant components that makes Valkyrie modular.
+In `<providers>` you will find each available game provider module that is integrated with Valkyrie. More in detail how to create a new provider module and the code structure of them can be found [here](./example/README.md).
 When starting a Valkyrie instance you provide it with a config yaml file containing what provider modules you want to have enabled. Read more about the configuration file [here](https://valkyrie.bet/docs/get-started/configuration).
 In the root `<provider>`-folder is the implementations of `provider/docs/operator_api.yml`. It is the specification the operator can use to send request to Valkyrie that will be forwarded toward the provider. You can read more [here](https://valkyrie.bet/docs/operator/valkyrie-operator-api).
 
-`<pam>` contains implemented PAMs that are available. Each provider is using `pam.PamClient` found in `/pam/client.go` to communicate with the PAM. The available PAMs should implement this interface. Similar to the providers, what PAM is used is based on the configuration file provided at runtime. There is an oapi specification that is used by `<genericpam>` called `pam_api.yml` that can be read [here](https://valkyrie.bet/docs/wallet/valkyrie-pam/valkyrie-pam-api). 
+`<pam>` contains implemented PAMs that are available. Each provider is using `pam.PamClient` found in `/pam/client.go` to communicate with the PAM. The available PAMs should implement this interface. Similar to the providers, what PAM is used is based on the configuration file provided at runtime. There is an oapi specification that is used by `<genericpam>` called `pam_api.yml` that can be read [here](https://valkyrie.bet/docs/wallet/valkyrie-pam/valkyrie-pam-api).
 Fulfilling this specification will enable you to use `<genericpam>`. In the diagram above, `<genericpam>` and `<vplugin>` would be the "PAM Client".
 "PAM Plugin", from the diagram, would be used in the case of `<vplugin>`. `<vplugin>` is utilizing hashicorp go-plugin to keep the pam implementation in a separate process from Valkyrie. This enables you to keep your own private implementation of a PAM. More on this can be read [here](https://valkyrie.bet/docs/wallet/vplugin/vplugin-introduction).
 ``` text
