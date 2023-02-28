@@ -32,8 +32,8 @@ telemetry:
   #  url: "https://metric-server-url # optional
 
 # configure the player account management (PAM aka Wallet system) to use
-pam: {}
-#  name: generic # check /pam-folder for available PAMs
+pam: 
+  name: generic # check /pam-folder for available PAMs
 #  api_key: pam-api-key # api key to PAM
 #  url: "https://pam-url" # base url to PAM
 
