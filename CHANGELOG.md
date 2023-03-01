@@ -16,6 +16,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Removed
 
+## [0.7.0] - 2023-03-01
+
+### Added
+
+- Added `casinoId` parameter to game render request
+- Added metrics exporting and instrumentation
+- Added support for exporting telemetry using OpenTelemetry Protocol (OTLP) over HTTP to an OpenTelemetry Collector
+- Added configurable OpenTelemetry Collector sidecart to helm chart
+
+### Changed
+
+- Fixed transaction date time for round transaction
+- Include round transactions for bets
+
+### Removed
+
+- Removed duplicate ping endpoint `/monitoring/ping`, use `/ping` instead
+- Removed support for exporting telemetry directly to Google Cloud and Jaeger, in favour of exporting to an intermediate OpenTelemetry Collector
+
 ## [0.6.0] - 2023-02-17
 
 ### Added
