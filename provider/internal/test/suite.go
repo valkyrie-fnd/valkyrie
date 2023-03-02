@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 	"github.com/valkyrie-fnd/valkyrie-stubs/backdoors"
 	"github.com/valkyrie-fnd/valkyrie-stubs/datastore"
@@ -88,8 +89,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			},
 		}
 
-		s.valkyrie = server.NewValkyrie(context.TODO(), &valkyrieConfig)
-
+		v, err := server.NewValkyrie(context.TODO(), &valkyrieConfig)
+		if err != nil {
+			log.Error().Err(err)
+			return
+		}
+		s.valkyrie = v
 		s.valkyrie.Start()
 
 		s.ValkyrieURL = fmt.Sprintf(baseURL+"%s%s", providerPort, valkyrieConfig.ProviderBasePath, s.ProviderConfig.BasePath)

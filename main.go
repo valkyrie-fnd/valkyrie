@@ -5,6 +5,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,7 +21,25 @@ import (
 
 var appVersion = "devel"
 
+// banner ascii art generated using https://textkool.com/en/ascii-art-generator?hl=default&vl=default&font=Bloody&text=Valkyrie
+const banner = `
+ ██▒   █▓ ▄▄▄       ██▓     ██ ▄█▀▓██   ██▓ ██▀███   ██▓▓█████
+▓██░   █▒▒████▄    ▓██▒     ██▄█▒  ▒██  ██▒▓██ ▒ ██▒▓██▒▓█   ▀
+ ▓██  █▒░▒██  ▀█▄  ▒██░    ▓███▄░   ▒██ ██░▓██ ░▄█ ▒▒██▒▒███
+  ▒██ █░░░██▄▄▄▄██ ▒██░    ▓██ █▄   ░ ▐██▓░▒██▀▀█▄  ░██░▒▓█  ▄
+   ▒▀█░   ▓█   ▓██▒░██████▒▒██▒ █▄  ░ ██▒▓░░██▓ ▒██▒░██░░▒████▒
+   ░ ▐░   ▒▒   ▓▒█░░ ▒░▓  ░▒ ▒▒ ▓▒   ██▒▒▒ ░ ▒▓ ░▒▓░░▓  ░░ ▒░ ░
+   ░ ░░    ▒   ▒▒ ░░ ░ ▒  ░░ ░▒ ▒░ ▓██ ░▒░   ░▒ ░ ▒░ ▒ ░ ░ ░  ░
+     ░░    ░   ▒     ░ ░   ░ ░░ ░  ▒ ▒ ░░    ░░   ░  ▒ ░   ░
+      ░        ░  ░    ░  ░░  ░    ░ ░        ░      ░     ░  ░
+     ░                             ░ ░
+`
+
 func main() {
+	os.Exit(mainReal(listenForSignal(), os.Stdout))
+}
+func mainReal(ctx context.Context, out io.Writer) int {
+
 	// Load .env.local if found
 	_ = godotenv.Load(".env.local")
 
@@ -33,20 +52,25 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
-		_, _ = fmt.Fprintf(os.Stdout, "Version: %s\n", appVersion)
-		return
+		_, _ = fmt.Fprintf(out, "Version: %s\n", appVersion)
+		return 0
 	}
 
 	cfg, err := configs.Read(configFilePath)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to read config")
+		log.Err(err).Msg("Failed to read config")
+		return 1
 	}
 	cfg.Version = appVersion
-
-	mainCtx := listenForSignal()
-	v := server.NewValkyrie(mainCtx, cfg)
+	// Print banner
+	_, _ = fmt.Fprintf(out, "%s\n", banner)
+	v, err := server.NewValkyrie(ctx, cfg)
+	if err != nil {
+		return 1
+	}
 
 	v.Run(func() {})
+	return 0
 }
 
 func listenForSignal() context.Context {

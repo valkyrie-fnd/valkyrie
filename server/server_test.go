@@ -137,8 +137,8 @@ func TestTimeout(t *testing.T) {
 			operatorPort, _ := testutils.GetFreePort()
 			valkyrieConfig.HTTPServer.ProviderAddress = fmt.Sprintf("localhost:%d", providerPort)
 			valkyrieConfig.HTTPServer.OperatorAddress = fmt.Sprintf("localhost:%d", operatorPort)
-			valkyrie := NewValkyrie(context.TODO(), &valkyrieConfig)
-
+			valkyrie, err := NewValkyrie(context.TODO(), &valkyrieConfig)
+			assert.NoError(t, err)
 			// add timeout handler used in test
 			type result struct {
 				Status int

@@ -27,6 +27,9 @@ func ConfigureLogging(logConfig configs.LogConfig, profiles *Profiles) {
 	} else {
 		zerolog.SetGlobalLevel(level)
 	}
+	if profiles.Has("testlog") {
+		return
+	}
 	zerolog.ErrorStackMarshaler = func(err error) interface{} {
 		return pkgerrors.MarshalStack(errors.WithStack(err))
 	}
