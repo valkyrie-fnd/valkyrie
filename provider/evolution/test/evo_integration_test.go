@@ -861,7 +861,7 @@ func (s *EvolutionIntegrationTestSuite) prepareCase(userID string) (*EvoRGIClien
 }
 
 // Type which happens to match the signature of Evo debit, credit and cancel methods
-type transFunc func(curr string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error)
+type transFunc func(currency string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error)
 
 // Generic method that runs debit, credit or cancel, and verifies response and with arbitrary
 //

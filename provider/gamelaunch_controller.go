@@ -45,9 +45,9 @@ func (ctrl GameLaunchController) GameLaunchEndpoint(ctx *fiber.Ctx) error {
 
 	url, err := ctrl.ps.GameLaunch(ctx, g, h)
 	if err != nil {
-		herr := &rest.HTTPError{}
-		if errors.As(err, herr) {
-			return ctx.Status(herr.Code).SendString(herr.Error())
+		hErr := &rest.HTTPError{}
+		if errors.As(err, hErr) {
+			return ctx.Status(hErr.Code).SendString(hErr.Error())
 		}
 		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
