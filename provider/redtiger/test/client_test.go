@@ -1,10 +1,9 @@
 package redtiger_test
 
 import (
+	"errors"
 	"fmt"
 	"time"
-
-	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 
 	"github.com/gofiber/fiber/v2"
 	redtiger_bd "github.com/valkyrie-fnd/valkyrie-stubs/backdoors/redtiger"
@@ -65,7 +64,7 @@ func (api *RGIClient) createSession(currency string) (*redtiger_bd.Result, error
 
 	var resp redtiger_bd.SessionResponse
 	if c, b, errs := a.Struct(&resp); c != fiber.StatusOK {
-		return nil, testutils.Stack(errs, fmt.Errorf("redtiger/session request failed: %s", b))
+		return nil, errors.Join(append(errs, fmt.Errorf("redtiger/session request failed: %s", b))...)
 	} else if !resp.Success {
 		return nil, fmt.Errorf("redtiger/session request failed")
 	}

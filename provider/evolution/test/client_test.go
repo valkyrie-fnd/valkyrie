@@ -3,6 +3,7 @@
 package evolution_test
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -53,7 +54,8 @@ func (c *EvoRGIClient) SID(userID string, channel rune) (*evolution.CheckRespons
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/sid request failed with status [%v]: %s", status, err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/sid request failed: %s", b))
+
+		return nil, errors.Join(append(err, fmt.Errorf("evo/sid request failed: %s", b))...)
 	}
 
 	// Store the session info in the client for subsequent interaction
@@ -77,7 +79,7 @@ func (c *EvoRGIClient) Check(r evolution.CheckRequest) (*evolution.CheckResponse
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/check request failed with status [%v]: %s", status, err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/check request failed: %s", b))
+		return nil, errors.Join(append(err, fmt.Errorf("evo/check request failed: %s", b))...)
 	}
 
 	// Store the session info in the client for subsequent interaction
@@ -207,7 +209,7 @@ func post(base, path, token string, body interface{}) (*evolution.StandardRespon
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/%s request failed with status [%v]: %s, Error: %s", path, status, string(b), err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/%s request failed: %s", path, b))
+		return nil, errors.Join(append(err, fmt.Errorf("evo/%s request failed: %s", path, b))...)
 	}
 
 	return &resp, nil
