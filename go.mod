@@ -1,6 +1,6 @@
 module github.com/valkyrie-fnd/valkyrie
 
-go 1.19
+go 1.20
 
 // You can run a local version of valkyrie-stubs by adding the replace directive like so:
 // replace github.com/valkyrie-fnd/valkyrie-stubs => ../valkyrie-stubs
