@@ -3,6 +3,7 @@
 package evolution_test
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -53,7 +54,8 @@ func (c *EvoRGIClient) SID(userID string, channel rune) (*evolution.CheckRespons
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/sid request failed with status [%v]: %s", status, err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/sid request failed: %s", b))
+
+		return nil, errors.Join(append(err, fmt.Errorf("evo/sid request failed: %s", b))...)
 	}
 
 	// Store the session info in the client for subsequent interaction
@@ -77,7 +79,7 @@ func (c *EvoRGIClient) Check(r evolution.CheckRequest) (*evolution.CheckResponse
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/check request failed with status [%v]: %s", status, err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/check request failed: %s", b))
+		return nil, errors.Join(append(err, fmt.Errorf("evo/check request failed: %s", b))...)
 	}
 
 	// Store the session info in the client for subsequent interaction
@@ -90,48 +92,48 @@ func (c *EvoRGIClient) Check(r evolution.CheckRequest) (*evolution.CheckResponse
 	return &resp, nil
 }
 
-func (c *EvoRGIClient) Balance(curr string) (*evolution.StandardResponse, error) {
+func (c *EvoRGIClient) Balance(currency string) (*evolution.StandardResponse, error) {
 	r := evolution.BalanceRequest{
 		RequestBase: c.reqBase,
-		Currency:    curr,
+		Currency:    currency,
 	}
 	return post(c.url, "/balance", c.authToken, &r)
 }
 
-func (c *EvoRGIClient) Debit(curr string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
+func (c *EvoRGIClient) Debit(currency string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
 	r := evolution.DebitRequest{
 		RequestBase: c.reqBase,
-		Currency:    curr,
+		Currency:    currency,
 		Game:        game,
 		Transaction: trans,
 	}
 	return post(c.url, "/debit", c.authToken, &r)
 }
 
-func (c *EvoRGIClient) Credit(curr string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
+func (c *EvoRGIClient) Credit(currency string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
 	r := evolution.CreditRequest{
 		RequestBase: c.reqBase,
-		Currency:    curr,
+		Currency:    currency,
 		Game:        game,
 		Transaction: trans,
 	}
 	return post(c.url, "/credit", c.authToken, &r)
 }
 
-func (c *EvoRGIClient) Cancel(curr string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
+func (c *EvoRGIClient) Cancel(currency string, game evolution.Game, trans evolution.Transaction) (*evolution.StandardResponse, error) {
 	r := evolution.DebitRequest{
 		RequestBase: c.reqBase,
-		Currency:    curr,
+		Currency:    currency,
 		Game:        game,
 		Transaction: trans,
 	}
 	return post(c.url, "/cancel", c.authToken, &r)
 }
 
-func (c *EvoRGIClient) PromoPayout(curr string, game evolution.Game, trans evolution.PromoTransaction) (*evolution.StandardResponse, error) {
+func (c *EvoRGIClient) PromoPayout(currency string, game evolution.Game, trans evolution.PromoTransaction) (*evolution.StandardResponse, error) {
 	r := evolution.PromoPayoutRequest{
 		RequestBase:      c.reqBase,
-		Currency:         curr,
+		Currency:         currency,
 		Game:             game,
 		PromoTransaction: trans,
 	}
@@ -207,7 +209,7 @@ func post(base, path, token string, body interface{}) (*evolution.StandardRespon
 	if status != fiber.StatusOK {
 		return nil, fmt.Errorf("evo/%s request failed with status [%v]: %s, Error: %s", path, status, string(b), err)
 	} else if err != nil {
-		return nil, testutils.Stack(err, fmt.Errorf("evo/%s request failed: %s", path, b))
+		return nil, errors.Join(append(err, fmt.Errorf("evo/%s request failed: %s", path, b))...)
 	}
 
 	return &resp, nil

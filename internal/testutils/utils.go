@@ -5,7 +5,6 @@ package testutils
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"net"
 	"os"
 
@@ -43,15 +42,6 @@ func RandomString(n int) string {
 // Ptr returns the pointer to an argument, useful for string literals.
 func Ptr[T any](t T) *T {
 	return &t
-}
-
-// Stack combines an array of errors into a single error via formatting.
-func Stack(errs []error, target error) error {
-	if len(errs) == 0 {
-		return target
-	}
-
-	return Stack(errs[1:], fmt.Errorf("%s %w", target, errs[0])) //nolint
 }
 
 func EnvOrDefault(environmentKey, defaultValue string) string {

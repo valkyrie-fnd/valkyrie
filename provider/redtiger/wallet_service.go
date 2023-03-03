@@ -172,9 +172,9 @@ func (s *WalletService) PromoSettle(req PayoutRequest) (*PayoutResponseWrapper, 
 func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionType) (*StakeResponseWrapper, *ErrorResponse) {
 	existingTransactions, err := s.pamClient.GetTransactions(s.getTransactionsMapper(req.BaseRequest, req.Transaction.ID))
 	if err != nil {
-		var valkErr pam.ValkyrieError
-		if errors.As(err, &valkErr) {
-			if valkErr.ValkErrorCode != pam.ValkErrOpTransNotFound {
+		var vErr pam.ValkyrieError
+		if errors.As(err, &vErr) {
+			if vErr.ValkErrorCode != pam.ValkErrOpTransNotFound {
 				e := createRtErrorResponse(err)
 				return nil, &e
 			}
@@ -184,9 +184,9 @@ func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionTy
 	if existingTransactions == nil {
 		gameEvent, gErr := s.pamClient.GetGameRound(s.getGameRoundMapper(req.BaseRequest, req.Round.ID))
 		if gErr != nil {
-			var valkErr pam.ValkyrieError
-			isValkErr := errors.As(gErr, &valkErr)
-			if !isValkErr || isValkErr && valkErr.ValkErrorCode != pam.ValkErrOpRoundNotFound {
+			var vErr pam.ValkyrieError
+			isValkyrieErr := errors.As(gErr, &vErr)
+			if !isValkyrieErr || isValkyrieErr && vErr.ValkErrorCode != pam.ValkErrOpRoundNotFound {
 				e := createRtErrorResponse(gErr)
 				return nil, &e
 			}
@@ -196,13 +196,13 @@ func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionTy
 			return nil, &e
 		}
 	}
-	tranRes, err := s.pamClient.AddTransaction(s.getStakeTransactionMapper(req, transType))
+	transactionResult, err := s.pamClient.AddTransaction(s.getStakeTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
 	}
-	if tranRes.Balance == nil {
-		tranRes.Balance = &pam.Balance{
+	if transactionResult.Balance == nil {
+		transactionResult.Balance = &pam.Balance{
 			BonusAmount: pam.ZeroAmount,
 			CashAmount:  pam.ZeroAmount,
 		}
@@ -216,14 +216,14 @@ func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionTy
 				Token:    req.Token,
 				Currency: req.Currency,
 			},
-			ID: *tranRes.TransactionId,
+			ID: *transactionResult.TransactionId,
 			Stake: Balance{
 				Cash:  req.Transaction.Stake,
 				Bonus: zeroMoney(),
 			},
 			Balance: Balance{
-				Cash:  Money(tranRes.Balance.CashAmount),
-				Bonus: Money(tranRes.Balance.BonusAmount),
+				Cash:  Money(transactionResult.Balance.CashAmount),
+				Bonus: Money(transactionResult.Balance.BonusAmount),
 			},
 		},
 	}
@@ -232,14 +232,14 @@ func handleStake(s *WalletService, req StakeRequest, transType pam.TransactionTy
 }
 
 func handlePayout(s *WalletService, req PayoutRequest, transType pam.TransactionType) (*PayoutResponseWrapper, *ErrorResponse) {
-	tranRes, err := s.pamClient.AddTransaction(s.getPayoutTransactionMapper(req, transType))
+	transactionResult, err := s.pamClient.AddTransaction(s.getPayoutTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
 	}
 
-	if tranRes.Balance == nil {
-		tranRes.Balance = &pam.Balance{
+	if transactionResult.Balance == nil {
+		transactionResult.Balance = &pam.Balance{
 			BonusAmount: pam.ZeroAmount,
 			CashAmount:  pam.ZeroAmount,
 		}
@@ -254,28 +254,28 @@ func handlePayout(s *WalletService, req PayoutRequest, transType pam.Transaction
 				Token:    req.Token,
 				Currency: req.Currency,
 			},
-			ID: *tranRes.TransactionId,
+			ID: *transactionResult.TransactionId,
 			Payout: Balance{
 				Cash:  req.Transaction.Payout,
 				Bonus: zeroMoney(),
 			},
 			Balance: Balance{
-				Cash:  Money(tranRes.Balance.CashAmount),
-				Bonus: Money(tranRes.Balance.BonusAmount),
+				Cash:  Money(transactionResult.Balance.CashAmount),
+				Bonus: Money(transactionResult.Balance.BonusAmount),
 			},
 		},
 	}, nil
 }
 
 func handleRefund(s *WalletService, req RefundRequest, transType pam.TransactionType) (*RefundResponseWrapper, *ErrorResponse) {
-	tranRes, err := s.pamClient.AddTransaction(s.getRefundTransactionMapper(req, transType))
+	transactionResult, err := s.pamClient.AddTransaction(s.getRefundTransactionMapper(req, transType))
 	if err != nil {
 		e := createRtErrorResponse(err)
 		return nil, &e
 	}
 
-	if tranRes.Balance == nil {
-		tranRes.Balance = &pam.Balance{
+	if transactionResult.Balance == nil {
+		transactionResult.Balance = &pam.Balance{
 			BonusAmount: pam.ZeroAmount,
 			CashAmount:  pam.ZeroAmount,
 		}
@@ -287,15 +287,15 @@ func handleRefund(s *WalletService, req RefundRequest, transType pam.Transaction
 		},
 		Result: RefundResult{
 			Token: req.Token,
-			ID:    *tranRes.TransactionId,
+			ID:    *transactionResult.TransactionId,
 			Stake: Balance{
 				Cash:  req.Transaction.Stake,
 				Bonus: zeroMoney(),
 			},
 		},
 		Balance: Balance{
-			Cash:  Money(tranRes.Balance.CashAmount),
-			Bonus: Money(tranRes.Balance.BonusAmount),
+			Cash:  Money(transactionResult.Balance.CashAmount),
+			Bonus: Money(transactionResult.Balance.BonusAmount),
 		},
 	}
 	return &resp, nil

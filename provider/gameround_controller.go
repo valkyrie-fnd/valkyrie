@@ -21,10 +21,10 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	casinoID := c.Query("casinoId")
 	res, err := ctrl.ps.GetGameRoundRender(c, GameRoundRenderRequest{gameRoundID, casinoID})
 	if err != nil {
-		herr := &rest.HTTPError{}
-		if errors.As(err, herr) {
+		hErr := &rest.HTTPError{}
+		if errors.As(err, hErr) {
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
-			return c.Status(herr.Code).SendString(herr.Message)
+			return c.Status(hErr.Code).SendString(hErr.Message)
 		}
 		return err
 	}

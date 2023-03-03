@@ -94,11 +94,11 @@ func (service *WalletService) Balance(req BalanceRequest) (*StandardResponse, er
 // @Router       /providers/evolution/debit [post]
 func (service *WalletService) Debit(req DebitRequest) (*StandardResponse, error) {
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.pamClient.AddTransaction(service.debitRequestMapper(req, time.Now()))
+	transactionResp, err := service.pamClient.AddTransaction(service.debitRequestMapper(req, time.Now()))
 
 	if err != nil {
-		if tranResp != nil && tranResp.Balance != nil {
-			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
+		if transactionResp != nil && transactionResp.Balance != nil {
+			return nil, toProviderError(err, req.UUID, fromPamAmount(&transactionResp.Balance.CashAmount), fromPamAmount(&transactionResp.Balance.BonusAmount))
 		} else {
 			return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 		}
@@ -106,9 +106,9 @@ func (service *WalletService) Debit(req DebitRequest) (*StandardResponse, error)
 
 	var cashAmount, bonusAmount Amount
 
-	if tranResp != nil && tranResp.Balance != nil {
-		cashAmount = fromPamAmount(&tranResp.Balance.CashAmount)
-		bonusAmount = fromPamAmount(&tranResp.Balance.BonusAmount)
+	if transactionResp != nil && transactionResp.Balance != nil {
+		cashAmount = fromPamAmount(&transactionResp.Balance.CashAmount)
+		bonusAmount = fromPamAmount(&transactionResp.Balance.BonusAmount)
 	}
 
 	return &StandardResponse{
@@ -163,10 +163,10 @@ func (service *WalletService) Credit(req CreditRequest) (*StandardResponse, erro
 	}
 
 	// Send the credit transaction and ignore the success response
-	tranResp, err := service.pamClient.AddTransaction(service.creditTransRequestMapper(req, time.Now()))
+	transactionResp, err := service.pamClient.AddTransaction(service.creditTransRequestMapper(req, time.Now()))
 	if err != nil {
-		if tranResp != nil && tranResp.Balance != nil {
-			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
+		if transactionResp != nil && transactionResp.Balance != nil {
+			return nil, toProviderError(err, req.UUID, fromPamAmount(&transactionResp.Balance.CashAmount), fromPamAmount(&transactionResp.Balance.BonusAmount))
 		} else {
 			return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 		}
@@ -174,9 +174,9 @@ func (service *WalletService) Credit(req CreditRequest) (*StandardResponse, erro
 
 	var cashAmount, bonusAmount Amount
 
-	if tranResp.Balance != nil {
-		cashAmount = fromPamAmount(&tranResp.Balance.CashAmount)
-		bonusAmount = fromPamAmount(&tranResp.Balance.BonusAmount)
+	if transactionResp.Balance != nil {
+		cashAmount = fromPamAmount(&transactionResp.Balance.CashAmount)
+		bonusAmount = fromPamAmount(&transactionResp.Balance.BonusAmount)
 	}
 
 	return &StandardResponse{
@@ -231,10 +231,10 @@ func (service *WalletService) Cancel(req CancelRequest) (*StandardResponse, erro
 	}
 
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.pamClient.AddTransaction(service.cancelTransRequestMapper(req, time.Now()))
+	transactionResp, err := service.pamClient.AddTransaction(service.cancelTransRequestMapper(req, time.Now()))
 	if err != nil {
-		if tranResp != nil && tranResp.Balance != nil {
-			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
+		if transactionResp != nil && transactionResp.Balance != nil {
+			return nil, toProviderError(err, req.UUID, fromPamAmount(&transactionResp.Balance.CashAmount), fromPamAmount(&transactionResp.Balance.BonusAmount))
 		} else {
 			return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 		}
@@ -242,9 +242,9 @@ func (service *WalletService) Cancel(req CancelRequest) (*StandardResponse, erro
 
 	var cashAmount, bonusAmount Amount
 
-	if tranResp.Balance != nil {
-		cashAmount = fromPamAmount(&tranResp.Balance.CashAmount)
-		bonusAmount = fromPamAmount(&tranResp.Balance.BonusAmount)
+	if transactionResp.Balance != nil {
+		cashAmount = fromPamAmount(&transactionResp.Balance.CashAmount)
+		bonusAmount = fromPamAmount(&transactionResp.Balance.BonusAmount)
 	}
 	return &StandardResponse{
 		Status:  "OK",
@@ -269,11 +269,11 @@ func (service *WalletService) Cancel(req CancelRequest) (*StandardResponse, erro
 // @Router       /providers/evolution/promo_payout [post]
 func (service *WalletService) PromoPayout(req PromoPayoutRequest) (*StandardResponse, error) {
 	// Send the debit transaction and ignore the success response
-	tranResp, err := service.pamClient.AddTransaction(service.promoPayoutTransRequestMapper(req, time.Now()))
+	transactionResp, err := service.pamClient.AddTransaction(service.promoPayoutTransRequestMapper(req, time.Now()))
 
 	if err != nil {
-		if tranResp != nil && tranResp.Balance != nil {
-			return nil, toProviderError(err, req.UUID, fromPamAmount(&tranResp.Balance.CashAmount), fromPamAmount(&tranResp.Balance.BonusAmount))
+		if transactionResp != nil && transactionResp.Balance != nil {
+			return nil, toProviderError(err, req.UUID, fromPamAmount(&transactionResp.Balance.CashAmount), fromPamAmount(&transactionResp.Balance.BonusAmount))
 		} else {
 			return nil, toProviderError(err, req.UUID, ZeroAmount, ZeroAmount)
 		}
@@ -281,9 +281,9 @@ func (service *WalletService) PromoPayout(req PromoPayoutRequest) (*StandardResp
 
 	var cashAmount, bonusAmount Amount
 
-	if tranResp.Balance != nil {
-		cashAmount = fromPamAmount(&tranResp.Balance.CashAmount)
-		bonusAmount = fromPamAmount(&tranResp.Balance.BonusAmount)
+	if transactionResp.Balance != nil {
+		cashAmount = fromPamAmount(&transactionResp.Balance.CashAmount)
+		bonusAmount = fromPamAmount(&transactionResp.Balance.BonusAmount)
 	}
 
 	return &StandardResponse{
