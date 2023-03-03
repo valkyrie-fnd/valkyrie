@@ -70,34 +70,38 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		operatorPort, _ := testutils.GetFreePort()
 
 		s.ProviderConfig = s.ProviderConfigFn(dataStore)
-		valkyrieConfig := configs.ValkyrieConfig{
-			Logging: configs.LogConfig{
-				Level: "fatal",
-			},
-			ProviderBasePath: "/providers",
-			Providers: []configs.ProviderConf{
-				s.ProviderConfig,
-			},
-			Pam: configs.PamConf{
-				"name":    "generic",
-				"url":     pamURL,
-				"api_key": dataStore.GetPamAPIToken(),
-			},
-			HTTPServer: configs.HTTPServerConfig{
-				ProviderAddress: fmt.Sprintf(baseAddr, providerPort),
-				OperatorAddress: fmt.Sprintf(baseAddr, operatorPort),
-			},
-		}
+		valkyrieConfig := s.buildConfig(pamURL, providerPort, operatorPort, dataStore)
 
-		v, err := server.NewValkyrie(context.TODO(), &valkyrieConfig)
-		if err != nil {
+		if v, err := server.NewValkyrie(context.TODO(), &valkyrieConfig); err != nil {
 			log.Error().Err(err)
 			return
+		} else {
+			s.valkyrie = v
 		}
-		s.valkyrie = v
 		s.valkyrie.Start()
 
 		s.ValkyrieURL = fmt.Sprintf(baseURL+"%s%s", providerPort, valkyrieConfig.ProviderBasePath, s.ProviderConfig.BasePath)
+	}
+}
+
+func (s *IntegrationTestSuite) buildConfig(pamURL string, providerPort, operatorPort int, dataStore *memorydatastore.MapDataStore) configs.ValkyrieConfig {
+	return configs.ValkyrieConfig{
+		Logging: configs.LogConfig{
+			Level: "fatal",
+		},
+		ProviderBasePath: "/providers",
+		Providers: []configs.ProviderConf{
+			s.ProviderConfig,
+		},
+		Pam: configs.PamConf{
+			"name":    "generic",
+			"url":     pamURL,
+			"api_key": dataStore.GetPamAPIToken(),
+		},
+		HTTPServer: configs.HTTPServerConfig{
+			ProviderAddress: fmt.Sprintf(baseAddr, providerPort),
+			OperatorAddress: fmt.Sprintf(baseAddr, operatorPort),
+		},
 	}
 }
 
