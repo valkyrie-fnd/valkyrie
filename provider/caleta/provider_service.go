@@ -42,7 +42,7 @@ func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundRender
 		return "", rest.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
 	}
 
-	return *resp.Url, nil
+	return fmt.Sprintf("%s/", *resp.Url), nil
 }
 
 // GameLaunch launches games

@@ -1488,6 +1488,7 @@ components:
     game_round_body:
       required:
       - operator_id
+      - sub_partner_id
       type: object
       properties:
         operator_id:
