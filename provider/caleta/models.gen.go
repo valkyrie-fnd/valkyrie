@@ -585,7 +585,7 @@ type GameRoundBody struct {
 	Round *Round `json:"round,omitempty"`
 
 	// SubPartnerId Id of Operator's sub-partner (brand, whitelabel, site, etc.) which uses same integration and credentials as Operator.
-	SubPartnerId *SubPartnerId `json:"sub_partner_id,omitempty"`
+	SubPartnerId SubPartnerId `json:"sub_partner_id"`
 
 	// TransactionUuid Unique wallet transaction.
 	TransactionUuid *TransactionUuid `json:"transaction_uuid,omitempty"`
