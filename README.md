@@ -1,5 +1,14 @@
 # Valkyrie Game Aggregator
-
+[![](https://img.shields.io/badge/License-MIT%20-brightgreen.svg)](./LICENSE.md) 
+[![BuildStatus](https://img.shields.io/github/actions/workflow/status/valkyrie-fnd/valkyrie/gh-workflow.yml)](https://github.com/valkyrie-fnd/valkyrie/actions/workflows/gh-workflow.yml)
+![](https://img.shields.io/github/last-commit/valkyrie-fnd/valkyrie)
+[![](https://img.shields.io/website?url=https%3A%2F%2Fvalkyrie.bet)](https://valkyrie.bet/docs)
+![](https://img.shields.io/github/go-mod/go-version/valkyrie-fnd/valkyrie)
+![](https://img.shields.io/github/languages/top/valkyrie-fnd/valkyrie)
+![](https://img.shields.io/tokei/lines/github/valkyrie-fnd/valkyrie)
+[![](https://img.shields.io/docker/image-size/valkyriefnd/valkyrie)](https://hub.docker.com/r/valkyriefnd/valkyrie)
+[![](https://img.shields.io/github/v/release/valkyrie-fnd/valkyrie)](https://github.com/valkyrie-fnd/valkyrie/releases)
+![](https://img.shields.io/maintenance/yes/2023)
 ## An open source game aggregator written in Go.
 For general information about Valkyrie, please check [this](https://valkyrie.bet/about) out!
 
