@@ -164,11 +164,11 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
+		Body:    &r.Body,
 	}
 
 	err = Pipeline.Execute(ctx, r,
 		func(pc internal.PipelineContext[any]) error {
-			req.Body = &pc.Payload().(*pam.AddTransactionRequest).Body
 			return c.rest.PostJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
