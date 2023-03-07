@@ -5,8 +5,11 @@ import (
 	"sync"
 )
 
+// Handler represents a step in a chain, together forming a "pipeline".
 type Handler[T any] func(cc PipelineContext[T]) error
 
+// pipelineContext keeps track of which handler in the pipeline to
+// call next, as well as any associated context and payload.
 type pipelineContext[T any] struct {
 	ctx     context.Context
 	payload T
@@ -15,6 +18,7 @@ type pipelineContext[T any] struct {
 	idx      int
 }
 
+// Next should be called by each handler to advance to the next handler
 func (c *pipelineContext[T]) Next() error {
 
 	c.idx++
@@ -45,6 +49,7 @@ type PipelineContext[T any] interface {
 	Payload() T
 }
 
+// Pipeline keeps track of all registered handlers that should be executed by the pipeline.
 type Pipeline[T any] struct {
 	handlers []Handler[T]
 	lock     sync.RWMutex
@@ -54,6 +59,7 @@ func NewPipeline[T any]() *Pipeline[T] {
 	return &Pipeline[T]{}
 }
 
+// Register one or more handlers
 func (p *Pipeline[T]) Register(h Handler[T], handlers ...Handler[T]) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
@@ -64,6 +70,7 @@ func (p *Pipeline[T]) Register(h Handler[T], handlers ...Handler[T]) {
 	}
 }
 
+// Handlers retrieves a copy of registered handlers
 func (p *Pipeline[T]) Handlers() []Handler[T] {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
@@ -74,6 +81,8 @@ func (p *Pipeline[T]) Handlers() []Handler[T] {
 	return copiedHandlers
 }
 
+// Execute will run all handlers in the pipeline sequentially with the associated context and payload.
+// A finalizer Handler is required and will be executed last to wrap up the pipeline.
 func (p *Pipeline[T]) Execute(ctx context.Context, payload T, finalizer Handler[T]) error {
 
 	// copy handlers from the pipeline
