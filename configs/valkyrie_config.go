@@ -11,14 +11,14 @@ import (
 
 // LogConfig configuration setup for logging
 type LogConfig struct {
+	Async  AsyncLogConfig  `yaml:"async"`
 	Level  string          `yaml:"level" default:"info"`
 	Output OutputLogConfig `yaml:"output"`
-	Async  AsyncLogConfig  `yaml:"async"`
 }
 
 // AsyncLogConfig Configuration for asynchronous logging
 type AsyncLogConfig struct {
-	Enabled      bool          `yaml:"enabled" default:"true"`
+	Enabled      *bool         `yaml:"enabled" default:"true"`
 	BufferSize   int           `yaml:"buffer_size" default:"100000"`
 	PollInterval time.Duration `yaml:"poll_interval" default:"10ms"`
 }

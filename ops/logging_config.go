@@ -58,7 +58,7 @@ func ConfigureLogging(logConfig configs.LogConfig, profiles *Profiles) {
 	log.Logger = log.Logger.Output(writer)
 
 	// If async, wrap logger in a diode
-	if logConfig.Async.Enabled {
+	if logConfig.Async.Enabled != nil && *logConfig.Async.Enabled {
 		log.Logger = log.Output(diode.NewWriter(writer, logConfig.Async.BufferSize, logConfig.Async.PollInterval, func(count int) {
 			_, _ = fmt.Fprintf(os.Stderr, "Async logger buffer full, dropped %d messages\n", count)
 		}))
