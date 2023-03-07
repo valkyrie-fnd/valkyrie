@@ -22,8 +22,8 @@ func AddLoggingContext(c userContextProvider, key, value string) {
 	})
 }
 
-// LogHTTPRequest return a function that adds request data to the zerolog Event
-func LogHTTPRequest(req *fasthttp.Request) func(event *zerolog.Event) {
+// logHTTPRequest return a function that adds request data to the zerolog Event
+func logHTTPRequest(req *fasthttp.Request) func(event *zerolog.Event) {
 	return func(event *zerolog.Event) {
 		event.Bytes("requestUrl", req.URI().FullURI()).
 			Bytes("requestMethod", req.Header.Method()).
@@ -35,8 +35,8 @@ func LogHTTPRequest(req *fasthttp.Request) func(event *zerolog.Event) {
 	}
 }
 
-// LogHTTPResponse return a function that adds request and response data to the zerolog Event
-func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) func(event *zerolog.Event) {
+// logHTTPResponse return a function that adds request and response data to the zerolog Event
+func logHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) func(event *zerolog.Event) {
 	return func(event *zerolog.Event) {
 		event.Err(err)
 
@@ -45,7 +45,7 @@ func LogHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) 
 		// https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
 		requestDict := zerolog.Dict()
 
-		LogHTTPRequest(req)(requestDict)
+		logHTTPRequest(req)(requestDict)
 
 		requestDict.Int("status", resp.StatusCode())
 

@@ -57,7 +57,7 @@ func TestLogHTTPRequest(t *testing.T) {
 	request.Header.SetContentType("text/plain")
 	request.Header.Set("X-Correlation-ID", "foo")
 
-	logger.Debug().Func(LogHTTPRequest(request)).Send()
+	logger.Debug().Func(logHTTPRequest(request)).Send()
 
 	assert.Contains(t, captor.String(), "\"userAgent\":\"bar\"")
 	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
@@ -80,7 +80,7 @@ func TestHTTPRequestContentLengthNegative(t *testing.T) {
 	request.SetBodyString("bar")
 	request.Header.SetContentLength(-2)
 
-	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
+	logger.Debug().Func(logHTTPResponse(request, response, nil)).Send()
 
 	assert.Contains(t, captor.String(), "\"requestSize\":-2")
 	assert.Contains(t, captor.String(), "\"responseSize\":-2")
@@ -99,7 +99,7 @@ func TestLogHTTPResponse(t *testing.T) {
 	request := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(request)
 
-	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
+	logger.Debug().Func(logHTTPResponse(request, response, nil)).Send()
 
 	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
 	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
@@ -120,7 +120,7 @@ func TestLogHTTPResponseSkipEmptyContentType(t *testing.T) {
 	defer fasthttp.ReleaseRequest(request)
 	request.Header.SetContentType("")
 
-	logger.Debug().Func(LogHTTPResponse(request, response, nil)).Send()
+	logger.Debug().Func(logHTTPResponse(request, response, nil)).Send()
 
 	assert.NotContains(t, captor.String(), "\"Content-Type\":\"\"")
 }
