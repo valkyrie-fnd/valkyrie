@@ -60,8 +60,8 @@ var errCodes = map[pam.ValkErrorCode]RTErrorCode{
 	pam.ValkErrUndefined:           GenericError,
 }
 
-func getError(valkError pam.ValkErrorCode) RTErrorCode {
-	return errCodes[valkError]
+func getError(vError pam.ValkErrorCode) RTErrorCode {
+	return errCodes[vError]
 }
 
 func newRTErrorResponse(msg string, code RTErrorCode) ErrorResponse {
@@ -85,9 +85,9 @@ func createRtErrorResponse(err error) ErrorResponse {
 }
 
 func extractValkErrorCode(err error) pam.ValkErrorCode {
-	var valkErr pam.ValkyrieError
-	if errors.As(err, &valkErr) {
-		return valkErr.ValkErrorCode
+	var vErr pam.ValkyrieError
+	if errors.As(err, &vErr) {
+		return vErr.ValkErrorCode
 	} else {
 		return pam.GetErrUndefined()
 	}

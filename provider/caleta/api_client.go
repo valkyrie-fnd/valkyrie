@@ -114,11 +114,12 @@ func (apiClient *apiClient) requestGameLaunch(ctx context.Context, body GameUrlB
 
 func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID, casinoID string) (*gameRoundRenderResponse, error) {
 	body := GameroundJSONRequestBody{
-		Round:      &gameRoundID,
-		OperatorId: apiClient.operatorID,
+		Round:        &gameRoundID,
+		OperatorId:   apiClient.operatorID,
+		SubPartnerId: "default",
 	}
 	if casinoID != "" {
-		body.SubPartnerId = &casinoID
+		body.SubPartnerId = casinoID
 	}
 	req := &rest.HTTPRequest{
 		URL:     fmt.Sprintf("%s%s", apiClient.url, "/api/game/round"),

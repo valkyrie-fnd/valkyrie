@@ -8,9 +8,9 @@ import (
 )
 
 func getCErrorStatus(err error) Status {
-	var valkErr pam.ValkyrieError
-	if errors.As(err, &valkErr) {
-		if status, ok := errCodes[valkErr.ValkErrorCode]; ok {
+	var vErr pam.ValkyrieError
+	if errors.As(err, &vErr) {
+		if status, ok := errCodes[vErr.ValkErrorCode]; ok {
 			return status
 		}
 	}

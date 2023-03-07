@@ -8,8 +8,8 @@ import (
 
 func Test_handleError(t *testing.T) {
 	type args struct {
-		err       error
-		valkError ValkyrieError
+		err    error
+		vError ValkyrieError
 	}
 	testError := errors.New("error")
 	valkyrieError := ValkyrieError{ErrMsg: "err", ValkErrorCode: ValkErrUndefined}
@@ -28,7 +28,7 @@ func Test_handleError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := handleError(tt.args.err, tt.args.valkError); !errors.Is(err, tt.wantErr) {
+			if err := handleError(tt.args.err, tt.args.vError); !errors.Is(err, tt.wantErr) {
 				t.Errorf("handleError() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

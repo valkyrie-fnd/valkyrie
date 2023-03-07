@@ -2,6 +2,7 @@ package caleta_test
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -58,7 +59,7 @@ func (api *RGIClient) SetupSession(currency string) error {
 
 	var resp backdoors.SessionResponse
 	if c, b, errs := a.Struct(&resp); c != fiber.StatusOK {
-		return testutils.Stack(errs, fmt.Errorf("session request failed: %s", b))
+		return errors.Join(append(errs, fmt.Errorf("session request failed: %s", b))...)
 	} else if !resp.Success {
 		return fmt.Errorf("session request failed")
 	}
@@ -83,7 +84,7 @@ func (api *RGIClient) BlockAccount(currency string) error {
 
 	var resp backdoors.SessionResponse
 	if c, b, errs := a.Struct(&resp); c != fiber.StatusOK {
-		return testutils.Stack(errs, fmt.Errorf("session request failed: %s", b))
+		return errors.Join(append(errs, fmt.Errorf("session request failed: %s", b))...)
 	} else if !resp.Success {
 		return fmt.Errorf("session request failed")
 	}
@@ -352,7 +353,7 @@ func postJSON[Body any, Response any](url string, body Body, timeout time.Durati
 	var resp Response
 
 	if status, b, errs := a.Struct(&resp); status != fiber.StatusOK || len(errs) > 0 {
-		return nil, fmt.Errorf("%s request failed with status [%v]: %s. %w", url, status, b, testutils.Stack(errs, nil))
+		return nil, errors.Join(append(errs, fmt.Errorf("%s request failed with status [%v]: %s.", url, status, b))...)
 	}
 
 	return &resp, nil
