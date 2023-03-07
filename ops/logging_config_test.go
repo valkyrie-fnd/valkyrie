@@ -15,7 +15,6 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 )
 
-var trueVar = true
 var falseVar = false
 
 func Test_getFileWriter(t *testing.T) {
