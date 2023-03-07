@@ -39,7 +39,7 @@ func TestMain(t *testing.T) {
 		},
 		{
 			"Starting Valkyrie with test config",
-			[]string{"-config", "./configs/testdata/valkyrie_config.test.main.yml"},
+			[]string{"-config", "./configs/testdata/valkyrie_config.test.yml"},
 			0,
 			"Operator server listening on 'localhost:",
 		},
@@ -49,8 +49,8 @@ func TestMain(t *testing.T) {
 			tt.Setenv("VALK_PROFILES", "testlog")
 			p, _ := testutils.GetFreePort()
 			o, _ := testutils.GetFreePort()
-			tt.Setenv("PROVIDER_PORT", fmt.Sprintf("%d", p))
-			tt.Setenv("OPERATOR_PORT", fmt.Sprintf("%d", o))
+			tt.Setenv("PROVIDER_ADDRESS", fmt.Sprintf("localhost:%d", p))
+			tt.Setenv("OPERATOR_ADDRESS", fmt.Sprintf("localhost:%d", o))
 			flag.CommandLine = flag.NewFlagSet(test.Name, flag.ExitOnError)
 			os.Args = append([]string{test.Name}, test.Args...)
 			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

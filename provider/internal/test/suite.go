@@ -73,7 +73,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		valkyrieConfig := s.buildConfig(pamURL, providerPort, operatorPort, dataStore)
 
 		if v, err := server.NewValkyrie(context.TODO(), &valkyrieConfig); err != nil {
-			log.Error().Err(err)
+			log.Error().Msg("Failed to create valkyrie instance")
 			return
 		} else {
 			s.valkyrie = v
