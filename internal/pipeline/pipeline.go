@@ -1,4 +1,41 @@
-package internal
+// Package pipeline provides functionality for implementing a chain of responsibility by passing a PipelineContext
+// along one or more Handler functions, represented by a Pipeline.
+//
+// This allows for multiple Handler functions to handle a PipelineContext without coupling them with
+// the sender code calling Pipeline.Execute(). The chain of Handler functions can be dynamically composed at
+// runtime by registering them using the Pipeline.Register() function. Registered handlers in the Pipeline are run in
+// the order that they are registered.
+//
+// This is especially useful when there is a need to introduce cross-cutting concerns to some component, such as
+// caching or tracing, without coupling the component with its respective caching or tracing libraries.
+//
+// Here is a small example of how the pipeline package can be used in practice:
+//
+//	pipeline := NewPipeline[string]()
+//	pipeline.Register(func(pc PipelineContext[string]) error {
+//		fmt.Println("before", pc.Payload())
+//		err := pc.Next()
+//		fmt.Println("after", pc.Payload())
+//		return err
+//	})
+//	pipeline.Execute(context.Background(), "foo", func(pc PipelineContext[string]) error {
+//		fmt.Println("execute", pc.Payload())
+//		return nil
+//	})
+//
+// This will print the following output:
+//
+//	before foo
+//	execute foo
+//	after foo
+//
+// The registered logging Handler wraps the finalizing Handler supplied to Pipeline.Execute (printing "execute") and
+// logs the PipelineContext.Payload() string both before and after the final Handler logging "execute" has run.
+//
+// It is important that intermediary Handler functions calls PipelineContext.Next() to continue the chain of handlers.
+// Any potential error returned by PipelineContext.Next() should also be returned by its respective Handler to properly
+// propagate errors back to the function calling Pipeline.Execute().
+package pipeline
 
 import (
 	"context"

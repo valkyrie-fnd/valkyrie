@@ -15,7 +15,7 @@ import (
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/valkyrie-fnd/valkyrie/internal"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
@@ -29,24 +29,24 @@ const (
 var rpcAttributes = []attribute.KeyValue{semconv.RPCSystemKey.String(RPCSystem), semconv.RPCService(RPCService)}
 
 // InstrumentVPluginPAMClient will instrument a VPlugin-based pipeline with telemetry handlers
-func InstrumentVPluginPAMClient(pipeline *internal.Pipeline[any]) {
+func InstrumentVPluginPAMClient(pipeline *pipeline.Pipeline[any]) {
 	pipeline.Register(PAMTracingHandler(VPluginName, rpcAttributes...),
 		ApplyTracingFromContextHandler(),
 		PAMMetricHandler(VPluginName, rpcAttributes...))
 }
 
 // InstrumentGenericPAMClient will instrument a genericpam-based pipeline with telemetry handlers
-func InstrumentGenericPAMClient(pipeline *internal.Pipeline[any]) {
+func InstrumentGenericPAMClient(pipeline *pipeline.Pipeline[any]) {
 	pipeline.Register(PAMMetricHandler(GenericPAMName))
 }
 
-func PAMMetricHandler(name string, attributes ...attribute.KeyValue) internal.Handler[any] {
+func PAMMetricHandler(name string, attributes ...attribute.KeyValue) pipeline.Handler[any] {
 	const (
 		metricNamePAMClientDuration = "pam.client.duration"
 		metricNamePAMClientActive   = "pam.client.active_requests"
 		metricNamePAMClientErrors   = "pam.client.errors"
 	)
-	var noopHandler internal.Handler[any] = func(pc internal.PipelineContext[any]) error {
+	var noopHandler pipeline.Handler[any] = func(pc pipeline.PipelineContext[any]) error {
 		return pc.Next()
 	}
 
@@ -71,7 +71,7 @@ func PAMMetricHandler(name string, attributes ...attribute.KeyValue) internal.Ha
 		return noopHandler
 	}
 
-	return func(pc internal.PipelineContext[any]) error {
+	return func(pc pipeline.PipelineContext[any]) error {
 		attrs := make([]attribute.KeyValue, len(attributes))
 		copy(attrs, attributes)
 		attrs = append(attrs, semconv.EventName(getRequestName(pc.Payload())))
@@ -91,8 +91,8 @@ func PAMMetricHandler(name string, attributes ...attribute.KeyValue) internal.Ha
 	}
 }
 
-func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) internal.Handler[any] {
-	return func(pc internal.PipelineContext[any]) error {
+func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) pipeline.Handler[any] {
+	return func(pc pipeline.PipelineContext[any]) error {
 		ctx, span := otel.Tracer(tracerName).Start(pc.Context(), getRequestName(pc.Payload()), trace.WithAttributes(attributes...))
 		defer span.End()
 
@@ -112,8 +112,8 @@ var ErrorUnknownRequest = errors.New("unknown request type")
 
 // ApplyTracingFromContextHandler applies traceparent and tracestate explicitly to the request, since
 // vplugin doesn't rely on http client that can propagate it via headers.
-func ApplyTracingFromContextHandler() internal.Handler[any] {
-	return func(pc internal.PipelineContext[any]) error {
+func ApplyTracingFromContextHandler() pipeline.Handler[any] {
+	return func(pc pipeline.PipelineContext[any]) error {
 		req := pc.Payload()
 		ctx := pc.Context()
 

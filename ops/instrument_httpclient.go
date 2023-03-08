@@ -15,7 +15,7 @@ import (
 	"go.opentelemetry.io/otel/metric/unit"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 
-	"github.com/valkyrie-fnd/valkyrie/internal"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 )
 
 type FastHTTPPayload interface {
@@ -24,14 +24,14 @@ type FastHTTPPayload interface {
 }
 
 // InstrumentHTTPClient will instrument a fasthttp-based pipeline with telemetry handlers
-func InstrumentHTTPClient[T FastHTTPPayload](pipeline *internal.Pipeline[T]) {
+func InstrumentHTTPClient[T FastHTTPPayload](pipeline *pipeline.Pipeline[T]) {
 	pipeline.Register(HTTPTracingHandler[T](), HTTPLoggingHandler[T](), HTTPMetricHandler[T]())
 }
 
-func HTTPTracingHandler[T FastHTTPPayload]() internal.Handler[T] {
+func HTTPTracingHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 	const tracerName = "http-client"
 
-	return func(cc internal.PipelineContext[T]) error {
+	return func(cc pipeline.PipelineContext[T]) error {
 		ctx, span := otel.Tracer(tracerName).Start(cc.Context(), string(cc.Payload().Request().URI().Path()))
 		defer span.End()
 
@@ -60,8 +60,8 @@ func addTraceHeaders(ctx context.Context, headers *fasthttp.RequestHeader) {
 	}
 }
 
-func HTTPLoggingHandler[T FastHTTPPayload]() internal.Handler[T] {
-	return func(pc internal.PipelineContext[T]) error {
+func HTTPLoggingHandler[T FastHTTPPayload]() pipeline.Handler[T] {
+	return func(pc pipeline.PipelineContext[T]) error {
 
 		log.Ctx(pc.Context()).
 			Debug().
@@ -83,14 +83,14 @@ func HTTPLoggingHandler[T FastHTTPPayload]() internal.Handler[T] {
 	}
 }
 
-func HTTPMetricHandler[T FastHTTPPayload]() internal.Handler[T] {
+func HTTPMetricHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 	const (
 		instrumentationName          = "http-client"
 		metricNameHTTPClientDuration = "http.client.duration"
 		metricNameHTTPClientActive   = "http.client.active_requests"
 		metricNameHTTPClientErrors   = "http.client.errors"
 	)
-	var noopHandler internal.Handler[T] = func(c internal.PipelineContext[T]) error {
+	var noopHandler pipeline.Handler[T] = func(c pipeline.PipelineContext[T]) error {
 		return c.Next()
 	}
 
@@ -115,7 +115,7 @@ func HTTPMetricHandler[T FastHTTPPayload]() internal.Handler[T] {
 		return noopHandler
 	}
 
-	return func(pc internal.PipelineContext[T]) error {
+	return func(pc pipeline.PipelineContext[T]) error {
 
 		attributes := httpClientReqAttributes(pc.Payload().Request())
 		start := time.Now()

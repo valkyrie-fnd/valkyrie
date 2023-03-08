@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/internal"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
@@ -18,7 +18,7 @@ const (
 
 // Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
 // to be registered and run before actual PAM calls.
-var Pipeline = internal.NewPipeline[any]()
+var Pipeline = pipeline.NewPipeline[any]()
 
 func init() {
 	pam.ClientFactory().
@@ -81,7 +81,7 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 	}
 
 	err = Pipeline.Execute(ctx, &r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.PutJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
@@ -107,7 +107,7 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 	}
 
 	err = Pipeline.Execute(ctx, &r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.GetJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
@@ -140,7 +140,7 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 	}
 
 	err = Pipeline.Execute(ctx, &r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.GetJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
@@ -170,7 +170,7 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 	}
 
 	err = Pipeline.Execute(ctx, r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.PostJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
@@ -200,7 +200,7 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	}
 
 	err = Pipeline.Execute(ctx, &r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.GetJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
@@ -225,7 +225,7 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	}
 
 	err = Pipeline.Execute(ctx, &r,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			return c.rest.GetJSON(pc.Context(), req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {

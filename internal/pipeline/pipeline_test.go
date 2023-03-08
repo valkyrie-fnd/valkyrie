@@ -1,7 +1,8 @@
-package internal
+package pipeline
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -74,4 +75,19 @@ func Test_Pipeline_Handler_Updating_Context(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
+}
+
+//nolint:forbidigo
+func Test_Sample(t *testing.T) {
+	pipeline := NewPipeline[string]()
+	pipeline.Register(func(pc PipelineContext[string]) error {
+		fmt.Println("before", pc.Payload())
+		err := pc.Next()
+		fmt.Println("after", pc.Payload())
+		return err
+	})
+	_ = pipeline.Execute(context.Background(), "foo", func(pc PipelineContext[string]) error {
+		fmt.Println("execute", pc.Payload())
+		return nil
+	})
 }
