@@ -16,6 +16,8 @@ const (
 	DriverName = "generic"
 )
 
+// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
+// to be registered and run before actual PAM calls.
 var Pipeline = internal.NewPipeline[any]()
 
 func init() {

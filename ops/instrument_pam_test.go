@@ -10,7 +10,7 @@ import (
 )
 
 func Test_pamTracingHandler(t *testing.T) {
-	handler := pamTracingHandler("name")
+	handler := PAMTracingHandler("name")
 
 	pc := &mockPipelineContext[any]{
 		ctx:     context.TODO(),
@@ -23,7 +23,7 @@ func Test_pamTracingHandler(t *testing.T) {
 }
 
 func Test_applyTracingFromContextHandler(t *testing.T) {
-	handler := applyTracingFromContextHandler()
+	handler := ApplyTracingFromContextHandler()
 	tests := []struct {
 		name    string
 		payload any
@@ -78,7 +78,7 @@ func Test_applyTracingFromContextHandler(t *testing.T) {
 }
 
 func Test_pamMetricHandler(t *testing.T) {
-	handler := pamMetricHandler("name")
+	handler := PAMMetricHandler("name")
 
 	pc := &mockPipelineContext[any]{
 		ctx:     context.TODO(),

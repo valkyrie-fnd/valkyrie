@@ -16,26 +16,31 @@ import (
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 
 	"github.com/valkyrie-fnd/valkyrie/internal"
-	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
-func init() {
-	rest.Pipeline.Register(httpTracingHandler(), httpLoggingHandler(), httpMetricHandler())
+type FastHTTPPayload interface {
+	Request() *fasthttp.Request
+	Response() *fasthttp.Response
 }
 
-func httpTracingHandler() internal.Handler[rest.PipelinePayload] {
+// InstrumentHTTPClient will instrument a fasthttp-based pipeline with telemetry handlers
+func InstrumentHTTPClient[T FastHTTPPayload](pipeline *internal.Pipeline[T]) {
+	pipeline.Register(HTTPTracingHandler[T](), HTTPLoggingHandler[T](), HTTPMetricHandler[T]())
+}
+
+func HTTPTracingHandler[T FastHTTPPayload]() internal.Handler[T] {
 	const tracerName = "http-client"
 
-	return func(cc internal.PipelineContext[rest.PipelinePayload]) error {
-		ctx, span := otel.Tracer(tracerName).Start(cc.Context(), string(cc.Payload().Request.URI().Path()))
+	return func(cc internal.PipelineContext[T]) error {
+		ctx, span := otel.Tracer(tracerName).Start(cc.Context(), string(cc.Payload().Request().URI().Path()))
 		defer span.End()
 
 		cc.SetContext(ctx)
-		addTraceHeaders(ctx, &cc.Payload().Request.Header)
+		addTraceHeaders(ctx, &cc.Payload().Request().Header)
 
 		err := cc.Next()
 
-		traceHTTPAttributes(span, cc.Payload().Request, cc.Payload().Response, err)
+		traceHTTPAttributes(span, cc.Payload().Request(), cc.Payload().Response(), err)
 
 		return err
 	}
@@ -55,12 +60,12 @@ func addTraceHeaders(ctx context.Context, headers *fasthttp.RequestHeader) {
 	}
 }
 
-func httpLoggingHandler() internal.Handler[rest.PipelinePayload] {
-	return func(pc internal.PipelineContext[rest.PipelinePayload]) error {
+func HTTPLoggingHandler[T FastHTTPPayload]() internal.Handler[T] {
+	return func(pc internal.PipelineContext[T]) error {
 
 		log.Ctx(pc.Context()).
 			Debug().
-			Func(logHTTPRequest(pc.Payload().Request)).
+			Func(logHTTPRequest(pc.Payload().Request())).
 			Msg("http client request")
 
 		err := pc.Next()
@@ -71,21 +76,21 @@ func httpLoggingHandler() internal.Handler[rest.PipelinePayload] {
 		} else {
 			event = log.Ctx(pc.Context()).Debug()
 		}
-		event.Func(logHTTPResponse(pc.Payload().Request, pc.Payload().Response, err)).
+		event.Func(logHTTPResponse(pc.Payload().Request(), pc.Payload().Response(), err)).
 			Msg("http client response")
 
 		return err
 	}
 }
 
-func httpMetricHandler() internal.Handler[rest.PipelinePayload] {
+func HTTPMetricHandler[T FastHTTPPayload]() internal.Handler[T] {
 	const (
 		instrumentationName          = "http-client"
 		metricNameHTTPClientDuration = "http.client.duration"
 		metricNameHTTPClientActive   = "http.client.active_requests"
 		metricNameHTTPClientErrors   = "http.client.errors"
 	)
-	var noopHandler internal.Handler[rest.PipelinePayload] = func(c internal.PipelineContext[rest.PipelinePayload]) error {
+	var noopHandler internal.Handler[T] = func(c internal.PipelineContext[T]) error {
 		return c.Next()
 	}
 
@@ -110,19 +115,19 @@ func httpMetricHandler() internal.Handler[rest.PipelinePayload] {
 		return noopHandler
 	}
 
-	return func(pc internal.PipelineContext[rest.PipelinePayload]) error {
+	return func(pc internal.PipelineContext[T]) error {
 
-		attributes := httpClientReqAttributes(pc.Payload().Request)
+		attributes := httpClientReqAttributes(pc.Payload().Request())
 		start := time.Now()
 		httpClientActive.Add(pc.Context(), 1, attributes...)
 
 		err := pc.Next()
 
-		attributes = append(attributes, httpClientRespAttributes(pc.Payload().Response)...)
+		attributes = append(attributes, httpClientRespAttributes(pc.Payload().Response())...)
 
 		httpClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), attributes...)
 		httpClientActive.Add(pc.Context(), -1, attributes...)
-		if err != nil || pc.Payload().Response.StatusCode() >= 500 {
+		if err != nil || pc.Payload().Response().StatusCode() >= 500 {
 			httpClientErrors.Add(pc.Context(), 1, attributes...)
 		}
 

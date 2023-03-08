@@ -6,8 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
-
-	"github.com/valkyrie-fnd/valkyrie/rest"
 )
 
 type mockPipelineContext[T any] struct {
@@ -31,14 +29,27 @@ func (m *mockPipelineContext[T]) Payload() T {
 	return m.payload
 }
 
-func Test_httpTracingHandler(t *testing.T) {
-	handler := httpTracingHandler()
+type mockPayload struct {
+	request  *fasthttp.Request
+	response *fasthttp.Response
+}
 
-	pc := &mockPipelineContext[rest.PipelinePayload]{
+func (m mockPayload) Request() *fasthttp.Request {
+	return m.request
+}
+
+func (m mockPayload) Response() *fasthttp.Response {
+	return m.response
+}
+
+func Test_httpTracingHandler(t *testing.T) {
+	handler := HTTPTracingHandler[FastHTTPPayload]()
+
+	pc := &mockPipelineContext[FastHTTPPayload]{
 		ctx: context.TODO(),
-		payload: rest.PipelinePayload{
-			Request:  fasthttp.AcquireRequest(),
-			Response: fasthttp.AcquireResponse(),
+		payload: mockPayload{
+			request:  fasthttp.AcquireRequest(),
+			response: fasthttp.AcquireResponse(),
 		},
 	}
 
@@ -48,13 +59,13 @@ func Test_httpTracingHandler(t *testing.T) {
 }
 
 func Test_httpLoggingHandler(t *testing.T) {
-	handler := httpLoggingHandler()
+	handler := HTTPLoggingHandler[FastHTTPPayload]()
 
-	pc := &mockPipelineContext[rest.PipelinePayload]{
+	pc := &mockPipelineContext[FastHTTPPayload]{
 		ctx: context.TODO(),
-		payload: rest.PipelinePayload{
-			Request:  fasthttp.AcquireRequest(),
-			Response: fasthttp.AcquireResponse(),
+		payload: mockPayload{
+			request:  fasthttp.AcquireRequest(),
+			response: fasthttp.AcquireResponse(),
 		},
 	}
 
@@ -64,13 +75,13 @@ func Test_httpLoggingHandler(t *testing.T) {
 }
 
 func Test_httpMetricHandler(t *testing.T) {
-	handler := httpMetricHandler()
+	handler := HTTPMetricHandler[FastHTTPPayload]()
 
-	pc := &mockPipelineContext[rest.PipelinePayload]{
+	pc := &mockPipelineContext[FastHTTPPayload]{
 		ctx: context.TODO(),
-		payload: rest.PipelinePayload{
-			Request:  fasthttp.AcquireRequest(),
-			Response: fasthttp.AcquireResponse(),
+		payload: mockPayload{
+			request:  fasthttp.AcquireRequest(),
+			response: fasthttp.AcquireResponse(),
 		},
 	}
 

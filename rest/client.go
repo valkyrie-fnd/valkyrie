@@ -22,12 +22,23 @@ var (
 	headerContentTypeJSON = []byte("application/json")
 	headerContentTypeXML  = []byte("application/xml")
 	validate              = validator.New()
-	Pipeline              = internal.NewPipeline[PipelinePayload]()
+
+	// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
+	// to be registered and run before actual HTTP calls.
+	Pipeline = internal.NewPipeline[PipelinePayload]()
 )
 
 type PipelinePayload struct {
-	Request  *fasthttp.Request
-	Response *fasthttp.Response
+	request  *fasthttp.Request
+	response *fasthttp.Response
+}
+
+func (p PipelinePayload) Request() *fasthttp.Request {
+	return p.request
+}
+
+func (p PipelinePayload) Response() *fasthttp.Response {
+	return p.response
 }
 
 // fastHTTPClient interface of used methods of fasthttp.Client
@@ -249,7 +260,7 @@ func (c *Client) handle(
 		PipelinePayload{req, resp},
 		func(pc internal.PipelineContext[PipelinePayload]) error {
 			return retry(func() error {
-				return c.fastClient.DoTimeout(pc.Payload().Request, pc.Payload().Response, c.config.RequestTimeout)
+				return c.fastClient.DoTimeout(pc.Payload().Request(), pc.Payload().Response(), c.config.RequestTimeout)
 			}, maxRetries, retriedErrors)
 		})
 

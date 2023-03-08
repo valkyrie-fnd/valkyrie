@@ -17,8 +17,6 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/internal"
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/pam/genericpam"
-	"github.com/valkyrie-fnd/valkyrie/pam/vplugin"
 )
 
 const (
@@ -30,15 +28,19 @@ const (
 
 var rpcAttributes = []attribute.KeyValue{semconv.RPCSystemKey.String(RPCSystem), semconv.RPCService(RPCService)}
 
-func init() {
-	vplugin.Pipeline.Register(pamTracingHandler(VPluginName, rpcAttributes...),
-		applyTracingFromContextHandler(),
-		pamMetricHandler(VPluginName, rpcAttributes...))
-
-	genericpam.Pipeline.Register(pamMetricHandler(GenericPAMName))
+// InstrumentVPluginPAMClient will instrument a VPlugin-based pipeline with telemetry handlers
+func InstrumentVPluginPAMClient(pipeline *internal.Pipeline[any]) {
+	pipeline.Register(PAMTracingHandler(VPluginName, rpcAttributes...),
+		ApplyTracingFromContextHandler(),
+		PAMMetricHandler(VPluginName, rpcAttributes...))
 }
 
-func pamMetricHandler(name string, attributes ...attribute.KeyValue) internal.Handler[any] {
+// InstrumentGenericPAMClient will instrument a genericpam-based pipeline with telemetry handlers
+func InstrumentGenericPAMClient(pipeline *internal.Pipeline[any]) {
+	pipeline.Register(PAMMetricHandler(GenericPAMName))
+}
+
+func PAMMetricHandler(name string, attributes ...attribute.KeyValue) internal.Handler[any] {
 	const (
 		metricNamePAMClientDuration = "pam.client.duration"
 		metricNamePAMClientActive   = "pam.client.active_requests"
@@ -89,7 +91,7 @@ func pamMetricHandler(name string, attributes ...attribute.KeyValue) internal.Ha
 	}
 }
 
-func pamTracingHandler(tracerName string, attributes ...attribute.KeyValue) internal.Handler[any] {
+func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) internal.Handler[any] {
 	return func(pc internal.PipelineContext[any]) error {
 		ctx, span := otel.Tracer(tracerName).Start(pc.Context(), getRequestName(pc.Payload()), trace.WithAttributes(attributes...))
 		defer span.End()
@@ -108,9 +110,9 @@ func getRequestName(req any) string {
 
 var ErrorUnknownRequest = errors.New("unknown request type")
 
-// applyTracingFromContextHandler applies traceparent and tracestate explicitly to the request, since
+// ApplyTracingFromContextHandler applies traceparent and tracestate explicitly to the request, since
 // vplugin doesn't rely on http client that can propagate it via headers.
-func applyTracingFromContextHandler() internal.Handler[any] {
+func ApplyTracingFromContextHandler() internal.Handler[any] {
 	return func(pc internal.PipelineContext[any]) error {
 		req := pc.Payload()
 		ctx := pc.Context()
