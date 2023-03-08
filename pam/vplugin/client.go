@@ -4,19 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/semconv/v1.17.0"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/ops"
+	"github.com/valkyrie-fnd/valkyrie/internal"
 	"github.com/valkyrie-fnd/valkyrie/pam"
-)
-
-const (
-	tracerName = "vplugin-client"
-	RPCSystem  = "net/rpc"
-	RPCService = "vplugin.PluginPAM"
 )
 
 // PamClient Interface describing available PAM operations. The implementing plugins
@@ -46,6 +36,10 @@ func init() {
 			return Create(args.Context, getPamConf(args))
 		})
 }
+
+// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
+// to be registered and run before actual PAM calls.
+var Pipeline = internal.NewPipeline[any]()
 
 type PluginPAM struct {
 	plugin              PAM
@@ -82,13 +76,13 @@ func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 		return nil, err
 	}
 
-	ctx, span := startSpan(ctx, "GetSession")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
-	resp := vp.plugin.GetSession(req)
-
-	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
+	var resp *pam.SessionResponse
+	err = Pipeline.Execute(ctx, &req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.GetSession(req)
+			return handleErrors(resp.Error, err, resp.Session)
+		})
+	if err != nil {
 		return nil, err
 	}
 
@@ -101,48 +95,48 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 		return nil, err
 	}
 
-	ctx, span := startSpan(ctx, "RefreshSession")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
-	resp := vp.plugin.RefreshSession(req)
-	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
+	var resp *pam.SessionResponse
+	err = Pipeline.Execute(ctx, &req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.RefreshSession(req)
+			return handleErrors(resp.Error, err, resp.Session)
+		})
+	if err != nil {
 		return nil, err
 	}
+
 	return resp.Session, nil
 }
 
 func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, error) {
 	ctx, req, err := rm()
 
-	ctx, span := startSpan(ctx, "GetBalance")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
+	var resp *pam.BalanceResponse
+	err = Pipeline.Execute(ctx, &req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.GetBalance(req)
+			return handleErrors(resp.Error, err, resp.Balance)
+		})
 	if err != nil {
 		return nil, err
 	}
-	resp := vp.plugin.GetBalance(req)
-	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
-		return nil, err
-	}
+
 	return resp.Balance, nil
 }
 
 func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam.Transaction, error) {
 	ctx, req, err := rm()
 
-	ctx, span := startSpan(ctx, "GetTransactions")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
+	var resp *pam.GetTransactionsResponse
+	err = Pipeline.Execute(ctx, &req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.GetTransactions(req)
+			return handleErrors(resp.Error, err, resp.Transactions)
+		})
 	if err != nil {
 		return nil, err
 	}
-	resp := vp.plugin.GetTransactions(req)
-	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
-		return nil, err
-	}
+
 	return *resp.Transactions, nil
 }
 
@@ -152,17 +146,16 @@ func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 		return nil, err
 	}
 
-	ctx, span := startSpan(ctx, "AddTransaction")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
-	resp := vp.plugin.AddTransaction(*req)
-	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
-		if resp.TransactionResult != nil {
-			return resp.TransactionResult, err
-		}
+	var resp *pam.AddTransactionResponse
+	err = Pipeline.Execute(ctx, req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.AddTransaction(*req)
+			return handleErrors(resp.Error, err, resp.TransactionResult)
+		})
+	if err != nil {
 		return nil, err
 	}
+
 	return resp.TransactionResult, nil
 }
 
@@ -172,14 +165,16 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 		return nil, err
 	}
 
-	ctx, span := startSpan(ctx, "GetGameRound")
-	defer span.End()
-	req.Params.Traceparent, req.Params.Tracestate = getTracingFromContext(ctx)
-
-	resp := vp.plugin.GetGameRound(req)
-	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
+	var resp *pam.GameRoundResponse
+	err = Pipeline.Execute(ctx, &req,
+		func(pc internal.PipelineContext[any]) error {
+			resp = vp.plugin.GetGameRound(req)
+			return handleErrors(resp.Error, err, resp.Gameround)
+		})
+	if err != nil {
 		return nil, err
 	}
+
 	return resp.Gameround, nil
 }
 
@@ -200,27 +195,4 @@ func getPamConf(args pam.ClientArgs) configs.PamConf {
 	}
 
 	return cfg
-}
-
-func getTracingFromContext(ctx context.Context) (traceparent *pam.Traceparent, tracestate *pam.Tracestate) {
-	tracingHeaders := ops.GetTracingHeaders(ctx)
-
-	if value, found := tracingHeaders["traceparent"]; found {
-		traceparent = &value
-	}
-
-	if value, found := tracingHeaders["tracestate"]; found {
-		tracestate = &value
-	}
-
-	return traceparent, tracestate
-}
-
-func startSpan(ctx context.Context, fnName string) (context.Context, trace.Span) {
-	// attributes from https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/rpc.md#common-remote-procedure-call-conventions
-	return otel.Tracer(tracerName).Start(ctx, fmt.Sprintf("%s/%s", RPCService, fnName), trace.WithAttributes(
-		semconv.RPCMethodKey.String(fnName),
-		semconv.RPCSystemKey.String(RPCSystem),
-		semconv.RPCServiceKey.String(RPCService),
-	))
 }

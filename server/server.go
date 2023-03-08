@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/valkyrie-fnd/valkyrie/internal/routine"
+	"github.com/valkyrie-fnd/valkyrie/pam/genericpam"
+	"github.com/valkyrie-fnd/valkyrie/pam/vplugin"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 
 	"github.com/gofiber/fiber/v2"
@@ -120,6 +122,11 @@ func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) {
 	// Setup tracing and logging
 	ops.TracingMiddleware(tracing, v.provider, v.operator)
 	ops.LoggingMiddleware(v.provider, v.operator)
+
+	// Instrument other components to capture telemetry data
+	ops.InstrumentHTTPClient(rest.Pipeline)
+	ops.InstrumentGenericPAMClient(genericpam.Pipeline)
+	ops.InstrumentVPluginPAMClient(vplugin.Pipeline)
 
 	// Routes
 	routes.MonitoringRoutes(v.operator)

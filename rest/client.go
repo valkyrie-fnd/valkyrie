@@ -9,26 +9,37 @@ import (
 	"net/http"
 	"time"
 
-	"go.opentelemetry.io/otel"
-
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/internal"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/rs/zerolog/log"
-
-	"github.com/valkyrie-fnd/valkyrie/ops"
 
 	"github.com/goccy/go-json"
 	"github.com/valyala/fasthttp"
 )
 
-const tracerName = "http-client"
-
 var (
 	headerContentTypeJSON = []byte("application/json")
 	headerContentTypeXML  = []byte("application/xml")
+	validate              = validator.New()
+
+	// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
+	// to be registered and run before actual HTTP calls.
+	Pipeline = internal.NewPipeline[PipelinePayload]()
 )
-var validate = validator.New()
+
+type PipelinePayload struct {
+	request  *fasthttp.Request
+	response *fasthttp.Response
+}
+
+func (p PipelinePayload) Request() *fasthttp.Request {
+	return p.request
+}
+
+func (p PipelinePayload) Response() *fasthttp.Response {
+	return p.response
+}
 
 // fastHTTPClient interface of used methods of fasthttp.Client
 type fastHTTPClient interface {
@@ -149,36 +160,36 @@ type HTTPClientXMLInterface interface {
 }
 
 // GetJson Issue GET request with expected json response
-func (c Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+func (c *Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.get(ctx, req.URL, readJSON(resp), req.Headers, req.Query)
 }
 
 // GetXML Issue GET request with expected XML response
-func (c Client) GetXML(ctx context.Context, req *HTTPRequest, resp any) error {
+func (c *Client) GetXML(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.get(ctx, req.URL, readXML(resp), req.Headers, req.Query)
 }
 
 // PostJson Issue POST request with expected json response
-func (c Client) PostJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+func (c *Client) PostJSON(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.post(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
 }
 
 // PutJson Issue PUT request with expected json response
-func (c Client) PutJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+func (c *Client) PutJSON(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.put(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
 }
 
 // PostXML Issue POST request with expected XML response
-func (c Client) PostXML(ctx context.Context, req HTTPRequest, resp any) error {
+func (c *Client) PostXML(ctx context.Context, req HTTPRequest, resp any) error {
 	return c.post(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
 }
 
 // PutXML Issue PUT request with expected XML response
-func (c Client) PutXML(ctx context.Context, req *HTTPRequest, resp any) error {
+func (c *Client) PutXML(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.put(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
 }
 
-func (c Client) post(
+func (c *Client) post(
 	ctx context.Context,
 	uri string,
 	bodyFn requestContentFn,
@@ -188,7 +199,7 @@ func (c Client) post(
 	return c.handle(ctx, uri, bodyFn, parseFn, fasthttp.MethodPost, headers, query)
 }
 
-func (c Client) put(
+func (c *Client) put(
 	ctx context.Context,
 	uri string,
 	bodyFn requestContentFn,
@@ -198,7 +209,7 @@ func (c Client) put(
 	return c.handle(ctx, uri, bodyFn, parseFn, fasthttp.MethodPut, headers, query)
 }
 
-func (c Client) get(
+func (c *Client) get(
 	ctx context.Context,
 	uri string,
 	parseFn responseParseFn,
@@ -215,7 +226,7 @@ var retriedErrors = []error{
 	fasthttp.ErrConnectionClosed,
 }
 
-func (c Client) handle(
+func (c *Client) handle(
 	ctx context.Context,
 	uri string,
 	bodyFn requestContentFn,
@@ -227,14 +238,10 @@ func (c Client) handle(
 	defer fasthttp.ReleaseRequest(req)
 	req.SetRequestURI(uri)
 
-	ctx, span := otel.Tracer(tracerName).Start(ctx, string(req.URI().Path()))
-	defer span.End()
-
 	req.Header.SetMethod(method)
 	for k, v := range headers {
 		req.Header.Add(k, v)
 	}
-	addTraceHeaders(ctx, &req.Header)
 
 	for k, v := range query {
 		req.URI().QueryArgs().Add(k, v)
@@ -249,18 +256,13 @@ func (c Client) handle(
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
-	log.Ctx(ctx).Debug().Func(ops.LogHTTPRequest(req)).Msg("http client request")
-
-	err := retry(func() error {
-		return c.fastClient.DoTimeout(req, resp, c.config.RequestTimeout)
-	}, maxRetries, retriedErrors)
-
-	if err != nil {
-		log.Ctx(ctx).Error().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
-	} else {
-		log.Ctx(ctx).Debug().Func(ops.LogHTTPResponse(req, resp, err)).Msg("http client response")
-	}
-	ops.TraceHTTPAttributes(span, req, resp, err)
+	err := Pipeline.Execute(ctx,
+		PipelinePayload{req, resp},
+		func(pc internal.PipelineContext[PipelinePayload]) error {
+			return retry(func() error {
+				return c.fastClient.DoTimeout(pc.Payload().Request(), pc.Payload().Response(), c.config.RequestTimeout)
+			}, maxRetries, retriedErrors)
+		})
 
 	statusCode := resp.StatusCode()
 	if err == nil {
@@ -325,18 +327,4 @@ func handleError(err error) error {
 	}
 
 	return err
-}
-
-func addTraceHeaders(ctx context.Context, headers *fasthttp.RequestHeader) {
-	tracingHeaders := ops.GetTracingHeaders(ctx)
-
-	// only propagate traceparent and tracestate, as other headers (baggage) might leak sensitive information
-	// https://www.w3.org/TR/trace-context/#privacy-considerations
-	if value, found := tracingHeaders["traceparent"]; found {
-		headers.Add("traceparent", value)
-	}
-
-	if value, found := tracingHeaders["tracestate"]; found {
-		headers.Add("tracestate", value)
-	}
 }
