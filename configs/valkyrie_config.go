@@ -11,14 +11,14 @@ import (
 
 // LogConfig configuration setup for logging
 type LogConfig struct {
+	Async  AsyncLogConfig  `yaml:"async"`
 	Level  string          `yaml:"level" default:"info"`
 	Output OutputLogConfig `yaml:"output"`
-	Async  AsyncLogConfig  `yaml:"async"`
 }
 
 // AsyncLogConfig Configuration for asynchronous logging
 type AsyncLogConfig struct {
-	Enabled      bool          `yaml:"enabled" default:"true"`
+	Enabled      *bool         `yaml:"enabled" default:"true"`
 	BufferSize   int           `yaml:"buffer_size" default:"100000"`
 	PollInterval time.Duration `yaml:"poll_interval" default:"10ms"`
 }
@@ -113,11 +113,11 @@ type HTTPServerConfig struct {
 	//
 	// For example, ":8083" binds to all interfaces on port 8083, while "localhost:8083" only
 	// binds to local interfaces (no external traffic).
-	ProviderAddress string `yaml:"provider_address" default:":8083"`
+	ProviderAddress string `yaml:"provider_address,omitempty" default:":8083"`
 
 	// OperatorAddress configures host and port where Valkyrie will attempt to listen for incoming traffic
 	// for operator endpoints.
-	OperatorAddress string        `yaml:"operator_address" default:":8084"`
+	OperatorAddress string        `yaml:"operator_address,omitempty" default:":8084"`
 	ReadTimeout     time.Duration `yaml:"read_timeout" default:"3s"`  // The amount of time allowed to read the full request including body
 	WriteTimeout    time.Duration `yaml:"write_timeout" default:"3s"` // The maximum duration before timing out writes of the response
 	IdleTimeout     time.Duration `yaml:"idle_timeout" default:"30s"` // The maximum amount of time to wait for the next request when keep-alive is enabled
@@ -153,6 +153,10 @@ func parse(data []byte) (*ValkyrieConfig, error) {
 	// Replace environment variables in strings
 	expandEnvVariables(&conf, os.ExpandEnv)
 
+	// Set "default" if environment variables were empty
+	if e := defaults.Set(&conf); e != nil {
+		return &conf, e
+	}
 	return &conf, err
 }
 

@@ -3,8 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -34,24 +32,8 @@ type Valkyrie struct {
 	cancel   context.CancelFunc
 }
 
-// banner ascii art generated using https://textkool.com/en/ascii-art-generator?hl=default&vl=default&font=Bloody&text=Valkyrie
-const banner = `
- ██▒   █▓ ▄▄▄       ██▓     ██ ▄█▀▓██   ██▓ ██▀███   ██▓▓█████
-▓██░   █▒▒████▄    ▓██▒     ██▄█▒  ▒██  ██▒▓██ ▒ ██▒▓██▒▓█   ▀
- ▓██  █▒░▒██  ▀█▄  ▒██░    ▓███▄░   ▒██ ██░▓██ ░▄█ ▒▒██▒▒███
-  ▒██ █░░░██▄▄▄▄██ ▒██░    ▓██ █▄   ░ ▐██▓░▒██▀▀█▄  ░██░▒▓█  ▄
-   ▒▀█░   ▓█   ▓██▒░██████▒▒██▒ █▄  ░ ██▒▓░░██▓ ▒██▒░██░░▒████▒
-   ░ ▐░   ▒▒   ▓▒█░░ ▒░▓  ░▒ ▒▒ ▓▒   ██▒▒▒ ░ ▒▓ ░▒▓░░▓  ░░ ▒░ ░
-   ░ ░░    ▒   ▒▒ ░░ ░ ▒  ░░ ░▒ ▒░ ▓██ ░▒░   ░▒ ░ ▒░ ▒ ░ ░ ░  ░
-     ░░    ░   ▒     ░ ░   ░ ░░ ░  ▒ ▒ ░░    ░░   ░  ▒ ░   ░
-      ░        ░  ░    ░  ░░  ░    ░ ░        ░      ░     ░  ░
-     ░                             ░ ░
-`
-
 // NewValkyrie use provided cfg to create a Valkyrie instance
-func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
-	// Print banner
-	_, _ = fmt.Fprintf(os.Stdout, "%s\n", banner)
+func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) (*Valkyrie, error) {
 
 	// Define Fiber config
 	fiberCfg := fiberConfig(cfg.HTTPServer)
@@ -68,7 +50,9 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 		cancel:   cancel,
 	}
 
-	configureOps(cfg, v)
+	if err := configureOps(cfg, v); err != nil {
+		return nil, err
+	}
 
 	// Http client
 	httpClient := rest.Create(cfg.HTTPClient)
@@ -82,15 +66,18 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 		TraceConfig: cfg.Telemetry.Tracing,
 	})
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error getting pam client")
+		log.Err(err).Msg("Error getting pam client")
+		return nil, err
 	}
 
 	// Provider routes.
 	if err = routes.ProviderRoutes(v.provider, cfg, pamClient, httpClient); err != nil {
-		log.Fatal().Err(err).Msg("Unable to setup the intended provider routes")
+		log.Err(err).Msg("Unable to setup the intended provider routes")
+		return nil, err
 	}
 	if err = routes.OperatorRoutes(v.operator, cfg, httpClient); err != nil {
-		log.Fatal().Err(err).Msg("Unable to setup the intended operator routes")
+		log.Err(err).Msg("Unable to setup the intended operator routes")
+		return nil, err
 	}
 
 	// Swagger
@@ -98,19 +85,19 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) *Valkyrie {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to configure swagger")
 	}
-	return v
+	return v, nil
 }
 
-func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) {
+func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) error {
 	// Profile
 	profiles := ops.NewProfiles().Load()
-
 	// Configure logging
 	ops.ConfigureLogging(cfg.Logging, profiles)
 
 	// Metrics config
 	if err := ops.ConfigureMetrics(cfg); err != nil {
-		log.Fatal().Err(err).Msg("Failed to configure metrics")
+		log.Err(err).Msg("Failed to configure metrics")
+		return err
 	}
 
 	// Get tracing config
@@ -130,6 +117,7 @@ func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) {
 
 	// Routes
 	routes.MonitoringRoutes(v.operator)
+	return nil
 }
 
 // Run Starts provider and operator servers. Returns only when
