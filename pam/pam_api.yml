@@ -555,6 +555,9 @@ components:
           $ref: "#/components/schemas/ProviderBetRef"
         betCode:
           $ref: "#/components/schemas/BetCode"
+        pending:
+          type: boolean
+          description: Indicates if the transaction has been fully acknowledged by the provider
       required:
         - transactionType
     Transaction:
