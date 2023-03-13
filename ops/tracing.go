@@ -24,8 +24,8 @@ func GetTracingHeaders(ctx context.Context) map[string]string {
 	return carrier
 }
 
-// TraceHTTPAttributes sets relevant tracing attributes based on provided fasthttp.Request and fasthttp.Response.
-func TraceHTTPAttributes(span trace.Span, req *fasthttp.Request, resp *fasthttp.Response, err error) {
+// traceHTTPAttributes sets relevant tracing attributes based on provided fasthttp.Request and fasthttp.Response.
+func traceHTTPAttributes(span trace.Span, req *fasthttp.Request, resp *fasthttp.Response, err error) {
 	if err != nil {
 		span.RecordError(err)
 	}

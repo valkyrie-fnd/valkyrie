@@ -15,6 +15,8 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 )
 
+var falseVar = false
+
 func Test_getFileWriter(t *testing.T) {
 	tempDir := t.TempDir()
 	tests := []struct {
@@ -89,7 +91,7 @@ func TestConfigureLogging(t *testing.T) {
 			configs.LogConfig{
 				Level: "debug",
 				Async: configs.AsyncLogConfig{
-					Enabled: false,
+					Enabled: &falseVar,
 				},
 				Output: configs.OutputLogConfig{
 					Type:     "file",

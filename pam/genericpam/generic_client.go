@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/rest"
 )
@@ -14,6 +15,10 @@ import (
 const (
 	DriverName = "generic"
 )
+
+// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
+// to be registered and run before actual PAM calls.
+var Pipeline = pipeline.NewPipeline[any]()
 
 func init() {
 	pam.ClientFactory().
@@ -75,7 +80,10 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.PutJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, &r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.PutJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
 	}
@@ -98,7 +106,10 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, &r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.GetJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
 		return nil, err
 	}
@@ -128,7 +139,10 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 		Query:   query,
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, &r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.GetJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
 		return nil, err
 	}
@@ -155,7 +169,10 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 		Body:    &r.Body,
 	}
 
-	err = c.rest.PostJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.PostJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
 		if resp.TransactionResult != nil {
 			// Special case, balance may still be included even if add transaction resulted in error.
@@ -182,7 +199,10 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, &r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.GetJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
 		return nil, err
 	}
@@ -204,7 +224,10 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 		Query:   map[string]string{"provider": r.Params.Provider},
 	}
 
-	err = c.rest.GetJSON(ctx, req, &resp)
+	err = Pipeline.Execute(ctx, &r,
+		func(pc pipeline.PipelineContext[any]) error {
+			return c.rest.GetJSON(pc.Context(), req, &resp)
+		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
 	}

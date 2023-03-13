@@ -10,6 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var trueVar = true
+var falseVar = false
+
 type testWrapper struct {
 	name        string
 	envFilePath string
@@ -35,7 +38,7 @@ var defaultHTTPClientConfig = HTTPClientConfig{
 var defaultLogConfig = LogConfig{
 	Level: "info",
 	Async: AsyncLogConfig{
-		Enabled:      true,
+		Enabled:      &trueVar,
 		BufferSize:   100000,
 		PollInterval: 10 * time.Millisecond,
 	},
@@ -237,7 +240,7 @@ http_client:
 			Logging: LogConfig{
 				Level: "debug",
 				Async: AsyncLogConfig{
-					Enabled:      false,
+					Enabled:      &falseVar,
 					BufferSize:   50000,
 					PollInterval: 5 * time.Millisecond,
 				},
@@ -298,7 +301,7 @@ logging:
 			Logging: LogConfig{
 				Level: "info",
 				Async: AsyncLogConfig{
-					Enabled:      true,
+					Enabled:      &trueVar,
 					BufferSize:   100000,
 					PollInterval: 10 * time.Millisecond,
 				},
@@ -352,7 +355,7 @@ func TestValkConfigFile(t *testing.T) {
 		Logging: LogConfig{
 			Level: "debug",
 			Async: AsyncLogConfig{
-				Enabled:      true,
+				Enabled:      &trueVar,
 				BufferSize:   500000,
 				PollInterval: 5 * time.Millisecond,
 			},
@@ -406,8 +409,8 @@ func TestValkConfigFile(t *testing.T) {
 			ReadTimeout:     3 * time.Second,
 			WriteTimeout:    3 * time.Second,
 			IdleTimeout:     30 * time.Second,
-			ProviderAddress: "localhost:8083",
-			OperatorAddress: "localhost:8084",
+			ProviderAddress: ":8083",
+			OperatorAddress: ":8084",
 		},
 		HTTPClient: defaultHTTPClientConfig,
 	}

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
 	"github.com/valkyrie-fnd/valkyrie-stubs/backdoors"
 	"github.com/valkyrie-fnd/valkyrie-stubs/datastore"
@@ -69,30 +70,38 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		operatorPort, _ := testutils.GetFreePort()
 
 		s.ProviderConfig = s.ProviderConfigFn(dataStore)
-		valkyrieConfig := configs.ValkyrieConfig{
-			Logging: configs.LogConfig{
-				Level: "fatal",
-			},
-			ProviderBasePath: "/providers",
-			Providers: []configs.ProviderConf{
-				s.ProviderConfig,
-			},
-			Pam: configs.PamConf{
-				"name":    "generic",
-				"url":     pamURL,
-				"api_key": dataStore.GetPamAPIToken(),
-			},
-			HTTPServer: configs.HTTPServerConfig{
-				ProviderAddress: fmt.Sprintf(baseAddr, providerPort),
-				OperatorAddress: fmt.Sprintf(baseAddr, operatorPort),
-			},
+		valkyrieConfig := s.buildConfig(pamURL, providerPort, operatorPort, dataStore)
+
+		if v, err := server.NewValkyrie(context.TODO(), &valkyrieConfig); err != nil {
+			log.Error().Msg("Failed to create valkyrie instance")
+			return
+		} else {
+			s.valkyrie = v
 		}
-
-		s.valkyrie = server.NewValkyrie(context.TODO(), &valkyrieConfig)
-
 		s.valkyrie.Start()
 
 		s.ValkyrieURL = fmt.Sprintf(baseURL+"%s%s", providerPort, valkyrieConfig.ProviderBasePath, s.ProviderConfig.BasePath)
+	}
+}
+
+func (s *IntegrationTestSuite) buildConfig(pamURL string, providerPort, operatorPort int, dataStore *memorydatastore.MapDataStore) configs.ValkyrieConfig {
+	return configs.ValkyrieConfig{
+		Logging: configs.LogConfig{
+			Level: "fatal",
+		},
+		ProviderBasePath: "/providers",
+		Providers: []configs.ProviderConf{
+			s.ProviderConfig,
+		},
+		Pam: configs.PamConf{
+			"name":    "generic",
+			"url":     pamURL,
+			"api_key": dataStore.GetPamAPIToken(),
+		},
+		HTTPServer: configs.HTTPServerConfig{
+			ProviderAddress: fmt.Sprintf(baseAddr, providerPort),
+			OperatorAddress: fmt.Sprintf(baseAddr, operatorPort),
+		},
 	}
 }
 

@@ -62,8 +62,8 @@ http_server: # optional http server configuration
   read_timeout: 3s
   write_timeout: 3s
   idle_timeout: 30s
-  provider_address: localhost:8083
-  operator_address: localhost:8084
+  provider_address: ${PROVIDER_ADDRESS}
+  operator_address: ${OPERATOR_ADDRESS}
 http_client: # optional http client configuration
   read_timeout: 10s
   write_timeout: 3s
