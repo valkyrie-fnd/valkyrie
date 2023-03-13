@@ -52,6 +52,7 @@ func Create(config configs.HTTPClientConfig) *Client {
 			RetryIf: func(_ *fasthttp.Request) bool {
 				return false // Disable automatic retries for GET/PATCH/PUT
 			},
+			MaxIdemponentCallAttempts: 1,
 			// increase DNS cache time to an hour instead of default minute
 			Dial: (&fasthttp.TCPDialer{
 				Concurrency:      4096,
