@@ -214,6 +214,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 			isGameOver := t.Payload.RoundClosed
 			refTx := t.Payload.ReferenceTransactionUUID
 			dateTime := t.CreatedTime
+			pending := t.ClosedTime.IsZero()
 
 			// Detect transaction type
 			var transactionType pam.TransactionType
@@ -242,6 +243,7 @@ func roundTransactionsMapper(roundTransactions *[]roundTransaction) *[]pam.Round
 				ProviderBetRef:        refTx,
 				TransactionType:       transactionType,
 				BetCode:               betCode,
+				Pending:               &pending,
 			}
 
 			jackpotAmt := toPamAmount(t.Payload.JackpotContribution)

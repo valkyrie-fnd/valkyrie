@@ -342,6 +342,9 @@ type RoundTransaction struct {
 	// JackpotContribution Amount in some currency, rounded to 6 decimal places
 	JackpotContribution *Amount `json:"jackpotContribution,omitempty"`
 
+	// Pending Indicates if the transaction has been fully acknowledged by the provider
+	Pending *bool `json:"pending,omitempty"`
+
 	// ProviderBetRef Provider bet reference for grouping or matching transactions. Either this or `providerTransactionId` is required. This one is prioritized if both are present. It is used for RGS:s that encapsulate many transactions in a wrapper transaction.
 	ProviderBetRef *ProviderBetRef `json:"providerBetRef,omitempty"`
 
