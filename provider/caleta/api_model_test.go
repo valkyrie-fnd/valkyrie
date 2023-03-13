@@ -129,6 +129,64 @@ func Test_transactionResponse(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Transactions not closed",
+			response: `
+			{
+				"round_id": "CG-909",
+				"transactions": [
+				  {
+					"round_id": 909,
+					"txn_uuid": "txn-uuid-0",
+					"created_time": "2023-01-17T13:55:26.551Z",
+					"closed_time": null,
+					"amount": 200000,
+					"payload": {
+					  "bet": "Base",
+					  "round": "CG-909",
+					  "token": "token-0",
+					  "amount": 200000,
+					  "game_id": 121,
+					  "is_free": false,
+					  "currency": "GBP",
+					  "game_code": "game-code",
+					  "request_uuid": "req-uuid-0",
+					  "round_closed": false,
+					  "supplier_user": "6",
+					  "transaction_uuid": "txn-uuid-0",
+					  "jackpot_contribution": 2000
+					}
+				  }
+				]
+			}`,
+			want: transactionResponse{
+				RoundID: "CG-909",
+				RoundTransactions: &[]roundTransaction{
+					{
+						RoundID:     909,
+						TxnUUID:     "txn-uuid-0",
+						CreatedTime: expectedTimestamp,
+						ClosedTime:  time.Time{}, // zero value time
+						Amount:      200000,
+						Payload: payload{
+							Bet:                 "Base",
+							Round:               "CG-909",
+							Token:               "token-0",
+							Amount:              200000,
+							GameID:              121,
+							IsFree:              false,
+							Currency:            "GBP",
+							GameCode:            "game-code",
+							RequestUUID:         "req-uuid-0",
+							RoundClosed:         false,
+							SupplierUser:        "6",
+							TransactionUUID:     "txn-uuid-0",
+							JackpotContribution: 2000,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

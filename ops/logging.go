@@ -125,6 +125,7 @@ var loggedHeaders = []string{
 	"X-Forwarded-For",
 	"X-Correlation-ID",
 	"traceparent",
+	"X-Msg-Timestamp",
 }
 
 // isContentTypeLogged returns true for the content types that should be logged.
