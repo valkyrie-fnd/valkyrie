@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/internal"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 
 	"github.com/go-playground/validator/v10"
 
@@ -25,7 +25,7 @@ var (
 
 	// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
 	// to be registered and run before actual HTTP calls.
-	Pipeline = internal.NewPipeline[PipelinePayload]()
+	Pipeline = pipeline.NewPipeline[PipelinePayload]()
 )
 
 type PipelinePayload struct {
@@ -258,7 +258,7 @@ func (c *Client) handle(
 
 	err := Pipeline.Execute(ctx,
 		PipelinePayload{req, resp},
-		func(pc internal.PipelineContext[PipelinePayload]) error {
+		func(pc pipeline.PipelineContext[PipelinePayload]) error {
 			return retry(func() error {
 				return c.fastClient.DoTimeout(pc.Payload().Request(), pc.Payload().Response(), c.config.RequestTimeout)
 			}, maxRetries, retriedErrors)

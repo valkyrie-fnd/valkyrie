@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/internal"
+	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
@@ -39,7 +39,7 @@ func init() {
 
 // Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
 // to be registered and run before actual PAM calls.
-var Pipeline = internal.NewPipeline[any]()
+var Pipeline = pipeline.NewPipeline[any]()
 
 type PluginPAM struct {
 	plugin              PAM
@@ -78,7 +78,7 @@ func (vp *PluginPAM) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 
 	var resp *pam.SessionResponse
 	err = Pipeline.Execute(ctx, &req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.GetSession(req)
 			return handleErrors(resp.Error, err, resp.Session)
 		})
@@ -97,7 +97,7 @@ func (vp *PluginPAM) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 
 	var resp *pam.SessionResponse
 	err = Pipeline.Execute(ctx, &req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.RefreshSession(req)
 			return handleErrors(resp.Error, err, resp.Session)
 		})
@@ -113,7 +113,7 @@ func (vp *PluginPAM) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 
 	var resp *pam.BalanceResponse
 	err = Pipeline.Execute(ctx, &req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.GetBalance(req)
 			return handleErrors(resp.Error, err, resp.Balance)
 		})
@@ -129,7 +129,7 @@ func (vp *PluginPAM) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 
 	var resp *pam.GetTransactionsResponse
 	err = Pipeline.Execute(ctx, &req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.GetTransactions(req)
 			return handleErrors(resp.Error, err, resp.Transactions)
 		})
@@ -148,7 +148,7 @@ func (vp *PluginPAM) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 
 	var resp *pam.AddTransactionResponse
 	err = Pipeline.Execute(ctx, req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.AddTransaction(*req)
 			return handleErrors(resp.Error, err, resp.TransactionResult)
 		})
@@ -167,7 +167,7 @@ func (vp *PluginPAM) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 
 	var resp *pam.GameRoundResponse
 	err = Pipeline.Execute(ctx, &req,
-		func(pc internal.PipelineContext[any]) error {
+		func(pc pipeline.PipelineContext[any]) error {
 			resp = vp.plugin.GetGameRound(req)
 			return handleErrors(resp.Error, err, resp.Gameround)
 		})
