@@ -149,6 +149,7 @@ type HTTPRequest struct {
 // HTTPClientJSONInterface interface for client with JSON responses
 type HTTPClientJSONInterface interface {
 	GetJSON(ctx context.Context, req *HTTPRequest, resp any) error
+	Get(ctx context.Context, req *HTTPRequest, resp any) error
 	PostJSON(ctx context.Context, req *HTTPRequest, resp any) error
 	PutJSON(ctx context.Context, req *HTTPRequest, resp any) error
 }
@@ -163,6 +164,14 @@ type HTTPClientXMLInterface interface {
 // GetJson Issue GET request with expected json response
 func (c *Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.get(ctx, req.URL, readJSON(resp), req.Headers, req.Query)
+}
+
+// Get Issue GET request with expected response body set to resp
+func (c *Client) Get(ctx context.Context, req *HTTPRequest, resp any) error {
+	return c.get(ctx, req.URL, func(r *fasthttp.Response) error {
+		resp = r.Body()
+		return nil
+	}, req.Headers, req.Query)
 }
 
 // GetXML Issue GET request with expected XML response

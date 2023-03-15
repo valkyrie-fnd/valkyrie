@@ -14,6 +14,7 @@ import (
 )
 
 type mockClient struct {
+	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	GetJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	PutJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
@@ -22,7 +23,9 @@ type mockClient struct {
 func (m mockClient) GetJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
 	return m.GetJSONFunc(ctx, req, resp)
 }
-
+func (m mockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+	return m.GetFunc(ctx, req, resp)
+}
 func (m mockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
