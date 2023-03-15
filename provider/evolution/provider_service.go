@@ -63,8 +63,9 @@ func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchReque
 	return gameURL, nil
 }
 
-func (service EvoService) GetGameRoundRender(*fiber.Ctx, provider.GameRoundRenderRequest) (string, error) {
-	return "", fmt.Errorf("Not available")
+func (service EvoService) GetGameRoundRender(c *fiber.Ctx, req provider.GameRoundRenderRequest) (int, error) {
+	// return fmt.Sprintf("%s/api/render/v1/%s", service.Conf.URL, req.GameRoundID), nil
+	return 404, fmt.Errorf("Not available")
 }
 
 func (service EvoService) makeAuthCall(ctx context.Context, request UserAuthenticationRequest) (*UserAuthenticationResponse, error) {

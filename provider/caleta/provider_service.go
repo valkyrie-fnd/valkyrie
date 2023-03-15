@@ -33,16 +33,18 @@ func NewCaletaService(apiClient API, config configs.ProviderConf) (*caletaServic
 }
 
 // GetGameRoundRender returns a game render for a given game round
-func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundRenderReq provider.GameRoundRenderRequest) (string, error) {
+func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundRenderReq provider.GameRoundRenderRequest) (int, error) {
 	resp, err := service.apiClient.getGameRoundRender(ctx.UserContext(), gameRoundRenderReq.GameRoundID, gameRoundRenderReq.CasinoID)
 	if err != nil {
-		return "", err
+		return fiber.StatusInternalServerError, err
 	}
 	if resp.Url == nil {
-		return "", rest.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
+		return fiber.StatusBadRequest, rest.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
 	}
 
-	return *resp.Url, nil
+	ctx.Response().Header.Add("Location", *resp.Url)
+
+	return fiber.StatusFound, nil
 }
 
 // GameLaunch launches games
