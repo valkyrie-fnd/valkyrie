@@ -65,20 +65,21 @@ func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchReque
 }
 
 func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRoundRenderRequest) (int, error) {
-	renderURL := fmt.Sprintf("%s/api/render/v1/%s", service.Conf.URL, req.GameRoundID)
+	renderURL := fmt.Sprintf("%s/api/render/v1/details", service.Conf.URL)
 	encodedAuth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", service.Auth.CasinoKey, service.Auth.CasinoToken)))
 	r := &rest.HTTPRequest{
-		URL: renderURL,
+		URL:   renderURL,
+		Query: map[string]string{"gameId": req.GameRoundID},
 		Headers: map[string]string{
 			"Authorization": fmt.Sprintf("Basic %s", encodedAuth),
 		},
 	}
 	var resp []byte
 	err := service.Client.Get(ctx.UserContext(), r, &resp)
+	ctx.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	if err != nil {
 		return fiber.StatusBadRequest, err
 	}
-	ctx.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	_, err = ctx.Response().BodyWriter().Write(resp)
 	if err != nil {
 		return fiber.StatusInternalServerError, err
