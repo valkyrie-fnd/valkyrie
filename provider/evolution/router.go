@@ -95,18 +95,23 @@ func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJS
 	if err != nil {
 		return nil, err
 	}
-	glController := provider.NewGameLaunchController(
-		EvoService{
-			Auth:   auth,
-			Conf:   &config,
-			Client: httpClient,
-		},
-	)
+	evoService := EvoService{
+		Auth:   auth,
+		Conf:   &config,
+		Client: httpClient,
+	}
+	glController := provider.NewGameLaunchController(&evoService)
+	grCtrl := provider.NewGameRoundController(&evoService)
 	routes := []provider.Route{
 		{
 			Path:        "/gamelaunch",
 			Method:      "POST",
 			HandlerFunc: glController.GameLaunchEndpoint,
+		},
+		{
+			Path:        "/gamerounds/:gameRoundId/render",
+			Method:      "GET",
+			HandlerFunc: grCtrl.GetGameRoundEndpoint,
 		},
 	}
 

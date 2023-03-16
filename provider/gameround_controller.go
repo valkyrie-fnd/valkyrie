@@ -24,6 +24,9 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 		hErr := &rest.HTTPError{}
 		if errors.As(err, hErr) {
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+			if hErr.Message == "" {
+				hErr.Message = "Gameround not available"
+			}
 			return c.Status(hErr.Code).SendString(hErr.Message)
 		}
 		return c.Status(res).SendString(err.Error())
