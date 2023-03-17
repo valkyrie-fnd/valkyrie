@@ -2,6 +2,7 @@ package evolution
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"reflect"
 	"testing"
@@ -18,17 +19,32 @@ import (
 type MockClient struct {
 	rest.HTTPClientJSONInterface
 	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
+	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error
 }
 
 func (m MockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
+func (m MockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+	return m.GetFunc(ctx, req, resp)
+}
+
+type fields struct {
+	Auth   AuthConf
+	C      *configs.ProviderConf
+	Client rest.HTTPClientJSONInterface
+}
+
 func TestGameLaunchService_GameLaunch(t *testing.T) {
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
-
+	type args struct {
+		ctx *fiber.Ctx
+		g   *provider.GameLaunchRequest
+		h   *provider.GameLaunchHeaders
+	}
 	var expectedRequest = provider.GameLaunchRequest{
 		Currency:       "SEK",
 		ProviderGameID: "i",
@@ -46,16 +62,6 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 		Entry: "entry",
 	}
 
-	type fields struct {
-		Auth   AuthConf
-		C      *configs.ProviderConf
-		Client rest.HTTPClientJSONInterface
-	}
-	type args struct {
-		ctx *fiber.Ctx
-		g   *provider.GameLaunchRequest
-		h   *provider.GameLaunchHeaders
-	}
 	tests := []struct {
 		name    string
 		fields  fields
@@ -128,7 +134,118 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 }
 
 func TestGameRoundRender(t *testing.T) {
-	sut := EvoService{}
-	_, err := sut.GetGameRoundRender(nil, provider.GameRoundRenderRequest{})
-	assert.EqualError(t, err, "Not available")
+	app := fiber.New()
+	c := app.AcquireCtx(&fasthttp.RequestCtx{})
+	defer app.ReleaseCtx(c)
+	type args struct {
+		c *fiber.Ctx
+		g *provider.GameRoundRenderRequest
+	}
+	a := args{
+		c: c,
+		g: &provider.GameRoundRenderRequest{
+			GameRoundID: "123",
+		},
+	}
+	ac := AuthConf{
+		CasinoToken: "casinoToken",
+		CasinoKey:   "casinoKey",
+	}
+	conf := &configs.ProviderConf{
+		URL: "evo-base-url.com",
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantCode int
+		wantBody string
+		wantErr  error
+	}{
+		{
+			name: "Returns ok with body of response",
+			args: a,
+			fields: fields{
+				Auth: ac,
+				C:    conf,
+				Client: MockClient{
+					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+						*resp = []byte("ResponseBody")
+						return nil
+					},
+				},
+			},
+			wantCode: 200,
+			wantBody: "ResponseBody",
+			wantErr:  nil,
+		},
+		{
+			name: "Pass gameRoundId to request",
+			args: a,
+			fields: fields{
+				Auth: ac,
+				C:    conf,
+				Client: MockClient{
+					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+						assert.Equal(t, "123", req.Query["gameId"])
+						return nil
+					},
+				},
+			},
+			wantCode: 200,
+			wantBody: "",
+			wantErr:  nil,
+		},
+		{
+			name: "Pass base64 encoded casinoKey:casinoToken as basic Auth header",
+			args: a,
+			fields: fields{
+				Auth: ac,
+				C:    conf,
+				Client: MockClient{
+					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+						encoded := base64.StdEncoding.EncodeToString(([]byte("casinoKey:casinoToken")))
+						assert.Equal(t, fmt.Sprintf("Basic %s", encoded), req.Headers["Authorization"])
+						return nil
+					},
+				},
+			},
+			wantCode: 200,
+			wantBody: "",
+			wantErr:  nil,
+		},
+		{
+			name: "Returns error from service call",
+			args: a,
+			fields: fields{
+				Auth: ac,
+				C:    conf,
+				Client: MockClient{
+					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+						return fmt.Errorf("Failed request")
+					},
+				},
+			},
+			wantCode: 400,
+			wantBody: "",
+			wantErr:  fmt.Errorf("Failed request"),
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(tt *testing.T) {
+			sut := EvoService{
+				Auth:   test.fields.Auth,
+				Conf:   test.fields.C,
+				Client: test.fields.Client,
+			}
+			resCode, err := sut.GetGameRoundRender(test.args.c, *test.args.g)
+			assert.Equal(tt, test.wantCode, resCode)
+			if test.wantErr != nil {
+				assert.Error(tt, test.wantErr, err)
+			}
+			if test.wantBody != "" {
+				assert.Equal(tt, test.wantBody, string(test.args.c.Response().Body()))
+			}
+		})
+	}
 }

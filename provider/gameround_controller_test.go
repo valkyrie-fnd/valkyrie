@@ -21,14 +21,15 @@ type gameRenderWant struct {
 }
 type gameRenderTestData struct {
 	id              string
-	gameRoundRender func(req GameRoundRenderRequest) (int, error)
+	gameRoundRender func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error)
 	want            gameRenderWant
 }
 
 var gameRenderTests = []gameRenderTestData{
 	{
 		id: "abc123",
-		gameRoundRender: func(req GameRoundRenderRequest) (int, error) {
+		gameRoundRender: func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
+			c.Set("Location", "redirectUrl")
 			return 302, nil
 		},
 		want: gameRenderWant{
@@ -41,7 +42,7 @@ var gameRenderTests = []gameRenderTestData{
 	},
 	{
 		id: "abc123",
-		gameRoundRender: func(req GameRoundRenderRequest) (int, error) {
+		gameRoundRender: func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
 			return 400, rest.HTTPError{Message: "Wrong Id Maybe", Code: 400}
 		},
 		want: gameRenderWant{
@@ -54,7 +55,7 @@ var gameRenderTests = []gameRenderTestData{
 	},
 	{
 		id: "abc123",
-		gameRoundRender: func(req GameRoundRenderRequest) (int, error) {
+		gameRoundRender: func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
 			return 500, fmt.Errorf("SomeOtherError")
 		},
 		want: gameRenderWant{
@@ -68,15 +69,15 @@ var gameRenderTests = []gameRenderTestData{
 }
 
 type gameRoundRenderService struct {
-	gameRoundRender func(req GameRoundRenderRequest) (int, error)
+	gameRoundRender func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error)
 }
 
 func (gs gameRoundRenderService) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error) {
 	return "", fmt.Errorf("Not Available")
 }
-func (gs gameRoundRenderService) GetGameRoundRender(_ *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
+func (gs gameRoundRenderService) GetGameRoundRender(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
 	if gs.gameRoundRender != nil {
-		return gs.gameRoundRender(req)
+		return gs.gameRoundRender(c, req)
 	}
 	return 200, nil
 }
