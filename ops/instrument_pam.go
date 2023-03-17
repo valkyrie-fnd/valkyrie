@@ -103,7 +103,7 @@ func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) pipe
 	}
 }
 
-// getRequestName, return "vplugin.PluginPAM/GetSession" from "GetBalanceRequest"
+// getRequestName, return "vplugin.PluginPAM/GetBalance" from "GetBalanceRequest"
 func getRequestName(req any) string {
 	var name string
 
