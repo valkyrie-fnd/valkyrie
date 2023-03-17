@@ -3,6 +3,7 @@ package ops
 import (
 	"context"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -102,10 +103,20 @@ func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) pipe
 	}
 }
 
-// getRequestName, return "GetSession" from "GetBalanceRequest"
+// getRequestName, return "vplugin.PluginPAM/GetSession" from "GetBalanceRequest"
 func getRequestName(req any) string {
-	name, _ := strings.CutSuffix(reflect.TypeOf(req).Name(), "Request")
-	return name
+	var name string
+
+	t := reflect.TypeOf(req)
+	if t.Kind() == reflect.Pointer {
+		name = t.Elem().Name()
+	} else {
+		name = t.Name()
+	}
+
+	name, _ = strings.CutSuffix(name, "Request")
+
+	return fmt.Sprintf("%s/%s", RPCService, name)
 }
 
 var ErrorUnknownRequest = errors.New("unknown request type")
