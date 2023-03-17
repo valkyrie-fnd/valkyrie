@@ -79,6 +79,9 @@ type requestContentFn func(*fasthttp.Request) error
 // Convenience method for reading response JSON
 func readJSON(target interface{}) responseParseFn {
 	return func(r *fasthttp.Response) error {
+		if r.Header.ContentLength() <= 0 {
+			return nil
+		}
 		err := json.Unmarshal(r.Body(), &target)
 		if err != nil {
 			return fmt.Errorf("json parsing error: %w", err)
@@ -110,6 +113,9 @@ func writeJSON(content interface{}) requestContentFn {
 // Convenience method for reading response XML
 func readXML(target interface{}) responseParseFn {
 	return func(r *fasthttp.Response) error {
+		if r.Header.ContentLength() <= 0 {
+			return nil
+		}
 		err := xml.Unmarshal(r.Body(), &target)
 		if err != nil {
 			return fmt.Errorf("xml parsing error: %w", err)
@@ -149,6 +155,7 @@ type HTTPRequest struct {
 // HTTPClientJSONInterface interface for client with JSON responses
 type HTTPClientJSONInterface interface {
 	GetJSON(ctx context.Context, req *HTTPRequest, resp any) error
+	Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error
 	PostJSON(ctx context.Context, req *HTTPRequest, resp any) error
 	PutJSON(ctx context.Context, req *HTTPRequest, resp any) error
 }
@@ -163,6 +170,14 @@ type HTTPClientXMLInterface interface {
 // GetJson Issue GET request with expected json response
 func (c *Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
 	return c.get(ctx, req.URL, readJSON(resp), req.Headers, req.Query)
+}
+
+// Get Issue GET request with expected response body set to resp
+func (c *Client) Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error {
+	return c.get(ctx, req.URL, func(r *fasthttp.Response) error {
+		*resp = r.Body()
+		return nil
+	}, req.Headers, req.Query)
 }
 
 // GetXML Issue GET request with expected XML response
@@ -276,9 +291,7 @@ func (c *Client) handle(
 func handleResponse(statusCode int, resp *fasthttp.Response, parseFn responseParseFn) error {
 	switch statusCode {
 	case http.StatusOK:
-		if resp.Header.ContentLength() > 0 {
-			return parseFn(resp)
-		}
+		return parseFn(resp)
 	case http.StatusCreated:
 		if resp.Header.ContentLength() > 0 {
 			return parseFn(resp)

@@ -73,7 +73,7 @@ func Test_OperatorRoutes(t *testing.T) {
 				},
 				URL: "url",
 			},
-			wantHandlers: 4,
+			wantHandlers: 5,
 		},
 		{
 			name: "Red Tiger",
@@ -85,7 +85,7 @@ func Test_OperatorRoutes(t *testing.T) {
 				},
 				URL: "url",
 			},
-			wantHandlers: 4,
+			wantHandlers: 5,
 		},
 	}
 

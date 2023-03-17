@@ -44,6 +44,6 @@ type GameRoundRenderRequest struct {
 type ProviderService interface {
 	// GameLaunch returns url to game session
 	GameLaunch(*fiber.Ctx, *GameLaunchRequest, *GameLaunchHeaders) (string, error)
-	// GetGameRoundRender Returns url where a specific game round result is rendered to be viewed
-	GetGameRoundRender(*fiber.Ctx, GameRoundRenderRequest) (string, error)
+	// GetGameRoundRender Returns status code to return. Fiber context should be populated with the response
+	GetGameRoundRender(*fiber.Ctx, GameRoundRenderRequest) (int, error)
 }
