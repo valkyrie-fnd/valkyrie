@@ -89,3 +89,27 @@ func Test_pamMetricHandler(t *testing.T) {
 
 	assert.NoError(t, err)
 }
+
+func Test_getRequestName(t *testing.T) {
+	tests := []struct {
+		name    string
+		payload any
+		want    string
+	}{
+		{
+			name:    "GetBalanceRequest",
+			payload: pam.GetBalanceRequest{},
+			want:    "GetBalance",
+		},
+		{
+			name:    "GetBalanceRequest pointer",
+			payload: &pam.GetBalanceRequest{},
+			want:    "GetBalance",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.want, getRequestName(test.payload))
+		})
+	}
+}

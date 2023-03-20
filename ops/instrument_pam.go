@@ -102,9 +102,19 @@ func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) pipe
 	}
 }
 
-// getRequestName, return "GetSession" from "GetBalanceRequest"
+// getRequestName, return "GetBalance" from "GetBalanceRequest"
 func getRequestName(req any) string {
-	name, _ := strings.CutSuffix(reflect.TypeOf(req).Name(), "Request")
+	var name string
+
+	t := reflect.TypeOf(req)
+	if t.Kind() == reflect.Pointer {
+		name = t.Elem().Name()
+	} else {
+		name = t.Name()
+	}
+
+	name, _ = strings.CutSuffix(name, "Request") // 2:nd return value can safely be ignored, it just indicates if suffix was found or not
+
 	return name
 }
 
