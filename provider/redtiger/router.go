@@ -96,15 +96,22 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 
 // NewOperatorRouter Routes operator calls to execute actions toward the provider
 func NewOperatorRouter(config configs.ProviderConf) *provider.Router {
-	glController := provider.NewGameLaunchController(
-		RedTigerService{
-			Conf: &config,
-		})
+	rtService := RedTigerService{
+		Conf: &config,
+	}
+	glController := provider.NewGameLaunchController(rtService)
+
+	grCtrl := provider.NewGameRoundController(rtService)
 	routes := []provider.Route{
 		{
 			Path:        "/gamelaunch",
 			Method:      "POST",
 			HandlerFunc: glController.GameLaunchEndpoint,
+		},
+		{
+			Path:        "/gamerounds/:gameRoundId/render",
+			Method:      "GET",
+			HandlerFunc: grCtrl.GetGameRoundEndpoint,
 		},
 	}
 

@@ -29,7 +29,10 @@ func (s *exampleProviderService) GameLaunch(c *fiber.Ctx, r *provider.GameLaunch
 }
 
 // GetGameRoundRender implements provider.ProviderService
-// It should return a url where the specific round is rendered
-func (s *exampleProviderService) GetGameRoundRender(c *fiber.Ctx, renderReq provider.GameRoundRenderRequest) (string, error) {
-	return fmt.Sprintf("%s/gameround/render?roundId=%s", s.conf.URL, renderReq.GameRoundID), nil
+// It should return a status and update fiber.Ctx appropriately.
+// It can redirect to a separate url or return the rendered html by itself
+func (s *exampleProviderService) GetGameRoundRender(c *fiber.Ctx, renderReq provider.GameRoundRenderRequest) (int, error) {
+	url := fmt.Sprintf("%s/gameround/render?roundId=%s", s.conf.URL, renderReq.GameRoundID)
+	c.Set("Location", url)
+	return fiber.StatusFound, nil
 }

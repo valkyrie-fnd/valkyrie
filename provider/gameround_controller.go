@@ -15,7 +15,7 @@ func NewGameRoundController(s ProviderService) *GameRoundController {
 	return &GameRoundController{s}
 }
 
-// GetGameRoundEndpoint Returns redirect status with provider url for game round rendering
+// GetGameRoundEndpoint Returns status from provider service
 func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	gameRoundID := c.Params("gameRoundId")
 	casinoID := c.Query("casinoId")
@@ -24,11 +24,13 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 		hErr := &rest.HTTPError{}
 		if errors.As(err, hErr) {
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+			if hErr.Message == "" {
+				hErr.Message = "Gameround not available"
+			}
 			return c.Status(hErr.Code).SendString(hErr.Message)
 		}
-		return err
+		return c.Status(res).SendString(err.Error())
 	}
 
-	c.Response().Header.Add("Location", res)
-	return c.SendStatus(fiber.StatusFound)
+	return c.SendStatus(res)
 }

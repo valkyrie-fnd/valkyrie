@@ -265,7 +265,9 @@ func Test_Requesting_Gameround_Render_Page(t *testing.T) {
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, _ := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
-	assert.Equal(t, "successUrl", res)
+	assert.Equal(t, 302, res)
+	locHeader := ctx.Response().Header.Peek("Location")
+	assert.Equal(t, "successUrl", string(locHeader))
 }
 
 func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
@@ -276,7 +278,7 @@ func Test_Requesting_Gameround_Render_Page_error_missing_url(t *testing.T) {
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
-	assert.Equal(t, "", res)
+	assert.Equal(t, 400, res)
 	assert.EqualError(t, err, "HTTP 400: 0: ")
 }
 
@@ -288,7 +290,7 @@ func Test_Requesting_Gameround_Render_Page_error_from_response(t *testing.T) {
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
-	assert.Equal(t, "", res)
+	assert.Equal(t, 400, res)
 	assert.EqualError(t, err, "HTTP 400: 100: Bad Stuff")
 }
 
@@ -300,6 +302,6 @@ func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
-	assert.Equal(t, "", res)
+	assert.Equal(t, 500, res)
 	assert.EqualError(t, err, "Some network error")
 }

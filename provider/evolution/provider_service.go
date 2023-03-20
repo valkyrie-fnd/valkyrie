@@ -2,6 +2,7 @@ package evolution
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -63,8 +64,27 @@ func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchReque
 	return gameURL, nil
 }
 
-func (service EvoService) GetGameRoundRender(*fiber.Ctx, provider.GameRoundRenderRequest) (string, error) {
-	return "", fmt.Errorf("Not available")
+func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRoundRenderRequest) (int, error) {
+	renderURL := fmt.Sprintf("%s/api/render/v1/details", service.Conf.URL)
+	encodedAuth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", service.Auth.CasinoKey, service.Auth.CasinoToken)))
+	r := &rest.HTTPRequest{
+		URL:   renderURL,
+		Query: map[string]string{"gameId": req.GameRoundID},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Basic %s", encodedAuth),
+		},
+	}
+	var resp []byte
+	err := service.Client.Get(ctx.UserContext(), r, &resp)
+	ctx.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	if err != nil {
+		return fiber.StatusBadRequest, err
+	}
+	_, err = ctx.Response().BodyWriter().Write(resp)
+	if err != nil {
+		return fiber.StatusInternalServerError, err
+	}
+	return fiber.StatusOK, nil
 }
 
 func (service EvoService) makeAuthCall(ctx context.Context, request UserAuthenticationRequest) (*UserAuthenticationResponse, error) {

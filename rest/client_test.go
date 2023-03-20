@@ -212,6 +212,7 @@ func Test_read_json_validation(t *testing.T) {
 			var res testStruct
 			parse := readJSON(&res)
 			resp := fasthttp.Response{}
+			resp.Header.SetContentLength(len(test.data))
 			resp.SetBodyRaw(test.data)
 			err := parse(&resp)
 			if test.want == nil {
