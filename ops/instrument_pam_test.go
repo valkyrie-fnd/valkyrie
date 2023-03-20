@@ -99,12 +99,12 @@ func Test_getRequestName(t *testing.T) {
 		{
 			name:    "GetBalanceRequest",
 			payload: pam.GetBalanceRequest{},
-			want:    "vplugin.PluginPAM/GetBalance",
+			want:    "GetBalance",
 		},
 		{
 			name:    "GetBalanceRequest pointer",
 			payload: &pam.GetBalanceRequest{},
-			want:    "vplugin.PluginPAM/GetBalance",
+			want:    "GetBalance",
 		},
 	}
 	for _, test := range tests {

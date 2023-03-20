@@ -3,7 +3,6 @@ package ops
 import (
 	"context"
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -103,7 +102,7 @@ func PAMTracingHandler(tracerName string, attributes ...attribute.KeyValue) pipe
 	}
 }
 
-// getRequestName, return "vplugin.PluginPAM/GetBalance" from "GetBalanceRequest"
+// getRequestName, return "GetBalance" from "GetBalanceRequest"
 func getRequestName(req any) string {
 	var name string
 
@@ -114,9 +113,9 @@ func getRequestName(req any) string {
 		name = t.Name()
 	}
 
-	name, _ = strings.CutSuffix(name, "Request")
+	name, _ = strings.CutSuffix(name, "Request") // 2:nd return value can safely be ignored, it just indicates if suffix was found or not
 
-	return fmt.Sprintf("%s/%s", RPCService, name)
+	return name
 }
 
 var ErrorUnknownRequest = errors.New("unknown request type")
