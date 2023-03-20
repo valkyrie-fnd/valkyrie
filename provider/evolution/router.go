@@ -90,7 +90,7 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 	}, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
+func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClient) (*provider.Router, error) {
 	auth, err := GetAuthConf(config)
 	if err != nil {
 		return nil, err

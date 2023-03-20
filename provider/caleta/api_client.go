@@ -20,14 +20,14 @@ type API interface {
 }
 
 type apiClient struct {
-	rest         rest.HTTPClientJSONInterface
+	rest         rest.HTTPClient
 	headerSigner headerSigner
 	authConfig   AuthConf
 	url          string
 	operatorID   string
 }
 
-func NewAPIClient(client rest.HTTPClientJSONInterface, config configs.ProviderConf) (*apiClient, error) {
+func NewAPIClient(client rest.HTTPClient, config configs.ProviderConf) (*apiClient, error) {
 	authConfig, err := getAuthConf(config)
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (apiClient *apiClient) requestGameLaunch(ctx context.Context, body GameUrlB
 	}
 
 	resp := InlineResponse200{}
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &rest.JSONParser, req, &resp)
 
 	return &resp, err
 }
@@ -133,7 +133,7 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID,
 	}
 
 	resp := gameRoundRenderResponse{}
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &rest.JSONParser, req, &resp)
 	return &resp, err
 }
 
@@ -155,6 +155,6 @@ func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundI
 		return nil, rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &rest.JSONParser, req, &resp)
 	return &resp, err
 }

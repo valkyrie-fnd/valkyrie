@@ -12,12 +12,12 @@ import (
 // ProviderArgs composes all arguments required to build a provider router
 type ProviderArgs struct {
 	PamClient  pam.PamClient
-	HTTPClient rest.HTTPClientJSONInterface
+	HTTPClient rest.HTTPClient
 	Config     configs.ProviderConf
 }
 
 type OperatorArgs struct {
-	HTTPClient rest.HTTPClientJSONInterface
+	HTTPClient rest.HTTPClient
 	Config     configs.ProviderConf
 }
 

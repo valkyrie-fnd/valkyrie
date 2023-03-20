@@ -13,7 +13,7 @@ import (
 // ClientArgs composes all arguments required to build a pam client
 type ClientArgs struct {
 	Context     context.Context
-	Client      rest.HTTPClientJSONInterface
+	Client      rest.HTTPClient
 	Config      configs.PamConf
 	TraceConfig configs.TraceConfig
 	LogConfig   configs.LogConfig

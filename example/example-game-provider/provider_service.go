@@ -13,10 +13,10 @@ import (
 // Connect to the provider specifics for how to launch a game or communicate with other provider apis
 type exampleProviderService struct {
 	conf       *configs.ProviderConf
-	httpClient rest.HTTPClientJSONInterface
+	httpClient rest.HTTPClient
 }
 
-func NewExampleProviderService(c configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) *exampleProviderService {
+func NewExampleProviderService(c configs.ProviderConf, httpClient rest.HTTPClient) *exampleProviderService {
 	return &exampleProviderService{conf: &c, httpClient: httpClient}
 }
 

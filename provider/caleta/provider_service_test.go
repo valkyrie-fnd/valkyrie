@@ -42,7 +42,7 @@ var (
 )
 
 type mockAPIClient struct {
-	rest.HTTPClientJSONInterface
+	rest.HTTPClient
 	getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 	requestGameLaunchFn    func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error)
 	getGameRoundRenderFn   func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error)

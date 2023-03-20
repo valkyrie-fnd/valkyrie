@@ -78,7 +78,7 @@ func getProviderMiddlewares(auth AuthConf) ([]fiber.Handler, error) {
 	return middlewares, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
+func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClient) (*provider.Router, error) {
 	apiClient, err := NewAPIClient(httpClient, config)
 	if err != nil {
 		return nil, err

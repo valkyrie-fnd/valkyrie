@@ -160,7 +160,7 @@ func TestTimeout(t *testing.T) {
 			resp := &result{}
 
 			// make a request towards /timeout/:sleep handler and check for timeout
-			err = client.GetJSON(context.TODO(), req, resp)
+			err = client.Get(context.TODO(), &rest.JSONParser, req, resp)
 			if !tt.wantErr(t, err) {
 				assert.Equal(t, 1, resp.Status)
 			}

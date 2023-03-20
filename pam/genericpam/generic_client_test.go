@@ -14,23 +14,20 @@ import (
 )
 
 type mockClient struct {
-	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error
 	GetJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	PutJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 }
 
-func (m mockClient) GetJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockClient) Get(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.GetJSONFunc(ctx, req, resp)
 }
-func (m mockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
-	return m.GetFunc(ctx, req, resp)
-}
-func (m mockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+
+func (m mockClient) Post(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m mockClient) PutJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockClient) Put(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.PutJSONFunc(ctx, req, resp)
 }
 
@@ -62,7 +59,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -211,7 +208,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -383,7 +380,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -577,7 +574,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -754,7 +751,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -906,7 +903,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    rest.HTTPClient
 	}
 	tests := []struct {
 		name    string

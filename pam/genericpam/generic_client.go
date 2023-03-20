@@ -34,12 +34,12 @@ type genericPamConfig struct {
 }
 
 type GenericPam struct {
-	rest    rest.HTTPClientJSONInterface
+	rest    rest.HTTPClient
 	baseURL string
 	apiKey  string
 }
 
-func Create(cfg configs.PamConf, client rest.HTTPClientJSONInterface) (*GenericPam, error) {
+func Create(cfg configs.PamConf, client rest.HTTPClient) (*GenericPam, error) {
 	config, err := pam.GetConfig[genericPamConfig](cfg)
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.PutJSON(pc.Context(), req, &resp)
+			return c.rest.Put(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.GetJSON(pc.Context(), req, &resp)
+			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
 		return nil, err
@@ -141,7 +141,7 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.GetJSON(pc.Context(), req, &resp)
+			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
 		return nil, err
@@ -171,7 +171,7 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 
 	err = Pipeline.Execute(ctx, r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.PostJSON(pc.Context(), req, &resp)
+			return c.rest.Post(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
 		if resp.TransactionResult != nil {
@@ -201,7 +201,7 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.GetJSON(pc.Context(), req, &resp)
+			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
 		return nil, err
@@ -226,7 +226,7 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.GetJSON(pc.Context(), req, &resp)
+			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err

@@ -21,6 +21,7 @@ import (
 var (
 	headerContentTypeJSON = []byte("application/json")
 	headerContentTypeXML  = []byte("application/xml")
+	headerContentTypeText = []byte("text/plain")
 	validate              = validator.New()
 
 	// Pipeline is used to allow for custom Handler functions (such as access logging or tracing)
@@ -73,11 +74,24 @@ func Create(config configs.HTTPClientConfig) *Client {
 	}
 }
 
+type Parser interface {
+	Read(target any) responseParseFn
+	Write(content any) requestContentFn
+}
+
 type responseParseFn func(*fasthttp.Response) error
 type requestContentFn func(*fasthttp.Request) error
 
+type jsonParser struct{}
+type xmlParser struct{}
+type plainParser struct{}
+
+var PlainParser = plainParser{}
+var JSONParser = jsonParser{}
+var XMLParser = xmlParser{}
+
 // Convenience method for reading response JSON
-func readJSON(target interface{}) responseParseFn {
+func (p *jsonParser) Read(target interface{}) responseParseFn {
 	return func(r *fasthttp.Response) error {
 		if r.Header.ContentLength() <= 0 {
 			return nil
@@ -94,7 +108,7 @@ func readJSON(target interface{}) responseParseFn {
 	}
 }
 
-func writeJSON(content interface{}) requestContentFn {
+func (p *jsonParser) Write(content interface{}) requestContentFn {
 	return func(r *fasthttp.Request) error {
 		if len(r.Header.ContentType()) == 0 {
 			r.Header.SetContentTypeBytes(headerContentTypeJSON)
@@ -111,7 +125,7 @@ func writeJSON(content interface{}) requestContentFn {
 }
 
 // Convenience method for reading response XML
-func readXML(target interface{}) responseParseFn {
+func (p *xmlParser) Read(target interface{}) responseParseFn {
 	return func(r *fasthttp.Response) error {
 		if r.Header.ContentLength() <= 0 {
 			return nil
@@ -128,7 +142,7 @@ func readXML(target interface{}) responseParseFn {
 	}
 }
 
-func writeXML(content interface{}) requestContentFn {
+func (p *xmlParser) Write(content interface{}) requestContentFn {
 	return func(r *fasthttp.Request) error {
 		if len(r.Header.ContentType()) == 0 {
 			r.Header.SetContentTypeBytes(headerContentTypeXML)
@@ -144,6 +158,23 @@ func writeXML(content interface{}) requestContentFn {
 	}
 }
 
+func (p *plainParser) Read(target any) responseParseFn {
+	return func(r *fasthttp.Response) error {
+		*target.(*[]byte) = r.Body()
+		return nil
+	}
+}
+
+func (p *plainParser) Write(content any) requestContentFn {
+	return func(r *fasthttp.Request) error {
+		if len(r.Header.ContentType()) == 0 {
+			r.Header.SetContentTypeBytes(headerContentTypeText)
+		}
+		r.SetBodyRaw(content.([]byte))
+		return nil
+	}
+}
+
 // HTTPRequest represents a http request
 type HTTPRequest struct {
 	Body    any
@@ -152,58 +183,76 @@ type HTTPRequest struct {
 	URL     string
 }
 
+type HTTPClient interface {
+	Get(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
+	Post(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
+	Put(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
+}
+
 // HTTPClientJSONInterface interface for client with JSON responses
-type HTTPClientJSONInterface interface {
-	GetJSON(ctx context.Context, req *HTTPRequest, resp any) error
-	Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error
-	PostJSON(ctx context.Context, req *HTTPRequest, resp any) error
-	PutJSON(ctx context.Context, req *HTTPRequest, resp any) error
+// type HTTPClientJSONInterface interface {
+// 	GetJSON(ctx context.Context, req *HTTPRequest, resp any) error
+// 	Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error
+// 	PostJSON(ctx context.Context, req *HTTPRequest, resp any) error
+// 	PutJSON(ctx context.Context, req *HTTPRequest, resp any) error
+// }
+
+// // HTTPClientXMLInterface interface for client with XML responses
+// type HTTPClientXMLInterface interface {
+// 	GetXML(ctx context.Context, req *HTTPRequest, resp any) error
+// 	PutXML(ctx context.Context, req *HTTPRequest, resp any) error
+// 	PostXML(ctx context.Context, req *HTTPRequest, resp any) error
+// }
+
+func (c *Client) Get(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
+	return c.get(ctx, req.URL, p.Read(resp), req.Headers, req.Query)
 }
 
-// HTTPClientXMLInterface interface for client with XML responses
-type HTTPClientXMLInterface interface {
-	GetXML(ctx context.Context, req *HTTPRequest, resp any) error
-	PutXML(ctx context.Context, req *HTTPRequest, resp any) error
-	PostXML(ctx context.Context, req *HTTPRequest, resp any) error
+func (c *Client) Post(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
+	return c.post(ctx, req.URL, p.Write(req.Body), p.Read(resp), req.Headers, req.Query)
 }
 
-// GetJson Issue GET request with expected json response
-func (c *Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
-	return c.get(ctx, req.URL, readJSON(resp), req.Headers, req.Query)
+func (c *Client) Put(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
+	return c.put(ctx, req.URL, p.Write(req.Body), p.Read(resp), req.Headers, req.Query)
 }
 
-// Get Issue GET request with expected response body set to resp
-func (c *Client) Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error {
-	return c.get(ctx, req.URL, func(r *fasthttp.Response) error {
-		*resp = r.Body()
-		return nil
-	}, req.Headers, req.Query)
-}
+// // GetJson Issue GET request with expected json response
+// func (c *Client) GetJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+// 	return c.get(ctx, req.URL, readJSON(resp), req.Headers, req.Query)
+// }
 
-// GetXML Issue GET request with expected XML response
-func (c *Client) GetXML(ctx context.Context, req *HTTPRequest, resp any) error {
-	return c.get(ctx, req.URL, readXML(resp), req.Headers, req.Query)
-}
+// // Get Issue GET request with expected response body set to resp
+// func (c *Client) Get(ctx context.Context, req *HTTPRequest, resp *[]byte) error {
+// 	return c.get(ctx, req.URL, func(r *fasthttp.Response) error {
+// 		*resp = r.Body()
+// 		return nil
+// 	}, req.Headers, req.Query)
+// }
 
-// PostJson Issue POST request with expected json response
-func (c *Client) PostJSON(ctx context.Context, req *HTTPRequest, resp any) error {
-	return c.post(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
-}
+// // GetXML Issue GET request with expected XML response
+// func (c *Client) GetXML(ctx context.Context, req *HTTPRequest, resp any) error {
+// 	return c.get(ctx, req.URL, readXML(resp), req.Headers, req.Query)
+// }
 
-// PutJson Issue PUT request with expected json response
-func (c *Client) PutJSON(ctx context.Context, req *HTTPRequest, resp any) error {
-	return c.put(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
-}
+// // PostJson Issue POST request with expected json response
+// func (c *Client) PostJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+// 	return c.post(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
+// }
 
-// PostXML Issue POST request with expected XML response
-func (c *Client) PostXML(ctx context.Context, req HTTPRequest, resp any) error {
-	return c.post(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
-}
+// // PutJson Issue PUT request with expected json response
+// func (c *Client) PutJSON(ctx context.Context, req *HTTPRequest, resp any) error {
+// 	return c.put(ctx, req.URL, writeJSON(req.Body), readJSON(resp), req.Headers, req.Query)
+// }
 
-// PutXML Issue PUT request with expected XML response
-func (c *Client) PutXML(ctx context.Context, req *HTTPRequest, resp any) error {
-	return c.put(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
-}
+// // PostXML Issue POST request with expected XML response
+// func (c *Client) PostXML(ctx context.Context, req HTTPRequest, resp any) error {
+// 	return c.post(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
+// }
+
+// // PutXML Issue PUT request with expected XML response
+// func (c *Client) PutXML(ctx context.Context, req *HTTPRequest, resp any) error {
+// 	return c.put(ctx, req.URL, writeXML(req.Body), readXML(resp), req.Headers, req.Query)
+// }
 
 func (c *Client) post(
 	ctx context.Context,

@@ -18,7 +18,7 @@ import (
 )
 
 type EvoService struct {
-	Client rest.HTTPClientJSONInterface
+	Client rest.HTTPClient
 	Conf   *configs.ProviderConf
 	Auth   AuthConf
 }
@@ -75,7 +75,7 @@ func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRo
 		},
 	}
 	var resp []byte
-	err := service.Client.Get(ctx.UserContext(), r, &resp)
+	err := service.Client.Get(ctx.UserContext(), &rest.PlainParser, r, &resp)
 	ctx.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	if err != nil {
 		return fiber.StatusBadRequest, err
@@ -95,7 +95,7 @@ func (service EvoService) makeAuthCall(ctx context.Context, request UserAuthenti
 		Body: &request,
 	}
 
-	err := service.Client.PostJSON(ctx, req, resp)
+	err := service.Client.Post(ctx, &rest.JSONParser, req, resp)
 	if nil != err {
 		return nil, fmt.Errorf("failed calling evo auth: %w", err)
 	}

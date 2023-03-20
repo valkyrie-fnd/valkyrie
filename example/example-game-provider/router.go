@@ -53,7 +53,7 @@ func NewProviderRouter(config configs.ProviderConf, service *WalletService) (*pr
 
 // NewOperatorRouter sets up all endpoints that can be used by the operator to make requests toward the provider.
 // The router should follow the oapi definition found in /provider/docs/operator_api.yml
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) *provider.Router {
+func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClient) *provider.Router {
 	// Provide an implementation of provider.ProviderService
 	providerService := NewExampleProviderService(config, httpClient)
 

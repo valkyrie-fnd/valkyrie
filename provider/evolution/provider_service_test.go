@@ -17,23 +17,23 @@ import (
 )
 
 type MockClient struct {
-	rest.HTTPClientJSONInterface
+	rest.HTTPClient
 	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error
 }
 
-func (m MockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m MockClient) Post(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m MockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
-	return m.GetFunc(ctx, req, resp)
+func (m MockClient) Get(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
+	return m.GetFunc(ctx, req, resp.(*[]byte))
 }
 
 type fields struct {
 	Auth   AuthConf
 	C      *configs.ProviderConf
-	Client rest.HTTPClientJSONInterface
+	Client rest.HTTPClient
 }
 
 func TestGameLaunchService_GameLaunch(t *testing.T) {

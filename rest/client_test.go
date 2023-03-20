@@ -81,7 +81,7 @@ func Test_get_httpCodes(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "what/ever",
 			}
-			err := c.GetJSON(context.Background(), req, &resp)
+			err := c.Get(context.Background(), &JSONParser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -128,7 +128,7 @@ func Test_post(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "dont/care",
 			}
-			err := c.PostJSON(context.Background(), req, &resp)
+			err := c.Post(context.Background(), &JSONParser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -175,7 +175,7 @@ func Test_put(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "dont/care",
 			}
-			err := c.PutJSON(context.Background(), req, &resp)
+			err := c.Put(context.Background(), &JSONParser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -210,7 +210,7 @@ func Test_read_json_validation(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(tt *testing.T) {
 			var res testStruct
-			parse := readJSON(&res)
+			parse := JSONParser.Read(&res)
 			resp := fasthttp.Response{}
 			resp.Header.SetContentLength(len(test.data))
 			resp.SetBodyRaw(test.data)
@@ -292,7 +292,7 @@ func Benchmark_readJson_parse(b *testing.B) {
 							"validation": "hello"
 						}`)
 	var res testStruct
-	parse := readJSON(&res)
+	parse := JSONParser.Read(&res)
 	resp := fasthttp.Response{}
 	for i := 0; i < b.N; i++ {
 		resp.SetBodyRaw(rawJSON)
@@ -310,7 +310,7 @@ func Benchmark_readXml_parse(b *testing.B) {
 						<validation>hello</validation>
 					  </x>`)
 	var res testStruct
-	parse := readXML(&res)
+	parse := XMLParser.Read(&res)
 	resp := fasthttp.Response{}
 	for i := 0; i < b.N; i++ {
 		resp.SetBodyRaw(rawXML)

@@ -25,15 +25,15 @@ var (
 )
 
 type mockRestClient struct {
-	rest.HTTPClientJSONInterface
+	rest.HTTPClient
 	JSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
 }
 
-func (m mockRestClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockRestClient) Post(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
-func (m mockRestClient) GetJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockRestClient) Get(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
