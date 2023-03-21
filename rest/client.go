@@ -74,6 +74,7 @@ func Create(config configs.HTTPClientConfig) *Client {
 	}
 }
 
+// Parser used to parse response and write to request body
 type Parser interface {
 	Read(target any) responseParseFn
 	Write(content any) requestContentFn
@@ -86,8 +87,13 @@ type jsonParser struct{}
 type xmlParser struct{}
 type plainParser struct{}
 
+// PlainParser just read and writes []byte
 var PlainParser = plainParser{}
+
+// JSONParser JSON marshal request and unmarshal response
 var JSONParser = jsonParser{}
+
+// XMLParser XML marshal request and unmarshal response
 var XMLParser = xmlParser{}
 
 // Convenience method for reading response JSON
@@ -108,6 +114,7 @@ func (p *jsonParser) Read(target interface{}) responseParseFn {
 	}
 }
 
+// Write json marshaling the content to the request body
 func (p *jsonParser) Write(content interface{}) requestContentFn {
 	return func(r *fasthttp.Request) error {
 		if len(r.Header.ContentType()) == 0 {
@@ -142,6 +149,7 @@ func (p *xmlParser) Read(target interface{}) responseParseFn {
 	}
 }
 
+// Write xml marshaling the content to the request body
 func (p *xmlParser) Write(content interface{}) requestContentFn {
 	return func(r *fasthttp.Request) error {
 		if len(r.Header.ContentType()) == 0 {
@@ -158,19 +166,29 @@ func (p *xmlParser) Write(content interface{}) requestContentFn {
 	}
 }
 
+// Read will read response body target *[]byte.
 func (p *plainParser) Read(target any) responseParseFn {
 	return func(r *fasthttp.Response) error {
-		*target.(*[]byte) = r.Body()
+		t, ok := target.(*[]byte)
+		if !ok {
+			return fmt.Errorf("Invalid type of target, should be *[]byte")
+		}
+		*t = r.Body()
 		return nil
 	}
 }
 
+// Write will write content []byte into request body
 func (p *plainParser) Write(content any) requestContentFn {
 	return func(r *fasthttp.Request) error {
+		c, ok := content.([]byte)
+		if !ok {
+			return fmt.Errorf("Invalid type of content, should be []byte")
+		}
 		if len(r.Header.ContentType()) == 0 {
 			r.Header.SetContentTypeBytes(headerContentTypeText)
 		}
-		r.SetBodyRaw(content.([]byte))
+		r.SetBodyRaw(c)
 		return nil
 	}
 }
@@ -183,20 +201,24 @@ type HTTPRequest struct {
 	URL     string
 }
 
+// HTTPClient interface for client where user can provide Parser for request and response
 type HTTPClient interface {
 	Get(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
 	Post(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
 	Put(ctx context.Context, p Parser, req *HTTPRequest, resp any) error
 }
 
+// Get Issue Get request  with expected response body set to resp
 func (c *Client) Get(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
 	return c.get(ctx, req.URL, p.Read(resp), req.Headers, req.Query)
 }
 
+// Post issue Post request with expected response body set to resp
 func (c *Client) Post(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
 	return c.post(ctx, req.URL, p.Write(req.Body), p.Read(resp), req.Headers, req.Query)
 }
 
+// Put issue Put request  with expected response body set to resp
 func (c *Client) Put(ctx context.Context, p Parser, req *HTTPRequest, resp any) error {
 	return c.put(ctx, req.URL, p.Write(req.Body), p.Read(resp), req.Headers, req.Query)
 }

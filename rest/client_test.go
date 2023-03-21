@@ -238,7 +238,7 @@ func Test_read_json_validation(t *testing.T) {
 	}
 }
 
-func Test_Plain_parser(t *testing.T) {
+func Test_Plain_parser_read(t *testing.T) {
 	data := []byte("returned data")
 	var res []byte
 	parse := PlainParser.Read(&res)
@@ -247,6 +247,31 @@ func Test_Plain_parser(t *testing.T) {
 	resp.SetBodyRaw(data)
 	_ = parse(&resp)
 	assert.Equal(t, "returned data", string(res))
+}
+
+func Test_Plain_parser_read_error(t *testing.T) {
+	data := []byte("returned data")
+	var res struct{}
+	parse := PlainParser.Read(&res)
+	resp := fasthttp.Response{}
+	resp.Header.SetContentLength(len(data))
+	resp.SetBodyRaw(data)
+	err := parse(&resp)
+	assert.EqualError(t, err, "Invalid type of target, should be *[]byte")
+}
+
+func Test_Plain_parser_write(t *testing.T) {
+	parse := PlainParser.Write([]byte("sending data"))
+	req := fasthttp.Request{}
+	_ = parse(&req)
+	assert.Equal(t, "sending data", string(req.Body()))
+}
+
+func Test_Plain_parser_write_error(t *testing.T) {
+	parse := PlainParser.Write("sending data")
+	req := fasthttp.Request{}
+	err := parse(&req)
+	assert.EqualError(t, err, "Invalid type of content, should be []byte")
 }
 
 func Test_retry(t *testing.T) {
