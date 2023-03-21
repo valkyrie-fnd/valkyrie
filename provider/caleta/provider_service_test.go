@@ -11,7 +11,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 	"github.com/valyala/fasthttp"
 )
 
@@ -42,7 +42,7 @@ var (
 )
 
 type mockAPIClient struct {
-	rest.HTTPClientJSONInterface
+	valkhttp.HTTPClient
 	getRoundTransactionsFn func(ctx context.Context, gameRoundID string) (*transactionResponse, error)
 	requestGameLaunchFn    func(ctx context.Context, body GameUrlBody) (*InlineResponse200, error)
 	getGameRoundRenderFn   func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error)

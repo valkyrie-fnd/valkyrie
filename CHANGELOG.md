@@ -13,7 +13,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 ### Changed
-
+- renamed rest package -> valkhttp
+  - Single HttpClient interface where caller decides how to parse response and write to request body
 ### Removed
 
 ## [0.7.0] - 2023-03-01

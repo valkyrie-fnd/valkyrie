@@ -7,7 +7,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 const (
@@ -78,7 +78,7 @@ func getProviderMiddlewares(auth AuthConf) ([]fiber.Handler, error) {
 	return middlewares, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClientJSONInterface) (*provider.Router, error) {
+func NewOperatorRouter(config configs.ProviderConf, httpClient valkhttp.HTTPClient) (*provider.Router, error) {
 	apiClient, err := NewAPIClient(httpClient, config)
 	if err != nil {
 		return nil, err

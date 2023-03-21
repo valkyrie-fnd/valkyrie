@@ -8,29 +8,26 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 
 	"github.com/stretchr/testify/assert"
 )
 
 type mockClient struct {
-	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error
-	GetJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
-	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
-	PutJSONFunc  func(ctx context.Context, req *rest.HTTPRequest, resp any) error
+	GetJSONFunc  func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
+	PostJSONFunc func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
+	PutJSONFunc  func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
 }
 
-func (m mockClient) GetJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.GetJSONFunc(ctx, req, resp)
 }
-func (m mockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
-	return m.GetFunc(ctx, req, resp)
-}
-func (m mockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+
+func (m mockClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m mockClient) PutJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m mockClient) Put(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PutJSONFunc(ctx, req, resp)
 }
 
@@ -62,7 +59,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -76,7 +73,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PutJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PutJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/session", req.URL)
 
 					assert.Equal(t, expectedRequest.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -100,7 +97,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PutJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PutJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -130,7 +127,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PutJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PutJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -151,7 +148,7 @@ func TestGenericPam_RefreshSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PutJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PutJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(pam.SessionResponse{}))
@@ -211,7 +208,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -225,7 +222,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/foo/balance", req.URL)
 
 					assert.Equal(t, expectedRequest.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -249,7 +246,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -279,7 +276,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -300,7 +297,7 @@ func TestGenericPam_GetBalance(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(pam.BalanceResponse{}))
@@ -383,7 +380,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -397,7 +394,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/1/transactions", req.URL)
 
 					assert.Equal(t, expectedRequestBetRef.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -422,7 +419,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/1/transactions", req.URL)
 
 					assert.Equal(t, expectedRequestTransactionID.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -447,7 +444,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedEmptyResponse))
@@ -467,7 +464,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -497,7 +494,7 @@ func TestGenericPam_GetTransactions(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -577,7 +574,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -591,7 +588,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/1/transactions", req.URL)
 
 					assert.Equal(t, expectedRequest.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -617,7 +614,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -647,7 +644,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -668,7 +665,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(pam.AddTransactionResponse{}))
@@ -688,7 +685,7 @@ func TestGenericPam_AddTransaction(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorBalanceResponse))
@@ -754,7 +751,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -768,7 +765,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/1/gamerounds/"+expectedResponse.Gameround.ProviderRoundId, req.URL)
 
 					assert.Equal(t, expectedRequest.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -792,7 +789,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -822,7 +819,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -843,7 +840,7 @@ func TestGenericPam_GetGameRound(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(pam.GameRoundResponse{}))
@@ -906,7 +903,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 	type fields struct {
 		baseURL string
 		apiKey  string
-		rest    rest.HTTPClientJSONInterface
+		rest    valkhttp.HTTPClient
 	}
 	tests := []struct {
 		name    string
@@ -920,7 +917,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "base/players/session", req.URL)
 
 					assert.Equal(t, expectedRequest.Params.XPlayerToken, req.Headers["X-Player-Token"])
@@ -944,7 +941,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -974,7 +971,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(expectedErrorResponse))
@@ -995,7 +992,7 @@ func TestGenericPam_GetSession(t *testing.T) {
 			fields: fields{
 				"base",
 				"key",
-				mockClient{GetJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				mockClient{GetJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					reflect.ValueOf(resp).
 						Elem().
 						Set(reflect.ValueOf(pam.SessionResponse{}))

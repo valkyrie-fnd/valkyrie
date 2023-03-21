@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 func Test_getCErrorStatus(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_getCErrorStatus(t *testing.T) {
 		},
 		{
 			"http timeout error",
-			rest.TimeoutError,
+			valkhttp.TimeoutError,
 			RSERRORTIMEOUT,
 		},
 	}

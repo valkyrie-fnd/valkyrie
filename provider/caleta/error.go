@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 func getCErrorStatus(err error) Status {
@@ -15,7 +15,7 @@ func getCErrorStatus(err error) Status {
 		}
 	}
 
-	if errors.Is(err, rest.TimeoutError) {
+	if errors.Is(err, valkhttp.TimeoutError) {
 		return RSERRORTIMEOUT
 	}
 

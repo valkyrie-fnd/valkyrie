@@ -6,7 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type GameLaunchController struct {
@@ -45,7 +45,7 @@ func (ctrl GameLaunchController) GameLaunchEndpoint(ctx *fiber.Ctx) error {
 
 	url, err := ctrl.ps.GameLaunch(ctx, g, h)
 	if err != nil {
-		hErr := &rest.HTTPError{}
+		hErr := &valkhttp.HTTPError{}
 		if errors.As(err, hErr) {
 			return ctx.Status(hErr.Code).SendString(hErr.Error())
 		}

@@ -10,7 +10,7 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider/caleta/auth"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type API interface {
@@ -20,14 +20,14 @@ type API interface {
 }
 
 type apiClient struct {
-	rest         rest.HTTPClientJSONInterface
+	rest         valkhttp.HTTPClient
 	headerSigner headerSigner
 	authConfig   AuthConf
 	url          string
 	operatorID   string
 }
 
-func NewAPIClient(client rest.HTTPClientJSONInterface, config configs.ProviderConf) (*apiClient, error) {
+func NewAPIClient(client valkhttp.HTTPClient, config configs.ProviderConf) (*apiClient, error) {
 	authConfig, err := getAuthConf(config)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (_ *noopHeaderSigner) sign(_ any, _ map[string]string) error {
 }
 
 func (apiClient *apiClient) requestGameLaunch(ctx context.Context, body GameUrlBody) (*InlineResponse200, error) {
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     fmt.Sprintf("%s%s", apiClient.url, "/api/game/url"),
 		Headers: map[string]string{},
 		Body:    body,
@@ -103,11 +103,11 @@ func (apiClient *apiClient) requestGameLaunch(ctx context.Context, body GameUrlB
 	err := apiClient.headerSigner.sign(body, req.Headers)
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("Failed to sign request")
-		return nil, rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
+		return nil, valkhttp.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
 	resp := InlineResponse200{}
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &valkhttp.JSONParser, req, &resp)
 
 	return &resp, err
 }
@@ -121,7 +121,7 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID,
 	if casinoID != "" {
 		body.SubPartnerId = casinoID
 	}
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     fmt.Sprintf("%s%s", apiClient.url, "/api/game/round"),
 		Headers: map[string]string{},
 		Body:    body,
@@ -129,16 +129,16 @@ func (apiClient *apiClient) getGameRoundRender(ctx context.Context, gameRoundID,
 	err := apiClient.headerSigner.sign(body, req.Headers)
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("Failed to sign request")
-		return nil, rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
+		return nil, valkhttp.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
 	resp := gameRoundRenderResponse{}
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &valkhttp.JSONParser, req, &resp)
 	return &resp, err
 }
 
 func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundID string) (*transactionResponse, error) {
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		Body: transactionRequestBody{
 			RoundID:    gameRoundID,
 			OperatorID: apiClient.operatorID,
@@ -152,9 +152,9 @@ func (apiClient *apiClient) getRoundTransactions(ctx context.Context, gameRoundI
 	err := apiClient.headerSigner.sign(req.Body, req.Headers)
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("Failed to sign request")
-		return nil, rest.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
+		return nil, valkhttp.NewHTTPError(fiber.StatusInternalServerError, "Failed to sign request")
 	}
 
-	err = apiClient.rest.PostJSON(ctx, req, &resp)
+	err = apiClient.rest.Post(ctx, &valkhttp.JSONParser, req, &resp)
 	return &resp, err
 }

@@ -7,13 +7,13 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 // ClientArgs composes all arguments required to build a pam client
 type ClientArgs struct {
 	Context     context.Context
-	Client      rest.HTTPClientJSONInterface
+	Client      valkhttp.HTTPClient
 	Config      configs.PamConf
 	TraceConfig configs.TraceConfig
 	LogConfig   configs.LogConfig

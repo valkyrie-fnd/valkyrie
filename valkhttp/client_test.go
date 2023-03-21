@@ -1,4 +1,4 @@
-package rest
+package valkhttp
 
 import (
 	"context"
@@ -48,6 +48,7 @@ func createStub(body []byte, statusCode int, err error) *Client {
 
 func Test_get_httpCodes(t *testing.T) {
 	testCases := []struct {
+		parser       Parser
 		desc         string
 		responseBody string
 		statusCode   int
@@ -55,18 +56,21 @@ func Test_get_httpCodes(t *testing.T) {
 		wantErr      error
 	}{
 		{
+			parser:       &JSONParser,
 			desc:         "Http 401 to error",
 			responseBody: "pelle",
 			statusCode:   401,
 			wantErr:      NewHTTPError(401, "pelle"),
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Http 200 no error",
 			responseBody: "{}",
 			statusCode:   200,
 			wantErr:      nil,
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Http timeout",
 			responseBody: "{}",
 			statusCode:   0,
@@ -81,7 +85,7 @@ func Test_get_httpCodes(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "what/ever",
 			}
-			err := c.GetJSON(context.Background(), req, &resp)
+			err := c.Get(context.Background(), tC.parser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -89,6 +93,7 @@ func Test_get_httpCodes(t *testing.T) {
 
 func Test_post(t *testing.T) {
 	testCases := []struct {
+		parser       Parser
 		desc         string
 		responseBody string
 		statusCode   int
@@ -96,24 +101,28 @@ func Test_post(t *testing.T) {
 		wantErr      error
 	}{
 		{
+			parser:       &JSONParser,
 			desc:         "Post 200 with body",
 			responseBody: "{}",
 			statusCode:   200,
 			wantErr:      nil,
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Post 201 no content",
 			responseBody: "",
 			statusCode:   201,
 			wantErr:      nil,
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Post getting 500",
 			responseBody: "total chaos",
 			statusCode:   500,
 			wantErr:      NewHTTPError(500, "total chaos"),
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Http timeout",
 			responseBody: "{}",
 			statusCode:   0,
@@ -128,7 +137,7 @@ func Test_post(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "dont/care",
 			}
-			err := c.PostJSON(context.Background(), req, &resp)
+			err := c.Post(context.Background(), tC.parser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -136,6 +145,7 @@ func Test_post(t *testing.T) {
 
 func Test_put(t *testing.T) {
 	testCases := []struct {
+		parser       Parser
 		desc         string
 		responseBody string
 		statusCode   int
@@ -143,24 +153,28 @@ func Test_put(t *testing.T) {
 		wantErr      error
 	}{
 		{
+			parser:       &JSONParser,
 			desc:         "Put 200 with body",
 			responseBody: "{}",
 			statusCode:   200,
 			wantErr:      nil,
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Put 201 no content",
 			responseBody: "",
 			statusCode:   201,
 			wantErr:      nil,
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Put getting 500",
 			responseBody: "total chaos",
 			statusCode:   500,
 			wantErr:      NewHTTPError(500, "total chaos"),
 		},
 		{
+			parser:       &JSONParser,
 			desc:         "Http timeout",
 			responseBody: "{}",
 			statusCode:   0,
@@ -175,7 +189,7 @@ func Test_put(t *testing.T) {
 			req := &HTTPRequest{
 				URL: "dont/care",
 			}
-			err := c.PutJSON(context.Background(), req, &resp)
+			err := c.Put(context.Background(), tC.parser, req, &resp)
 			assert.Equal(t, tC.wantErr, err)
 		})
 	}
@@ -210,7 +224,7 @@ func Test_read_json_validation(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(tt *testing.T) {
 			var res testStruct
-			parse := readJSON(&res)
+			parse := JSONParser.Read(&res)
 			resp := fasthttp.Response{}
 			resp.Header.SetContentLength(len(test.data))
 			resp.SetBodyRaw(test.data)
@@ -222,6 +236,42 @@ func Test_read_json_validation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_Plain_parser_read(t *testing.T) {
+	data := []byte("returned data")
+	var res []byte
+	parse := PlainParser.Read(&res)
+	resp := fasthttp.Response{}
+	resp.Header.SetContentLength(len(data))
+	resp.SetBodyRaw(data)
+	_ = parse(&resp)
+	assert.Equal(t, "returned data", string(res))
+}
+
+func Test_Plain_parser_read_error(t *testing.T) {
+	data := []byte("returned data")
+	var res struct{}
+	parse := PlainParser.Read(&res)
+	resp := fasthttp.Response{}
+	resp.Header.SetContentLength(len(data))
+	resp.SetBodyRaw(data)
+	err := parse(&resp)
+	assert.EqualError(t, err, "Invalid type of target, should be *[]byte")
+}
+
+func Test_Plain_parser_write(t *testing.T) {
+	parse := PlainParser.Write([]byte("sending data"))
+	req := fasthttp.Request{}
+	_ = parse(&req)
+	assert.Equal(t, "sending data", string(req.Body()))
+}
+
+func Test_Plain_parser_write_error(t *testing.T) {
+	parse := PlainParser.Write("sending data")
+	req := fasthttp.Request{}
+	err := parse(&req)
+	assert.EqualError(t, err, "Invalid type of content, should be []byte")
 }
 
 func Test_retry(t *testing.T) {
@@ -292,7 +342,7 @@ func Benchmark_readJson_parse(b *testing.B) {
 							"validation": "hello"
 						}`)
 	var res testStruct
-	parse := readJSON(&res)
+	parse := JSONParser.Read(&res)
 	resp := fasthttp.Response{}
 	for i := 0; i < b.N; i++ {
 		resp.SetBodyRaw(rawJSON)
@@ -310,7 +360,7 @@ func Benchmark_readXml_parse(b *testing.B) {
 						<validation>hello</validation>
 					  </x>`)
 	var res testStruct
-	parse := readXML(&res)
+	parse := XMLParser.Read(&res)
 	resp := fasthttp.Response{}
 	for i := 0; i < b.N; i++ {
 		resp.SetBodyRaw(rawXML)

@@ -9,7 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type gameRenderWant struct {
@@ -43,7 +43,7 @@ var gameRenderTests = []gameRenderTestData{
 	{
 		id: "abc123",
 		gameRoundRender: func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
-			return 400, rest.HTTPError{Message: "Wrong Id Maybe", Code: 400}
+			return 400, valkhttp.HTTPError{Message: "Wrong Id Maybe", Code: 400}
 		},
 		want: gameRenderWant{
 			status:         400,

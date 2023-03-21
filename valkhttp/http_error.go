@@ -1,4 +1,4 @@
-package rest
+package valkhttp
 
 import (
 	"errors"

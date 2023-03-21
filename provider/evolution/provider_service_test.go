@@ -13,27 +13,27 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type MockClient struct {
-	rest.HTTPClientJSONInterface
-	PostJSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
-	GetFunc      func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error
+	valkhttp.HTTPClient
+	PostJSONFunc func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
+	GetFunc      func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error
 }
 
-func (m MockClient) PostJSON(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+func (m MockClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m MockClient) Get(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
-	return m.GetFunc(ctx, req, resp)
+func (m MockClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+	return m.GetFunc(ctx, req, resp.(*[]byte))
 }
 
 type fields struct {
 	Auth   AuthConf
 	C      *configs.ProviderConf
-	Client rest.HTTPClientJSONInterface
+	Client valkhttp.HTTPClient
 }
 
 func TestGameLaunchService_GameLaunch(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 					URL:  "evo-url",
 				},
 				Auth: AuthConf{CasinoToken: "casino-token", CasinoKey: "casino-key"},
-				Client: MockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				Client: MockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					assert.Equal(t, "evo-url/ua/v1/casino-key/casino-token", req.URL)
 					reflect.ValueOf(resp).
 						Elem().
@@ -101,7 +101,7 @@ func TestGameLaunchService_GameLaunch(t *testing.T) {
 					Name: "Evolution",
 					URL:  "evo-url",
 				},
-				Client: MockClient{PostJSONFunc: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+				Client: MockClient{PostJSONFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 					return assert.AnError
 				}},
 			},
@@ -169,7 +169,7 @@ func TestGameRoundRender(t *testing.T) {
 				Auth: ac,
 				C:    conf,
 				Client: MockClient{
-					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
 						*resp = []byte("ResponseBody")
 						return nil
 					},
@@ -186,7 +186,7 @@ func TestGameRoundRender(t *testing.T) {
 				Auth: ac,
 				C:    conf,
 				Client: MockClient{
-					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
 						assert.Equal(t, "123", req.Query["gameId"])
 						return nil
 					},
@@ -203,7 +203,7 @@ func TestGameRoundRender(t *testing.T) {
 				Auth: ac,
 				C:    conf,
 				Client: MockClient{
-					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
 						encoded := base64.StdEncoding.EncodeToString(([]byte("casinoKey:casinoToken")))
 						assert.Equal(t, fmt.Sprintf("Basic %s", encoded), req.Headers["Authorization"])
 						return nil
@@ -221,7 +221,7 @@ func TestGameRoundRender(t *testing.T) {
 				Auth: ac,
 				C:    conf,
 				Client: MockClient{
-					GetFunc: func(ctx context.Context, req *rest.HTTPRequest, resp *[]byte) error {
+					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
 						return fmt.Errorf("Failed request")
 					},
 				},

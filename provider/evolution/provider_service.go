@@ -14,11 +14,11 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type EvoService struct {
-	Client rest.HTTPClientJSONInterface
+	Client valkhttp.HTTPClient
 	Conf   *configs.ProviderConf
 	Auth   AuthConf
 }
@@ -67,7 +67,7 @@ func (service EvoService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchReque
 func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRoundRenderRequest) (int, error) {
 	renderURL := fmt.Sprintf("%s/api/render/v1/details", service.Conf.URL)
 	encodedAuth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", service.Auth.CasinoKey, service.Auth.CasinoToken)))
-	r := &rest.HTTPRequest{
+	r := &valkhttp.HTTPRequest{
 		URL:   renderURL,
 		Query: map[string]string{"gameId": req.GameRoundID},
 		Headers: map[string]string{
@@ -75,7 +75,7 @@ func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRo
 		},
 	}
 	var resp []byte
-	err := service.Client.Get(ctx.UserContext(), r, &resp)
+	err := service.Client.Get(ctx.UserContext(), &valkhttp.PlainParser, r, &resp)
 	ctx.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 	if err != nil {
 		return fiber.StatusBadRequest, err
@@ -90,12 +90,12 @@ func (service EvoService) GetGameRoundRender(ctx *fiber.Ctx, req provider.GameRo
 func (service EvoService) makeAuthCall(ctx context.Context, request UserAuthenticationRequest) (*UserAuthenticationResponse, error) {
 	authURL := fmt.Sprintf("%s/ua/v1/%s/%s", service.Conf.URL, service.Auth.CasinoKey, service.Auth.CasinoToken)
 	resp := &UserAuthenticationResponse{}
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:  authURL,
 		Body: &request,
 	}
 
-	err := service.Client.PostJSON(ctx, req, resp)
+	err := service.Client.Post(ctx, &valkhttp.JSONParser, req, resp)
 	if nil != err {
 		return nil, fmt.Errorf("failed calling evo auth: %w", err)
 	}

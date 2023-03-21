@@ -6,7 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -21,7 +21,7 @@ import (
 )
 
 // ProviderRoutes Init the provider routes
-func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient, httpClient rest.HTTPClientJSONInterface) error {
+func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamClient, httpClient valkhttp.HTTPClient) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", pingHandler)
 
@@ -50,7 +50,7 @@ func ProviderRoutes(a *fiber.App, config *configs.ValkyrieConfig, pam pam.PamCli
 }
 
 // OperatorRoutes Init the operator side routes
-func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, httpClient rest.HTTPClientJSONInterface) error {
+func OperatorRoutes(a *fiber.App, config *configs.ValkyrieConfig, httpClient valkhttp.HTTPClient) error {
 	// ping endpoint is public and used by load balancers for health checking
 	a.Get("/ping", pingHandler)
 
