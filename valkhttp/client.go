@@ -1,5 +1,5 @@
-// Package rest provides convenience and sensible defaults for some low level http client
-package rest
+// Package valkhttp provides convenience and sensible defaults for some low level http client
+package valkhttp
 
 import (
 	"context"

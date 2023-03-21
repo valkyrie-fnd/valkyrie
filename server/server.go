@@ -9,7 +9,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/internal/routine"
 	"github.com/valkyrie-fnd/valkyrie/pam/genericpam"
 	"github.com/valkyrie-fnd/valkyrie/pam/vplugin"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
@@ -55,7 +55,7 @@ func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) (*Valkyrie, e
 	}
 
 	// Http client
-	httpClient := rest.Create(cfg.HTTPClient)
+	httpClient := valkhttp.Create(cfg.HTTPClient)
 
 	// PAM client.
 	pamClient, err := pam.GetPamClient(pam.ClientArgs{
@@ -111,7 +111,7 @@ func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) error {
 	ops.LoggingMiddleware(v.provider, v.operator)
 
 	// Instrument other components to capture telemetry data
-	ops.InstrumentHTTPClient(rest.Pipeline)
+	ops.InstrumentHTTPClient(valkhttp.Pipeline)
 	ops.InstrumentGenericPAMClient(genericpam.Pipeline)
 	ops.InstrumentVPluginPAMClient(vplugin.Pipeline)
 

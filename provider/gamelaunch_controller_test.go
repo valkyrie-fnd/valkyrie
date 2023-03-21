@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type GameLaunchWant struct {
@@ -92,7 +92,7 @@ var gameLaunchTests = []GameLaunchTestData{
 		contentType: "application/json",
 		conf:        configs.ProviderConf{},
 		gameLaunchFn: func(gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error) {
-			return "", rest.NewHTTPError(401, "Unauthorized")
+			return "", valkhttp.NewHTTPError(401, "Unauthorized")
 		},
 		want: GameLaunchWant{
 			resBody:     "",

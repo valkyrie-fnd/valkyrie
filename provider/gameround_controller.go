@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type GameRoundController struct {
@@ -21,7 +21,7 @@ func (ctrl *GameRoundController) GetGameRoundEndpoint(c *fiber.Ctx) error {
 	casinoID := c.Query("casinoId")
 	res, err := ctrl.ps.GetGameRoundRender(c, GameRoundRenderRequest{gameRoundID, casinoID})
 	if err != nil {
-		hErr := &rest.HTTPError{}
+		hErr := &valkhttp.HTTPError{}
 		if errors.As(err, hErr) {
 			c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 			if hErr.Message == "" {

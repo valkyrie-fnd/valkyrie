@@ -11,7 +11,7 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 var (
@@ -25,15 +25,15 @@ var (
 )
 
 type mockRestClient struct {
-	rest.HTTPClient
-	JSONFunc func(ctx context.Context, req *rest.HTTPRequest, resp any) error
+	valkhttp.HTTPClient
+	JSONFunc func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
 }
 
-func (m mockRestClient) Post(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
+func (m mockRestClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
-func (m mockRestClient) Get(ctx context.Context, p rest.Parser, req *rest.HTTPRequest, resp any) error {
+func (m mockRestClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
@@ -72,7 +72,7 @@ func Test_requestGameLaunch(t *testing.T) {
 	type tests struct {
 		name   string
 		body   GameUrlBody
-		jsonFn func(_ context.Context, req *rest.HTTPRequest, resp any) error
+		jsonFn func(_ context.Context, req *valkhttp.HTTPRequest, resp any) error
 		config configs.ProviderConf
 		want   any
 		e      error
@@ -81,7 +81,7 @@ func Test_requestGameLaunch(t *testing.T) {
 	var gameLaunchTests = []tests{
 		{
 			name: "successful game launch",
-			jsonFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(_ context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				assert.Equal(t, "http://caleta-test/api/game/url", req.URL)
 				assert.NotEmpty(t, req.Headers["X-Auth-Signature"])
 				assert.NotNil(t, req.Body)
@@ -98,7 +98,7 @@ func Test_requestGameLaunch(t *testing.T) {
 		},
 		{
 			name: "successful game launch without signing_key",
-			jsonFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(_ context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				assert.Empty(t, req.Headers["X-Auth-Signature"])
 
 				reflect.ValueOf(resp).
@@ -121,7 +121,7 @@ func Test_requestGameLaunch(t *testing.T) {
 		},
 		{
 			name: "error post request",
-			jsonFn: func(_ context.Context, _ *rest.HTTPRequest, _ any) error {
+			jsonFn: func(_ context.Context, _ *valkhttp.HTTPRequest, _ any) error {
 				return errors.New("post error")
 			},
 			config: providerConfiguration,
@@ -130,7 +130,7 @@ func Test_requestGameLaunch(t *testing.T) {
 		},
 		{
 			name: "no error but url missing from response",
-			jsonFn: func(_ context.Context, _ *rest.HTTPRequest, resp any) error {
+			jsonFn: func(_ context.Context, _ *valkhttp.HTTPRequest, resp any) error {
 				reflect.ValueOf(resp).
 					Elem().
 					Set(reflect.ValueOf(InlineResponse200{}))
@@ -161,7 +161,7 @@ func Test_getGameRoundRender(t *testing.T) {
 	type tests struct {
 		name        string
 		gameRoundID string
-		jsonFn      func(_ context.Context, req *rest.HTTPRequest, resp any) error
+		jsonFn      func(_ context.Context, req *valkhttp.HTTPRequest, resp any) error
 		config      configs.ProviderConf
 		want        any
 		e           error
@@ -171,7 +171,7 @@ func Test_getGameRoundRender(t *testing.T) {
 		{
 			name:        "get game render page",
 			gameRoundID: "909",
-			jsonFn: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				r := resp.(*gameRoundRenderResponse)
 				url := "successUrl"
 				r.Url = &url
@@ -184,7 +184,7 @@ func Test_getGameRoundRender(t *testing.T) {
 		{
 			name:        "get game render page missing url",
 			gameRoundID: "909",
-			jsonFn: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				return nil
 			},
 			config: providerConfiguration,
@@ -194,7 +194,7 @@ func Test_getGameRoundRender(t *testing.T) {
 		{
 			name:        "get game render page error from response",
 			gameRoundID: "909",
-			jsonFn: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				r := resp.(*gameRoundRenderResponse)
 				r.Code = 100
 				r.Message = "Bad Stuff"
@@ -207,7 +207,7 @@ func Test_getGameRoundRender(t *testing.T) {
 		{
 			name:        "get game render page http error",
 			gameRoundID: "909",
-			jsonFn: func(ctx context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				return fmt.Errorf("some error")
 			},
 			config: providerConfiguration,
@@ -234,7 +234,7 @@ func Test_roundTransactions(t *testing.T) {
 	type tests struct {
 		name        string
 		gameRoundID string
-		jsonFn      func(ctx context.Context, req *rest.HTTPRequest, resp any) error
+		jsonFn      func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
 		want        *transactionResponse
 		e           error
 	}
@@ -249,7 +249,7 @@ func Test_roundTransactions(t *testing.T) {
 					{
 						RoundID: 909,
 					}}},
-			jsonFn: func(_ context.Context, req *rest.HTTPRequest, resp any) error {
+			jsonFn: func(_ context.Context, req *valkhttp.HTTPRequest, resp any) error {
 				assert.Equal(t, "http://caleta-test/api/transactions/round", req.URL)
 				assert.NotEmpty(t, req.Headers["X-Auth-Signature"])
 				assert.Empty(t, req.Query)

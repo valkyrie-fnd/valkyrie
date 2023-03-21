@@ -12,7 +12,7 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 func TestTimeout(t *testing.T) {
@@ -151,16 +151,16 @@ func TestTimeout(t *testing.T) {
 			})
 
 			valkyrie.Start()
-			client := rest.Create(valkyrieConfig.HTTPClient)
+			client := valkhttp.Create(valkyrieConfig.HTTPClient)
 
-			req := &rest.HTTPRequest{
+			req := &valkhttp.HTTPRequest{
 				Headers: map[string]string{"Accept": "application/json"},
 				URL:     fmt.Sprintf("http://localhost:%d/timeout/%d", providerPort, tt.args.sleepTimeout.Milliseconds()),
 			}
 			resp := &result{}
 
 			// make a request towards /timeout/:sleep handler and check for timeout
-			err = client.Get(context.TODO(), &rest.JSONParser, req, resp)
+			err = client.Get(context.TODO(), &valkhttp.JSONParser, req, resp)
 			if !tt.wantErr(t, err) {
 				assert.Equal(t, 1, resp.Status)
 			}

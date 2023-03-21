@@ -8,7 +8,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 const (
@@ -90,7 +90,7 @@ func NewProviderRouter(config configs.ProviderConf, controller Controller) (*pro
 	}, nil
 }
 
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClient) (*provider.Router, error) {
+func NewOperatorRouter(config configs.ProviderConf, httpClient valkhttp.HTTPClient) (*provider.Router, error) {
 	auth, err := GetAuthConf(config)
 	if err != nil {
 		return nil, err

@@ -6,17 +6,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 // exampleProviderService implements provider.ProviderService
 // Connect to the provider specifics for how to launch a game or communicate with other provider apis
 type exampleProviderService struct {
 	conf       *configs.ProviderConf
-	httpClient rest.HTTPClient
+	httpClient valkhttp.HTTPClient
 }
 
-func NewExampleProviderService(c configs.ProviderConf, httpClient rest.HTTPClient) *exampleProviderService {
+func NewExampleProviderService(c configs.ProviderConf, httpClient valkhttp.HTTPClient) *exampleProviderService {
 	return &exampleProviderService{conf: &c, httpClient: httpClient}
 }
 

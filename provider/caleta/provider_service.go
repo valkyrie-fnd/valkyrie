@@ -8,7 +8,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 type caletaService struct {
@@ -39,7 +39,7 @@ func (service *caletaService) GetGameRoundRender(ctx *fiber.Ctx, gameRoundRender
 		return fiber.StatusInternalServerError, err
 	}
 	if resp.Url == nil {
-		return fiber.StatusBadRequest, rest.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
+		return fiber.StatusBadRequest, valkhttp.NewHTTPError(fiber.StatusBadRequest, fmt.Sprintf("%d: %s", resp.Code, resp.Message))
 	}
 
 	ctx.Response().Header.Add("Location", *resp.Url)

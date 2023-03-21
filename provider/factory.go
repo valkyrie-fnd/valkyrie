@@ -6,18 +6,18 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal"
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 // ProviderArgs composes all arguments required to build a provider router
 type ProviderArgs struct {
 	PamClient  pam.PamClient
-	HTTPClient rest.HTTPClient
+	HTTPClient valkhttp.HTTPClient
 	Config     configs.ProviderConf
 }
 
 type OperatorArgs struct {
-	HTTPClient rest.HTTPClient
+	HTTPClient valkhttp.HTTPClient
 	Config     configs.ProviderConf
 }
 

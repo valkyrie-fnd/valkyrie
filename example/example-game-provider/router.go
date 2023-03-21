@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 const ProviderName = "Example Game Provider"
@@ -53,7 +53,7 @@ func NewProviderRouter(config configs.ProviderConf, service *WalletService) (*pr
 
 // NewOperatorRouter sets up all endpoints that can be used by the operator to make requests toward the provider.
 // The router should follow the oapi definition found in /provider/docs/operator_api.yml
-func NewOperatorRouter(config configs.ProviderConf, httpClient rest.HTTPClient) *provider.Router {
+func NewOperatorRouter(config configs.ProviderConf, httpClient valkhttp.HTTPClient) *provider.Router {
 	// Provide an implementation of provider.ProviderService
 	providerService := NewExampleProviderService(config, httpClient)
 

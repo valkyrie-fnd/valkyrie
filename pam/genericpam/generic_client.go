@@ -9,7 +9,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
 	"github.com/valkyrie-fnd/valkyrie/pam"
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
 const (
@@ -34,12 +34,12 @@ type genericPamConfig struct {
 }
 
 type GenericPam struct {
-	rest    rest.HTTPClient
+	rest    valkhttp.HTTPClient
 	baseURL string
 	apiKey  string
 }
 
-func Create(cfg configs.PamConf, client rest.HTTPClient) (*GenericPam, error) {
+func Create(cfg configs.PamConf, client valkhttp.HTTPClient) (*GenericPam, error) {
 	config, err := pam.GetConfig[genericPamConfig](cfg)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 	url := fmt.Sprintf("%s/players/session", c.baseURL)
 	var resp pam.SessionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
@@ -82,7 +82,7 @@ func (c *GenericPam) RefreshSession(rm pam.RefreshSessionRequestMapper) (*pam.Se
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Put(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Put(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 	url := fmt.Sprintf("%s/players/%s/balance", c.baseURL, r.PlayerID)
 	resp := pam.BalanceResponse{}
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
@@ -108,7 +108,7 @@ func (c *GenericPam) GetBalance(rm pam.GetBalanceRequestMapper) (*pam.Balance, e
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Get(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Balance); err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 	if r.Params.ProviderBetRef != nil {
 		query["providerBetRef"] = *r.Params.ProviderBetRef
 	}
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   query,
@@ -141,7 +141,7 @@ func (c *GenericPam) GetTransactions(rm pam.GetTransactionsRequestMapper) ([]pam
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Get(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Transactions); err != nil {
 		return nil, err
@@ -162,7 +162,7 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 	url := fmt.Sprintf("%s/players/%s/transactions", c.baseURL, r.PlayerID)
 	var resp pam.AddTransactionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
@@ -171,7 +171,7 @@ func (c *GenericPam) AddTransaction(rm pam.AddTransactionRequestMapper) (*pam.Tr
 
 	err = Pipeline.Execute(ctx, r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Post(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Post(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.TransactionResult); err != nil {
 		if resp.TransactionResult != nil {
@@ -193,7 +193,7 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 	url := fmt.Sprintf("%s/players/%s/gamerounds/%s", c.baseURL, r.PlayerID, r.ProviderRoundID)
 	var resp pam.GameRoundResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
@@ -201,7 +201,7 @@ func (c *GenericPam) GetGameRound(rm pam.GetGameRoundRequestMapper) (*pam.GameRo
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Get(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Gameround); err != nil {
 		return nil, err
@@ -218,7 +218,7 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 	url := fmt.Sprintf("%s/players/session", c.baseURL)
 	var resp pam.SessionResponse
 	headers := getHeaders(c.apiKey, r.Params.XPlayerToken, r.Params.XCorrelationID)
-	req := &rest.HTTPRequest{
+	req := &valkhttp.HTTPRequest{
 		URL:     url,
 		Headers: headers,
 		Query:   map[string]string{"provider": r.Params.Provider},
@@ -226,7 +226,7 @@ func (c *GenericPam) GetSession(rm pam.GetSessionRequestMapper) (*pam.Session, e
 
 	err = Pipeline.Execute(ctx, &r,
 		func(pc pipeline.PipelineContext[any]) error {
-			return c.rest.Get(pc.Context(), &rest.JSONParser, req, &resp)
+			return c.rest.Get(pc.Context(), &valkhttp.JSONParser, req, &resp)
 		})
 	if err = handleErrors(resp.Error, err, resp.Session); err != nil {
 		return nil, err
@@ -246,7 +246,7 @@ func handleErrors[T any](pamError *pam.PamError, httpErr error, entity *T) error
 		return pam.ToValkyrieError(pamError)
 	}
 	if httpErr != nil {
-		if errors.Is(httpErr, rest.TimeoutError) {
+		if errors.Is(httpErr, valkhttp.TimeoutError) {
 			return pam.ErrorWrapper("http client timeout", pam.ValkErrTimeout, httpErr)
 		}
 		return pam.ErrorWrapper("http client error", pam.ValkErrUndefined, httpErr)

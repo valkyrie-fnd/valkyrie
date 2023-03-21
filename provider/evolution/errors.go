@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/valkyrie-fnd/valkyrie/rest"
+	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
@@ -69,7 +69,7 @@ func toProviderError(err error, uuid string, balance, bonus Amount) ProviderErro
 		}
 	}
 
-	httpErr := &rest.HTTPError{}
+	httpErr := &valkhttp.HTTPError{}
 	if errors.As(err, httpErr) {
 		if st, found := httpErrCodes[httpErr.Code]; found {
 			status = st
