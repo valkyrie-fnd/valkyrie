@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
@@ -25,7 +26,8 @@ func NewExampleProviderService(c configs.ProviderConf, httpClient valkhttp.HTTPC
 func (s *exampleProviderService) GameLaunch(c *fiber.Ctx, r *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
 	// Could return a "static" url based on config and the request.
 	// Or it could be an endpoint where the game provider returns a url for the operator
-	return fmt.Sprintf("%s/gamelaunch?gameId=%s&playerId=%s", s.conf.URL, r.ProviderGameID, r.PlayerID), nil
+	return fmt.Sprintf("%sgameId=%s&playerId=%s&currency=%s&token=%s",
+		s.conf.URL, r.ProviderGameID, r.PlayerID, r.Currency, h.SessionKey), nil
 }
 
 // GetGameRoundRender implements provider.ProviderService

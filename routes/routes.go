@@ -15,6 +15,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/provider"
 
 	// init providers
+	_ "github.com/valkyrie-fnd/valkyrie/example/example-game-provider"
 	_ "github.com/valkyrie-fnd/valkyrie/provider/caleta"
 	_ "github.com/valkyrie-fnd/valkyrie/provider/evolution"
 	_ "github.com/valkyrie-fnd/valkyrie/provider/redtiger"
