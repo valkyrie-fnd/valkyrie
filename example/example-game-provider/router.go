@@ -2,12 +2,13 @@ package example
 
 import (
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
-const ProviderName = "Example Game Provider"
+const ProviderName = "example" // Example game provider
 
 // init will register the provider and operator endpoints.
 // If this provider is part of valkyrie config they will be exposed by Valkyrie
@@ -37,8 +38,27 @@ func NewProviderRouter(config configs.ProviderConf, service *WalletService) (*pr
 			Path:   "/balance",
 			Method: "POST",
 			// The endpoint function
-			HandlerFunc: controller.WalletBalanceEndpoint,
+			HandlerFunc: controller.Balance,
 			// any middlewares to be used only for this endpoint
+			Middlewares: []fiber.Handler{},
+		},
+		{
+			Path:        "/auth",
+			Method:      "POST",
+			HandlerFunc: controller.Auth,
+			Middlewares: []fiber.Handler{},
+		},
+		{
+			Path:        "/bet",
+			Method:      "POST",
+			HandlerFunc: controller.Bet,
+			Middlewares: []fiber.Handler{},
+		},
+		{
+			Path:   "/win",
+			Method: "POST",
+			// The endpoint function
+			HandlerFunc: controller.Win,
 			Middlewares: []fiber.Handler{},
 		},
 	}

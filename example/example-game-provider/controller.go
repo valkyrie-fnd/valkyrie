@@ -16,7 +16,7 @@ func NewController(walletService *WalletService) *Controller {
 }
 
 type requestType interface {
-	balanceRequest // | BetRequest etc. Add all request types the provider supports
+	balanceRequest | authRequest | betRequest | winRequest // Add all request types the provider supports
 }
 
 // execController generic function parsing and handling all request parsing and validation that is the same for all wallet requests.
@@ -33,16 +33,53 @@ func execController[T requestType](c *fiber.Ctx, svcFunc func(req T) (any, error
 	resp, err := svcFunc(req)
 	// If error, return it
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err)
+		return c.Status(fiber.StatusBadRequest).JSON(errorResponse{Err: err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(resp)
 }
 
-func (c *Controller) WalletBalanceEndpoint(ctx *fiber.Ctx) error {
+func (c *Controller) Balance(ctx *fiber.Ctx) error {
 	return execController(ctx, func(r balanceRequest) (any, error) {
 		// walletService handles the mapping toward the Valkyrie pam api, pam.PamClient.
-		balance := c.walletService.GetBalance(r)
+		balance, err := c.walletService.GetBalance(ctx.UserContext(), r)
+		if err != nil {
+			return nil, err
+		}
+
 		// return what provider wallet api needs
-		return balance, nil
+		return balanceResponse{Balance: balance.CashAmount}, nil
+	})
+}
+
+func (c *Controller) Auth(ctx *fiber.Ctx) error {
+	return execController(ctx, func(r authRequest) (any, error) {
+		session, err := c.walletService.Auth(ctx.UserContext(), r)
+		if err != nil {
+			return nil, err
+		}
+
+		return authResponse{Token: session.Token}, nil
+	})
+}
+
+func (c *Controller) Bet(ctx *fiber.Ctx) error {
+	return execController(ctx, func(r betRequest) (any, error) {
+		balance, err := c.walletService.Bet(ctx.UserContext(), r)
+		if err != nil {
+			return nil, err
+		}
+
+		return betResponse{Balance: balance.CashAmount}, nil
+	})
+}
+
+func (c *Controller) Win(ctx *fiber.Ctx) error {
+	return execController(ctx, func(r winRequest) (any, error) {
+		balance, err := c.walletService.Win(ctx.UserContext(), r)
+		if err != nil {
+			return nil, err
+		}
+
+		return winResponse{Balance: balance.CashAmount}, nil
 	})
 }
