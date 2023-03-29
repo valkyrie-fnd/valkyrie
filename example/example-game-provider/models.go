@@ -57,3 +57,15 @@ type winRequest struct {
 type winResponse struct {
 	Balance pam.Amount `json:"balance" validate:"required"`
 }
+
+type launchRequest struct {
+	Token    string `json:"token" validate:"required"`
+	Currency string `json:"currency" validate:"required"`
+	GameID   string `json:"gameId" validate:"required"`
+	PlayerID string `json:"playerId" validate:"required"`
+}
+
+type launchResponse struct {
+	Token   string `json:"token"`
+	GameURL string `json:"gameUrl"`
+}

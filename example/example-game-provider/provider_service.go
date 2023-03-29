@@ -26,8 +26,22 @@ func NewExampleProviderService(c configs.ProviderConf, httpClient valkhttp.HTTPC
 func (s *exampleProviderService) GameLaunch(c *fiber.Ctx, r *provider.GameLaunchRequest, h *provider.GameLaunchHeaders) (string, error) {
 	// Could return a "static" url based on config and the request.
 	// Or it could be an endpoint where the game provider returns a url for the operator
-	return fmt.Sprintf("%sgameId=%s&playerId=%s&currency=%s&token=%s",
-		s.conf.URL, r.ProviderGameID, r.PlayerID, r.Currency, h.SessionKey), nil
+	body := &launchRequest{
+		Token:    h.SessionKey,
+		Currency: r.Currency,
+		GameID:   r.ProviderGameID,
+		PlayerID: r.PlayerID,
+	}
+	req := &valkhttp.HTTPRequest{
+		URL:  fmt.Sprintf("%s/launch", s.conf.URL),
+		Body: body,
+	}
+	resp := &launchResponse{}
+	err := s.httpClient.Post(c.UserContext(), &valkhttp.JSONParser, req, resp)
+	if err != nil {
+		return "", fmt.Errorf("Error calling example gamelaunch: %w", err)
+	}
+	return resp.GameURL, nil
 }
 
 // GetGameRoundRender implements provider.ProviderService
