@@ -1,5 +1,5 @@
 # Valkyrie Game Aggregator
-[![](https://img.shields.io/badge/License-MIT%20-brightgreen.svg)](./LICENSE.md) 
+[![](https://img.shields.io/badge/License-MIT%20-brightgreen.svg)](./LICENSE.md)
 [![](https://img.shields.io/github/actions/workflow/status/valkyrie-fnd/valkyrie/gh-workflow.yml)](https://github.com/valkyrie-fnd/valkyrie/actions/workflows/gh-workflow.yml)
 ![](https://img.shields.io/github/last-commit/valkyrie-fnd/valkyrie)
 [![](https://img.shields.io/website?url=https%3A%2F%2Fvalkyrie.bet)](https://valkyrie.bet/docs)
@@ -9,6 +9,8 @@
 [![](https://img.shields.io/docker/image-size/valkyriefnd/valkyrie)](https://hub.docker.com/r/valkyriefnd/valkyrie)
 [![](https://img.shields.io/github/v/release/valkyrie-fnd/valkyrie)](https://github.com/valkyrie-fnd/valkyrie/releases)
 ![](https://img.shields.io/maintenance/yes/2023)
+![](https://img.shields.io/discord/1105398334023282688?label=Discord&style=flat-square)
+
 ## An open source game aggregator written in Go.
 For general information about Valkyrie, please check [this](https://valkyrie.bet/about) out!
 
@@ -179,4 +181,4 @@ Read [contribution guidelines here](./CONTRIBUTING.md)
 
 ## Contact
 
-If you have questions regarding an integration you can either post a question [on GitHub](https://github.com/valkyrie-fnd/valkyrie/discussions) or contact us on: help (at) valkyrie.bet
+If you have questions regarding an integration you can either post a question on [GitHub](https://github.com/valkyrie-fnd/valkyrie/discussions) or contact us on [Discord](https://discord.gg/AdHGJS3wHX).
