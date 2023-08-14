@@ -2,11 +2,10 @@ package ops
 
 import (
 	"context"
+	"go.opentelemetry.io/otel"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.opentelemetry.io/otel/metric/global"
-
 	"github.com/valkyrie-fnd/valkyrie/configs"
 )
 
@@ -22,7 +21,7 @@ func Test_ConfigureMetric(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	testMeters := global.MeterProvider().Meter("testMeters")
+	testMeters := otel.GetMeterProvider().Meter("testMeters")
 
 	testCounter, err := testMeters.Int64Counter("testCounter")
 	assert.NoError(t, err)

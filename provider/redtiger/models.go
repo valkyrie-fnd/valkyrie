@@ -130,8 +130,8 @@ type TransactionPayout struct {
 	Sources     Sources       `json:"sources"`
 	Details     PayoutDetails `json:"details"`
 	ID          string        `json:"id" validate:"max=32"`
-	Payout      Money         `json:"payout" validate:"min=0"`
-	PayoutPromo Money         `json:"payoutPromo" validate:"min=0"`
+	Payout      Money         `json:"payout"`
+	PayoutPromo Money         `json:"payoutPromo"`
 }
 
 type PayoutDetails struct {

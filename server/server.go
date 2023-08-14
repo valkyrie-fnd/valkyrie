@@ -138,13 +138,13 @@ func (v *Valkyrie) Run(ready func()) {
 
 	// wait for listeners to start before returning
 	wg.Add(2)
-	v.operator.Hooks().OnListen(func() error {
+	v.operator.Hooks().OnListen(func(_ fiber.ListenData) error {
 		log.Info().Msgf("Operator server listening on '%v'", v.config.HTTPServer.OperatorAddress)
 		wg.Done()
 		return nil
 	})
 
-	v.provider.Hooks().OnListen(func() error {
+	v.provider.Hooks().OnListen(func(_ fiber.ListenData) error {
 		log.Info().Msgf("Provider server listening on '%v'", v.config.HTTPServer.ProviderAddress)
 		wg.Done()
 		return nil

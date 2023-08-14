@@ -3,15 +3,13 @@ package ops
 import (
 	"context"
 	"errors"
+	"go.opentelemetry.io/otel/metric"
 	"reflect"
 	"strings"
 	"time"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/metric/global"
-	"go.opentelemetry.io/otel/metric/instrument"
-	"go.opentelemetry.io/otel/metric/unit"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.opentelemetry.io/otel/trace"
 
@@ -50,23 +48,23 @@ func PAMMetricHandler(name string, attributes ...attribute.KeyValue) pipeline.Ha
 		return pc.Next()
 	}
 
-	pamClientDuration, err := global.Meter(name).Int64Histogram(metricNamePAMClientDuration,
-		instrument.WithUnit(unit.Milliseconds),
-		instrument.WithDescription("measures the duration for outbound PAM client requests"))
+	pamClientDuration, err := otel.Meter(name).Int64Histogram(metricNamePAMClientDuration,
+		metric.WithUnit(unitMilliseconds),
+		metric.WithDescription("measures the duration for outbound PAM client requests"))
 	if err != nil {
 		return noopHandler
 	}
 
-	pamClientActive, err := global.Meter(name).Int64UpDownCounter(metricNamePAMClientActive,
-		instrument.WithUnit(unit.Dimensionless),
-		instrument.WithDescription("measures the number of concurrent PAM client requests currently in-flight"))
+	pamClientActive, err := otel.Meter(name).Int64UpDownCounter(metricNamePAMClientActive,
+		metric.WithUnit(unitDimensionless),
+		metric.WithDescription("measures the number of concurrent PAM client requests currently in-flight"))
 	if err != nil {
 		return noopHandler
 	}
 
-	pamClientErrors, err := global.Meter(name).Int64Counter(metricNamePAMClientErrors,
-		instrument.WithUnit(unit.Dimensionless),
-		instrument.WithDescription("measures the number of requests with errors from the PAM client"))
+	pamClientErrors, err := otel.Meter(name).Int64Counter(metricNamePAMClientErrors,
+		metric.WithUnit(unitDimensionless),
+		metric.WithDescription("measures the number of requests with errors from the PAM client"))
 	if err != nil {
 		return noopHandler
 	}
@@ -75,16 +73,17 @@ func PAMMetricHandler(name string, attributes ...attribute.KeyValue) pipeline.Ha
 		attrs := make([]attribute.KeyValue, len(attributes))
 		copy(attrs, attributes)
 		attrs = append(attrs, semconv.EventName(getRequestName(pc.Payload())))
+		opts := metric.WithAttributes(attrs...)
 
 		start := time.Now()
-		pamClientActive.Add(pc.Context(), 1, attrs...)
+		pamClientActive.Add(pc.Context(), 1, opts)
 
 		err := pc.Next()
 
-		pamClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), attrs...)
-		pamClientActive.Add(pc.Context(), -1, attrs...)
+		pamClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), opts)
+		pamClientActive.Add(pc.Context(), -1, opts)
 		if err != nil {
-			pamClientErrors.Add(pc.Context(), 1, attrs...)
+			pamClientErrors.Add(pc.Context(), 1, opts)
 		}
 
 		return err

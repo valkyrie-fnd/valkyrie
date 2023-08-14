@@ -79,7 +79,7 @@ type PromoTransaction struct {
 type PromoPayoutRequest struct {
 	RequestBase
 	Currency         string           `json:"currency" validate:"required,len=3"`
-	Game             Game             `json:"game" validate:"required"`
+	Game             Game             `json:"game"`
 	PromoTransaction PromoTransaction `json:"promoTransaction"`
 }
 
