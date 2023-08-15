@@ -2,6 +2,7 @@ package ops
 
 import (
 	"context"
+	"go.opentelemetry.io/otel/metric"
 	"time"
 
 	"github.com/gofiber/fiber/v2/utils"
@@ -10,9 +11,6 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/metric/global"
-	"go.opentelemetry.io/otel/metric/instrument"
-	"go.opentelemetry.io/otel/metric/unit"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 
 	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
@@ -94,23 +92,23 @@ func HTTPMetricHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 		return c.Next()
 	}
 
-	httpClientDuration, err := global.Meter(instrumentationName).Int64Histogram(metricNameHTTPClientDuration,
-		instrument.WithUnit(unit.Milliseconds),
-		instrument.WithDescription("measures the duration for outbound HTTP client requests"))
+	httpClientDuration, err := otel.Meter(instrumentationName).Int64Histogram(metricNameHTTPClientDuration,
+		metric.WithUnit(unitMilliseconds),
+		metric.WithDescription("measures the duration for outbound HTTP client requests"))
 	if err != nil {
 		return noopHandler
 	}
 
-	httpClientActive, err := global.Meter(instrumentationName).Int64UpDownCounter(metricNameHTTPClientActive,
-		instrument.WithUnit(unit.Dimensionless),
-		instrument.WithDescription("measures the number of concurrent HTTP client requests currently in-flight"))
+	httpClientActive, err := otel.Meter(instrumentationName).Int64UpDownCounter(metricNameHTTPClientActive,
+		metric.WithUnit(unitDimensionless),
+		metric.WithDescription("measures the number of concurrent HTTP client requests currently in-flight"))
 	if err != nil {
 		return noopHandler
 	}
 
-	httpClientErrors, err := global.Meter(instrumentationName).Int64Counter(metricNameHTTPClientErrors,
-		instrument.WithUnit(unit.Dimensionless),
-		instrument.WithDescription("measures the number of requests with errors from the HTTP client"))
+	httpClientErrors, err := otel.Meter(instrumentationName).Int64Counter(metricNameHTTPClientErrors,
+		metric.WithUnit(unitDimensionless),
+		metric.WithDescription("measures the number of requests with errors from the HTTP client"))
 	if err != nil {
 		return noopHandler
 	}
@@ -118,17 +116,19 @@ func HTTPMetricHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 	return func(pc pipeline.PipelineContext[T]) error {
 
 		attributes := httpClientReqAttributes(pc.Payload().Request())
+		opts := metric.WithAttributes(attributes...)
 		start := time.Now()
-		httpClientActive.Add(pc.Context(), 1, attributes...)
+		httpClientActive.Add(pc.Context(), 1, opts)
 
 		err := pc.Next()
 
 		attributes = append(attributes, httpClientRespAttributes(pc.Payload().Response())...)
+		opts = metric.WithAttributes(attributes...)
 
-		httpClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), attributes...)
-		httpClientActive.Add(pc.Context(), -1, attributes...)
+		httpClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), opts)
+		httpClientActive.Add(pc.Context(), -1, opts)
 		if err != nil || pc.Payload().Response().StatusCode() >= 500 {
-			httpClientErrors.Add(pc.Context(), 1, attributes...)
+			httpClientErrors.Add(pc.Context(), 1, opts)
 		}
 
 		return err
