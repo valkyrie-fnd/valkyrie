@@ -1,6 +1,6 @@
-FROM --platform=$BUILDPLATFORM golang:1.20-alpine as builder
+FROM --platform=$BUILDPLATFORM golang:1.21-alpine as builder
 ARG VERSION
-RUN adduser -u 1001 -D valkyrie && apk --no-cache add ca-certificates=20220614-r4
+RUN adduser -u 1001 -D valkyrie && apk --no-cache add ca-certificates=20230506-r0
 ENV CGO_ENABLED=0
 WORKDIR /app
 COPY go.mod go.sum ./
