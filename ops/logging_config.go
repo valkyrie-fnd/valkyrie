@@ -73,7 +73,19 @@ func ConfigureLogging(logConfig configs.LogConfig, profiles *Profiles) {
 	// use global logger as default context logger (used when context is missing a logger: "zerolog.Ctx(ctx).Info()")
 	zerolog.DefaultContextLogger = &log.Logger
 
+	// configure HTTP-related logging options
+	configureHTTPLogging(logConfig.HTTP)
+
 	log.Info().Strs("profiles", profiles.List()).Msg("Configured logging")
+}
+
+func configureHTTPLogging(cfg configs.HTTPLogConfig) {
+	if cfg.HeaderWhitelist != nil {
+		SetHeaderWhitelist(*cfg.HeaderWhitelist)
+	}
+	if cfg.ContentTypeWhitelist != nil {
+		SetContentTypeWhitelist(*cfg.ContentTypeWhitelist)
+	}
 }
 
 func getFileWriter(config configs.OutputLogConfig) io.Writer {

@@ -59,11 +59,12 @@ func TestLogHTTPRequest(t *testing.T) {
 
 	logger.Debug().Func(logHTTPRequest(request)).Send()
 
-	assert.Contains(t, captor.String(), "\"userAgent\":\"bar\"")
-	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
-	assert.Contains(t, captor.String(), "\"Content-Type\":\"text/plain\"")
+	str := strings.ToLower(captor.String())
+	assert.Contains(t, str, "\"useragent\":\"bar\"")
+	assert.Contains(t, str, "\"x-correlation-id\":\"foo\"")
+	assert.Contains(t, str, "\"content-type\":\"text/plain\"")
 
-	assert.NotContains(t, captor.String(), "\"X-Forwarded-For\"", "X-Forwarded-For header is never set")
+	assert.NotContains(t, str, "\"x-forwarded-for\"", "X-Forwarded-For header is never set")
 }
 
 func TestHTTPRequestContentLengthNegative(t *testing.T) {
@@ -101,11 +102,12 @@ func TestLogHTTPResponse(t *testing.T) {
 
 	logger.Debug().Func(logHTTPResponse(request, response, nil)).Send()
 
-	assert.Contains(t, captor.String(), "\"response\":\"foo\"")
-	assert.Contains(t, captor.String(), "\"X-Correlation-ID\":\"foo\"")
-	assert.Contains(t, captor.String(), "\"Content-Type\":\"text/plain\"")
+	str := strings.ToLower(captor.String())
+	assert.Contains(t, str, "\"response\":\"foo\"")
+	assert.Contains(t, str, "\"x-correlation-id\":\"foo\"")
+	assert.Contains(t, str, "\"content-type\":\"text/plain\"")
 
-	assert.NotContains(t, captor.String(), "\"X-Forwarded-For\"", "X-Forwarded-For header is never set")
+	assert.NotContains(t, captor.String(), "\"x-forwarded-for\"", "X-Forwarded-For header is never set")
 }
 
 func TestLogHTTPResponseSkipEmptyContentType(t *testing.T) {
@@ -122,7 +124,8 @@ func TestLogHTTPResponseSkipEmptyContentType(t *testing.T) {
 
 	logger.Debug().Func(logHTTPResponse(request, response, nil)).Send()
 
-	assert.NotContains(t, captor.String(), "\"Content-Type\":\"\"")
+	str := strings.ToLower(captor.String())
+	assert.NotContains(t, str, "\"content-type\":\"\"")
 }
 
 func Test_isContentTypeJson(t *testing.T) {

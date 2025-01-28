@@ -13,6 +13,20 @@ logging:
     #                                 # timestamp encoded in their filename
     # max_backups: 3                  # the maximum number of old log files to retain
     # compress: false                 # determines if the rotated log files should be compressed using gzip
+  http:
+    header_whitelist:
+      - Content-Encoding
+      - Content-Type
+      - X-*
+      - traceparent
+    content_type_whitelist:
+      - application/*+json
+      - application/*+xml
+      - application/json
+      - application/x-www-form-urlencoded
+      - application/xml
+      - multipart/form-data
+      - text/*
 telemetry:
   service_name: serviceName
   namespace: namespace

@@ -362,6 +362,23 @@ func TestValkConfigFile(t *testing.T) {
 			Output: OutputLogConfig{
 				Type: "stdout",
 			},
+			HTTP: HTTPLogConfig{
+				HeaderWhitelist: ref([]string{
+					"Content-Encoding",
+					"Content-Type",
+					"X-*",
+					"traceparent",
+				}),
+				ContentTypeWhitelist: ref([]string{
+					"application/*+json",
+					"application/*+xml",
+					"application/json",
+					"application/x-www-form-urlencoded",
+					"application/xml",
+					"multipart/form-data",
+					"text/*",
+				}),
+			},
 		},
 		OperatorBasePath: "/operator",
 		OperatorAPIKey:   "operator-api-key",
@@ -444,8 +461,8 @@ func Test_expandEnvVariables(t *testing.T) {
 	}{
 		{
 			"paint a plain string",
-			strPtr("something"),
-			strPtr("pelle"),
+			ref("something"),
+			ref("pelle"),
 		},
 		{
 			"paint string map",
@@ -494,6 +511,6 @@ func TestMinimalValkConfigFile(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func strPtr(s string) *string {
-	return &s
+func ref[T any](t T) *T {
+	return &t
 }

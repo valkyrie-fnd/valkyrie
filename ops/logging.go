@@ -3,6 +3,8 @@ package ops
 import (
 	"bytes"
 	"context"
+	"regexp"
+	"strings"
 
 	"github.com/valyala/fasthttp"
 
@@ -59,11 +61,11 @@ func logHTTPResponse(req *fasthttp.Request, resp *fasthttp.Response, err error) 
 func logRequestHeaders(req *fasthttp.Request, requestDict *zerolog.Event) {
 	// Request headers
 	requestHeaders := zerolog.Dict()
-	for _, name := range loggedHeaders {
-		if value := req.Header.Peek(name); len(value) > 0 {
-			requestHeaders.Bytes(name, value)
+	req.Header.VisitAll(func(key, value []byte) {
+		if isHeaderLogged(key) {
+			requestHeaders.Bytes(string(key), value)
 		}
-	}
+	})
 	requestDict.Dict("requestHeaders", requestHeaders)
 }
 
@@ -101,41 +103,89 @@ func logResponseBody(resp *fasthttp.Response, requestDict *zerolog.Event) {
 
 func logResponseHeaders(resp *fasthttp.Response, requestDict *zerolog.Event) {
 	responseHeaders := zerolog.Dict()
-	for _, name := range loggedHeaders {
-		if value := resp.Header.Peek(name); len(value) > 0 {
-			responseHeaders.Bytes(name, value)
+	resp.Header.VisitAll(func(key, value []byte) {
+		if isHeaderLogged(key) {
+			responseHeaders.Bytes(string(key), value)
 		}
-	}
+	})
 	requestDict.Dict("responseHeaders", responseHeaders)
 }
 
-var loggedContentTypes = map[string]struct{}{
-	fiber.MIMEApplicationJSON:            {},
-	fiber.MIMETextPlain:                  {},
-	fiber.MIMEApplicationXML:             {},
-	fiber.MIMEApplicationForm:            {},
-	fiber.MIMEMultipartForm:              {},
-	"application/vnd.kafka.json.v2+json": {},
-	"application/vnd.kafka.v2+json":      {},
-}
+func isHeaderLogged(header []byte) bool {
+	header = bytes.ToLower(header)
+	for _, re := range loggedHeaders {
+		if re.Match(header) {
+			return true
+		}
+	}
 
-var loggedHeaders = []string{
-	"Content-Type",
-	"Content-Encoding",
-	"X-Forwarded-For",
-	"X-Correlation-ID",
-	"traceparent",
-	"X-Msg-Timestamp",
+	return false
 }
 
 // isContentTypeLogged returns true for the content types that should be logged.
 // This function skips verbose content such as html, images, octet streams etc.
 func isContentTypeLogged(contentType []byte) bool {
-	_, found := loggedContentTypes[string(contentType)]
-	return found
+	contentType = bytes.ToLower(contentType)
+	// Handle headers like "application/json; charset=utf-8"
+	prefix, _, _ := bytes.Cut(contentType, []byte(";"))
+
+	for _, re := range loggedContentTypes {
+		if re.Match(prefix) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // isContentTypeJSON returns true for content types that contains json data, otherwise false.
 func isContentTypeJSON(contentType []byte) bool {
+	contentType = bytes.ToLower(contentType)
 	return bytes.Contains(contentType, []byte("/json")) || bytes.Contains(contentType, []byte("+json"))
+}
+
+// Set default values for Header and Content-Type logging filters.
+func init() {
+	SetHeaderWhitelist([]string{
+		`Content-Type`,
+		`Content-Encoding`,
+		`X-Forwarded-For`,
+		`X-Correlation-ID`,
+		`traceparent`,
+		`X-Msg-Timestamp`,
+		`X-Request-Id`,
+	})
+
+	SetContentTypeWhitelist([]string{
+		fiber.MIMEApplicationJSON,
+		fiber.MIMETextPlain,
+		fiber.MIMEApplicationXML,
+		fiber.MIMEApplicationForm,
+		fiber.MIMEMultipartForm,
+		`application/vnd.kafka.json.v2+json`,
+		`application/vnd.kafka.v2+json`,
+	})
+}
+
+var loggedHeaders = []*regexp.Regexp{}
+var loggedContentTypes = []*regexp.Regexp{}
+
+func SetHeaderWhitelist(headers []string) {
+	loggedHeaders = make([]*regexp.Regexp, 0, len(headers))
+	for _, header := range headers {
+		loggedHeaders = append(loggedHeaders, wildcardToRegexp(header))
+	}
+}
+
+func SetContentTypeWhitelist(contentTypes []string) {
+	loggedContentTypes = make([]*regexp.Regexp, 0, len(contentTypes))
+	for _, contentType := range contentTypes {
+		loggedContentTypes = append(loggedContentTypes, wildcardToRegexp(contentType))
+	}
+}
+
+func wildcardToRegexp(wildcard string) *regexp.Regexp {
+	wildcard = strings.ToLower(wildcard)
+	pattern := strings.ReplaceAll(`^`+regexp.QuoteMeta(wildcard)+`$`, `\*`, `.*`)
+	return regexp.MustCompile(pattern)
 }

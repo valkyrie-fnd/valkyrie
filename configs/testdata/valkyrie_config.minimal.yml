@@ -1,5 +1,19 @@
 # logging configuration
-logging: {}
+logging:
+  http:
+    header_whitelist:
+      - Content-Encoding
+      - Content-Type
+      - X-*
+      - traceparent
+    content_type_whitelist:
+      - application/*+json
+      - application/*+xml
+      - application/json
+      - application/x-www-form-urlencoded
+      - application/xml
+      - multipart/form-data
+      - text/*
 #  level: debug # info, warn, error, fatal, panic
 #  async: # Optional async configuration (enabled by default, with default values)
 #    enabled: true
