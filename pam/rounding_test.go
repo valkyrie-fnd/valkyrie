@@ -1,8 +1,9 @@
 package pam
 
 import (
-	"github.com/shopspring/decimal"
 	"testing"
+
+	"github.com/shopspring/decimal"
 
 	"github.com/stretchr/testify/assert"
 )

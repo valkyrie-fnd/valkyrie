@@ -11,10 +11,11 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 )
 
-func TestMain(t *testing.T) {
+func TestMainReal(t *testing.T) {
 	oldArgs := os.Args
 	defer func() {
 		os.Args = oldArgs

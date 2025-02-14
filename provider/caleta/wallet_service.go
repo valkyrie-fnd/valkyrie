@@ -14,7 +14,7 @@ type WalletService struct {
 	APIClient API
 }
 
-// NewService Create new caleta wallet service
+// NewWalletService creates new Caleta wallet service
 func NewWalletService(pamClient pam.PamClient, apiClient API) *WalletService {
 	return &WalletService{PamClient: pamClient, APIClient: apiClient}
 }

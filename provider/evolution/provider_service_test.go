@@ -22,11 +22,11 @@ type MockClient struct {
 	GetFunc      func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error
 }
 
-func (m MockClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m MockClient) Post(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m MockClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m MockClient) Get(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.GetFunc(ctx, req, resp.(*[]byte))
 }
 
@@ -204,7 +204,7 @@ func TestGameRoundRender(t *testing.T) {
 				C:    conf,
 				Client: MockClient{
 					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
-						encoded := base64.StdEncoding.EncodeToString(([]byte("casinoKey:casinoToken")))
+						encoded := base64.StdEncoding.EncodeToString([]byte("casinoKey:casinoToken"))
 						assert.Equal(t, fmt.Sprintf("Basic %s", encoded), req.Headers["Authorization"])
 						return nil
 					},
@@ -222,13 +222,13 @@ func TestGameRoundRender(t *testing.T) {
 				C:    conf,
 				Client: MockClient{
 					GetFunc: func(ctx context.Context, req *valkhttp.HTTPRequest, resp *[]byte) error {
-						return fmt.Errorf("Failed request")
+						return fmt.Errorf("failed request")
 					},
 				},
 			},
 			wantCode: 400,
 			wantBody: "",
-			wantErr:  fmt.Errorf("Failed request"),
+			wantErr:  fmt.Errorf("failed request"),
 		},
 	}
 	for _, test := range tests {

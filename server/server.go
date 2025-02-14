@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+
 	"github.com/valkyrie-fnd/valkyrie/internal/routine"
 	"github.com/valkyrie-fnd/valkyrie/pam/genericpam"
 	"github.com/valkyrie-fnd/valkyrie/pam/vplugin"
@@ -34,7 +35,6 @@ type Valkyrie struct {
 
 // NewValkyrie use provided cfg to create a Valkyrie instance
 func NewValkyrie(ctx context.Context, cfg *configs.ValkyrieConfig) (*Valkyrie, error) {
-
 	// Define Fiber config
 	fiberCfg := fiberConfig(cfg.HTTPServer)
 
@@ -120,7 +120,7 @@ func configureOps(cfg *configs.ValkyrieConfig, v *Valkyrie) error {
 	return nil
 }
 
-// Run Starts provider and operator servers. Returns only when
+// Start provider and operator servers. Returns only when
 // listeners are ready.
 func (v *Valkyrie) Start() {
 	var wg sync.WaitGroup

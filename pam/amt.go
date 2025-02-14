@@ -7,7 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// Amt is then internal alias for the Decimal type and
+// Amt is then internal alias for the Decimal type, and
 // it is injected into generated model for the Generic PAM.
 // NB: use `Amt` internally instead of the generated pam.Amount
 type Amt decimal.Decimal
@@ -22,7 +22,7 @@ func (a Amt) Equal(b Amt) bool {
 	return decimal.Decimal(a).Equal(decimal.Decimal(b))
 }
 
-var Zero Amt = Amt(decimal.Zero)
+var Zero = Amt(decimal.Zero)
 
 var ZeroAmount = Amount(decimal.Zero)
 
@@ -74,7 +74,7 @@ func (m *Amount) GobDecode(bs []byte) error {
 	return nil
 }
 
-// GobDecode provides custom encoding since gob halts on type aliases
+// GobEncode provides custom encoding since gob halts on type aliases
 func (m Amount) GobEncode() ([]byte, error) {
 	var sink bytes.Buffer
 	enc := gob.NewEncoder(&sink)

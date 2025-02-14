@@ -7,18 +7,18 @@ SVC_DESCRIPTION="Valkyrie Aggregator Service"
 SVC_CMD=$1
 arg_2=${2}
 
-RUNNER_ROOT=`pwd`
+RUNNER_ROOT=$(pwd)
 
 UNIT_PATH=/etc/systemd/system/${SVC_NAME}
 TEMPLATE_PATH=./valkyrie.service.template
 TEMP_PATH=./valkyrie.service.temp
 CONFIG_PATH=.service
 
-user_id=`id -u`
+user_id=$(id -u)
 
 # systemctl must run as sudo
 # this script is a convenience wrapper around systemctl
-if [ $user_id -ne 0 ]; then
+if [ "${user_id}" -ne 0 ]; then
     echo "Must run as sudo"
     exit 1
 fi
@@ -55,38 +55,38 @@ function install()
     run_as_user=${arg_2:-$SUDO_USER}
     echo "Run as user: ${run_as_user}"
 
-    run_as_uid=$(id -u ${run_as_user}) || failed "User does not exist"
+    run_as_uid=$(id -u "${run_as_user}") || failed "User does not exist"
     echo "Run as uid: ${run_as_uid}"
 
-    run_as_gid=$(id -g ${run_as_user}) || failed "Group not available"
+    run_as_gid=$(id -g "${run_as_user}") || failed "Group not available"
     echo "gid: ${run_as_gid}"
 
-    sed "s/{{User}}/${run_as_user}/g; s/{{Description}}/$(echo ${SVC_DESCRIPTION} | sed -e 's/[\/&]/\\&/g')/g; s/{{RunnerRoot}}/$(echo ${RUNNER_ROOT} | sed -e 's/[\/&]/\\&/g')/g;" "${TEMPLATE_PATH}" > "${TEMP_PATH}" || failed "failed to create replacement temp file"
+    sed "s/{{User}}/${run_as_user}/g; s/{{Description}}/$(echo "${SVC_DESCRIPTION}" | sed -e 's/[\/&]/\\&/g')/g; s/{{RunnerRoot}}/$(echo "${RUNNER_ROOT}" | sed -e 's/[\/&]/\\&/g')/g;" "${TEMPLATE_PATH}" > "${TEMP_PATH}" || failed "failed to create replacement temp file"
     mv "${TEMP_PATH}" "${UNIT_PATH}" || failed "failed to copy unit file"
 
     # unit file should not be executable and world writable
     chmod 664 "${UNIT_PATH}" || failed "failed to set permissions on ${UNIT_PATH}"
     systemctl daemon-reload || failed "failed to reload daemons"
-    
-    # Since we started with sudo, runsvc.sh will be owned by root. Change this to current login user.  
-    chown ${run_as_uid}:${run_as_gid} ./valkyrie || failed "failed to set owner for valkyrie"
+
+    # Since we started with sudo, runsvc.sh will be owned by root. Change this to current login user.
+    chown "${run_as_uid}:${run_as_gid}" ./valkyrie || failed "failed to set owner for valkyrie"
     chmod 755 ./valkyrie || failed "failed to set permission for valkyrie"
 
-    systemctl enable ${SVC_NAME} || failed "failed to enable ${SVC_NAME}"
+    systemctl enable "${SVC_NAME}" || failed "failed to enable ${SVC_NAME}"
 
     echo "${SVC_NAME}" > ${CONFIG_PATH} || failed "failed to create .service file"
-    chown ${run_as_uid}:${run_as_gid} ${CONFIG_PATH} || failed "failed to set permission for ${CONFIG_PATH}"
+    chown "${run_as_uid}:${run_as_gid}" "${CONFIG_PATH}" || failed "failed to set permission for ${CONFIG_PATH}"
 }
 
 function start()
 {
-    systemctl start ${SVC_NAME} || failed "failed to start ${SVC_NAME}"
-    status    
+    systemctl start "${SVC_NAME}" || failed "failed to start ${SVC_NAME}"
+    status
 }
 
 function stop()
 {
-    systemctl stop ${SVC_NAME} || failed "failed to stop ${SVC_NAME}"    
+    systemctl stop "${SVC_NAME}" || failed "failed to stop ${SVC_NAME}"
     status
 }
 
@@ -94,11 +94,11 @@ function uninstall()
 {
     if service_exists; then
         stop
-        systemctl disable ${SVC_NAME} || failed "failed to disable ${SVC_NAME}"
+        systemctl disable "${SVC_NAME}" || failed "failed to disable ${SVC_NAME}"
         rm "${UNIT_PATH}" || failed "failed to delete ${UNIT_PATH}"
     else
         echo "Service ${SVC_NAME} is not installed"
-    fi    
+    fi
     if [ -f "${CONFIG_PATH}" ]; then
       rm "${CONFIG_PATH}" || failed "failed to delete ${CONFIG_PATH}"
     fi
@@ -125,7 +125,7 @@ function status()
         exit 1
     fi
 
-    systemctl --no-pager status ${SVC_NAME}
+    systemctl --no-pager status "${SVC_NAME}"
 }
 
 function usage()
@@ -148,7 +148,6 @@ case $SVC_CMD in
    "uninstall") uninstall;;
    "start") start;;
    "stop") stop;;
-   "status") status;;
    *) usage;;
 esac
 

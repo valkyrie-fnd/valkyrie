@@ -10,10 +10,10 @@ type VPluginRPCServer struct {
 	Impl PAM
 }
 
-func (pp *VPluginRPCServer) Init(args any, resp *any) error {
+func (pp *VPluginRPCServer) Init(args any) error {
 	cfg, ok := args.(PluginInitConfig)
 	if !ok {
-		return fmt.Errorf("Init config not valid, %v", args)
+		return fmt.Errorf("init config not valid, %v", args)
 	}
 
 	return pp.Impl.Init(cfg)
@@ -79,7 +79,7 @@ func (pp *VPluginRPCServer) GetGameRound(args any, resp *pam.GameRoundResponse) 
 	return nil
 }
 
-func (pp *VPluginRPCServer) GetTransactionSupplier(args any, resp *pam.TransactionSupplier) error {
+func (pp *VPluginRPCServer) GetTransactionSupplier(resp *pam.TransactionSupplier) error {
 	result := pp.Impl.GetTransactionSupplier()
 	*resp = result
 	return nil

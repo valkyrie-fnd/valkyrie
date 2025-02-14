@@ -353,7 +353,7 @@ func postJSON[Body any, Response any](url string, body Body, timeout time.Durati
 	var resp Response
 
 	if status, b, errs := a.Struct(&resp); status != fiber.StatusOK || len(errs) > 0 {
-		return nil, errors.Join(append(errs, fmt.Errorf("%s request failed with status [%v]: %s.", url, status, b))...)
+		return nil, errors.Join(append(errs, fmt.Errorf("%s request failed with status [%v]: %s", url, status, b))...)
 	}
 
 	return &resp, nil

@@ -2,7 +2,7 @@ package auth
 
 // Verifier verifies a signature with a payload
 type Verifier interface {
-	// Verifies the payload and returns nil if correct and error if not
+	// Verify the payload; return error if incorrect
 	Verify(signature string, payload []byte) error
 }
 

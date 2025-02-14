@@ -133,7 +133,7 @@ func (gs ProviderServiceMock) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h 
 	return "", nil
 }
 func (gs ProviderServiceMock) GetGameRoundRender(*fiber.Ctx, GameRoundRenderRequest) (int, error) {
-	return 404, fmt.Errorf("Not Available")
+	return 404, fmt.Errorf("not Available")
 }
 
 func TestGameLaunch(t *testing.T) {

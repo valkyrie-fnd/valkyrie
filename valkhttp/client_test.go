@@ -213,7 +213,7 @@ func Test_read_json_validation(t *testing.T) {
 		},
 		{
 			name: "Error when required field is missing",
-			want: errors.New("Validation error: Key: 'testStruct.Validation' Error:Field validation for 'Validation' failed on the 'required' tag"),
+			want: errors.New("validation error: Key: 'testStruct.Validation' Error:Field validation for 'Validation' failed on the 'required' tag"),
 			data: []byte(`{
 						  "some":"thing",
 						  "cnt":1000.32,
@@ -257,7 +257,7 @@ func Test_Plain_parser_read_error(t *testing.T) {
 	resp.Header.SetContentLength(len(data))
 	resp.SetBodyRaw(data)
 	err := parse(&resp)
-	assert.EqualError(t, err, "Invalid type of target, should be *[]byte")
+	assert.EqualError(t, err, "invalid type of target, should be *[]byte")
 }
 
 func Test_Plain_parser_write(t *testing.T) {
@@ -271,7 +271,7 @@ func Test_Plain_parser_write_error(t *testing.T) {
 	parse := PlainParser.Write("sending data")
 	req := fasthttp.Request{}
 	err := parse(&req)
-	assert.EqualError(t, err, "Invalid type of content, should be []byte")
+	assert.EqualError(t, err, "invalid type of content, should be []byte")
 }
 
 func Test_retry(t *testing.T) {

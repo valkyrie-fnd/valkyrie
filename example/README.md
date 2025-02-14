@@ -12,7 +12,7 @@ In [this folder](./example-game-provider/) you will find `example-game-provider`
 
 Another step that needs to be done is defining what configuration is needed for this specific provider.
 - `name` - Should be the same as `ProviderName` in router.go
-- `base_path` - used to differentiate between providers within Valkyrie, used both when operator makes request toward valkyrie, as well as part of the url the provider should set up when making wallet requests toward the operator/Valkyrie
+- `base_path` - used to differentiate between providers within Valkyrie, used both when operator makes request toward valkyrie, and as part of the url the provider should set up when making wallet requests toward the operator/Valkyrie
 - `URL` - base path to game provider server for requests such as gamelaunch and render
 - `auth` - "key - value" map for whatever auth fields are needed for the specific provider
 - `provider_specific` - are there any other configuration that is needed for a specific provider? put them here.
@@ -41,7 +41,7 @@ import (
 
 ## Documentation
 
-Adding a subfolder to the provider called "docs", will enable the valkyrie site to pick up the provider module and add the information to it. Any `.md` or `.mdx` files will be added to the the documentation of the provider on [valkyrie.bet](https://valkyrie.bet).
+Adding a subfolder to the provider called "docs", will enable the valkyrie site to pick up the provider module and add the information to it. Any `.md` or `.mdx` files will be added to the documentation of the provider on [valkyrie.bet](https://valkyrie.bet).
 
 Any images or other assets should be placed in the assets sub-folder.
 

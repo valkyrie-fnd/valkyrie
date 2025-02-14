@@ -24,7 +24,7 @@ var gameLaunchTests = []GLTestData{
 	{
 		name:    "Error when request is missing Session key",
 		want:    "",
-		e:       errors.New("Missing SessionKey"),
+		e:       errors.New("missing SessionKey"),
 		conf:    &configs.ProviderConf{},
 		req:     &provider.GameLaunchRequest{},
 		headers: &provider.GameLaunchHeaders{},
@@ -95,5 +95,5 @@ func TestGameLaunch(t *testing.T) {
 func TestGameRoundRender(t *testing.T) {
 	sut := RedTigerService{}
 	_, err := sut.GetGameRoundRender(nil, provider.GameRoundRenderRequest{})
-	assert.EqualError(t, err, "Not available")
+	assert.EqualError(t, err, "not available")
 }

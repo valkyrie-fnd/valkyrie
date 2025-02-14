@@ -50,7 +50,7 @@ type googleTracingHook struct {
 
 // Run adds standard tracing fields supported by Google Cloud Logging:
 // https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
-func (h googleTracingHook) Run(e *zerolog.Event, l zerolog.Level, _ string) {
+func (h googleTracingHook) Run(e *zerolog.Event, _ zerolog.Level, _ string) {
 	if h.spanContext.IsValid() {
 		e.Str("logging.googleapis.com/trace", fmt.Sprintf("projects/%s/traces/%s", h.projectID, h.spanContext.TraceID()))
 		e.Str("logging.googleapis.com/spanId", h.spanContext.SpanID().String())

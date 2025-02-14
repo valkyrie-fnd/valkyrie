@@ -438,7 +438,7 @@ func Test_Rollback(t *testing.T) {
 }
 
 func Test_getRoundTransactions(t *testing.T) {
-	testError := fmt.Errorf("Error fetching transactions")
+	testError := fmt.Errorf("error fetching transactions")
 	tests := []struct {
 		name                   string
 		transactionSupplier    pam.TransactionSupplier

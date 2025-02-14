@@ -1,23 +1,25 @@
 linters:
   enable:
-    - bidichk # checks for dangerous unicode character sequences
+    - bidichk # checks for dangerous Unicode character sequences
     - bodyclose # checks whether HTTP response body is closed successfully
+    - copyloopvar # checks for pointers to enclosing loop variables
     - decorder # checks declaration order and count of types, constants, variables and functions
     - errcheck # checking for unchecked errors
     - errchkjson # Checks types passed to the json encoding functions
     - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
-    - exportloopref # checks for pointers to enclosing loop variables
     - forbidigo # forbids identifiers
     - funlen # tool for detection of long functions
     - goconst # finds repeated strings that could be replaced by a constant
     - gocritic # provides diagnostics that check for bugs, performance and style issues
     - gocyclo # computes and checks the cyclomatic complexity of functions
-    - gosimple # specializes in simplifying a code
     - gosec # inspects source code for security problems
+    - gosimple # specializes in simplifying a code
     - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - ineffassign # detects when assignments to existing variables are not used
+    - misspell # finds commonly misspelled english words
     - nilnil # checks that there is no simultaneous return of nil error and an invalid value
     - nolintlint # reports ill-formed or insufficient nolint directives
+    - prealloc # finds slice declarations that could potentially be pre-allocated
     - predeclared # finds code that shadows one of Go's predeclared identifiers
     - revive # drop-in replacement of golint
     - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
@@ -54,5 +56,4 @@ linters-settings:
           - ["SID", "RGI"]
       - name: package-comments
   govet:
-    check-shadowing: true
     enable-all: true

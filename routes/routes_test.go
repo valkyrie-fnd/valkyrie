@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
 	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 )
