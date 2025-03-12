@@ -11,9 +11,15 @@ import (
 
 // LogConfig configuration setup for logging
 type LogConfig struct {
-	Async  AsyncLogConfig  `yaml:"async"`
+	HTTP   HTTPLogConfig   `yaml:"http"`
 	Level  string          `yaml:"level" default:"info"`
+	Async  AsyncLogConfig  `yaml:"async"`
 	Output OutputLogConfig `yaml:"output"`
+}
+
+type HTTPLogConfig struct {
+	HeaderWhitelist      *[]string `yaml:"header_whitelist,omitempty"`
+	ContentTypeWhitelist *[]string `yaml:"content_type_whitelist,omitempty"`
 }
 
 // AsyncLogConfig Configuration for asynchronous logging
