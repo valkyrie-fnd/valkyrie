@@ -78,7 +78,6 @@ type rtGameLaunchConfig struct {
 	HasRealPlayButton          bool   `url:"hasRealPlayButton"`
 }
 
-// RT base request and response
 type BaseRequest struct {
 	Token    string `json:"token" validate:"required,min=32,max=128"`
 	UserID   string `json:"userId" validate:"max=36"`
@@ -92,7 +91,6 @@ type BaseResponse struct {
 	Currency string `json:"currency" validate:"max=8"`
 }
 
-// RT refund stuff
 type RefundRequest struct {
 	BaseRequest
 	Transaction TransactionStake `json:"transaction"`
@@ -115,7 +113,6 @@ type RefundResponseWrapper struct {
 	Response
 }
 
-// RT payout stuff
 type PayoutRequest struct {
 	BaseRequest
 	Transaction TransactionPayout `json:"transaction"`
@@ -223,7 +220,6 @@ type Promo struct {
 	CampaignID   int    `json:"campaignId"`
 }
 
-// RT auth request
 type AuthRequest struct {
 	BaseRequest
 	Channel   string `json:"channel,omitempty" validate:"max=8"`
@@ -231,13 +227,11 @@ type AuthRequest struct {
 	Extras    string `json:"extras,omitempty"`
 }
 
-// RT balance object
 type Balance struct {
 	Cash  Money `json:"cash"`
 	Bonus Money `json:"bonus"`
 }
 
-// RT auth result object
 type AuthResponse struct {
 	BaseResponse
 	UserID   string  `json:"userId" validate:"max=32"`
@@ -247,7 +241,6 @@ type AuthResponse struct {
 	Balance  Balance `json:"balance"`
 }
 
-// RT auth response
 type AuthResponseWrapper struct {
 	Error   *Error       `json:"error,omitempty"`
 	Result  AuthResponse `json:"result,omitempty"`
@@ -259,7 +252,6 @@ type Error struct {
 	Code    RTErrorCode `json:"code"`
 }
 
-// RT error response
 type ErrorResponse struct {
 	Error   Error `json:"error"`
 	Success bool  `json:"success"`

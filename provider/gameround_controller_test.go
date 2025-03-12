@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
+
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 
@@ -72,8 +73,8 @@ type gameRoundRenderService struct {
 	gameRoundRender func(c *fiber.Ctx, req GameRoundRenderRequest) (int, error)
 }
 
-func (gs gameRoundRenderService) GameLaunch(_ *fiber.Ctx, gr *GameLaunchRequest, h *GameLaunchHeaders) (string, error) {
-	return "", fmt.Errorf("Not Available")
+func (gs gameRoundRenderService) GameLaunch(_ *fiber.Ctx, _ *GameLaunchRequest, _ *GameLaunchHeaders) (string, error) {
+	return "", fmt.Errorf("not available")
 }
 func (gs gameRoundRenderService) GetGameRoundRender(c *fiber.Ctx, req GameRoundRenderRequest) (int, error) {
 	if gs.gameRoundRender != nil {
@@ -85,7 +86,7 @@ func (gs gameRoundRenderService) GetGameRoundRender(c *fiber.Ctx, req GameRoundR
 func TestGameRoundRender(t *testing.T) {
 	for _, test := range gameRenderTests {
 		testApp := fiber.New()
-		ctrl := NewGameRoundController(gameRoundRenderService{test.gameRoundRender})
+		ctrl := NewGameRoundController(gameRoundRenderService{gameRoundRender: test.gameRoundRender})
 		testApp.Get("/gameRender/:gameRoundId", ctrl.GetGameRoundEndpoint)
 		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/gameRender/%s", test.id), nil)
 

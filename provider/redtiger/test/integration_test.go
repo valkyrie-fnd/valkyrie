@@ -9,7 +9,6 @@ import (
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
-	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider/internal/test"
 
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
@@ -141,7 +140,7 @@ func (s *RedTigerIntegrationTestSuite) Test_MAKES_A_BET_REQUEST_WITH_STAKE_0() {
 
 	s.Require().NoError(err, "Request should not produce hard error")
 	s.Assert().True(resp.Success)
-	s.Assert().True(decimal.Decimal(pam.Amt(resp.Result.Balance.Cash)).Equal(decimal.Decimal(toMoney(1000.0))))
+	s.Assert().True(decimal.Decimal(resp.Result.Balance.Cash).Equal(decimal.Decimal(toMoney(1000.0))))
 }
 
 func (s *RedTigerIntegrationTestSuite) Test_MAKES_SEVERAL_BET_REQUESTS_WITH_SAME_ROUNDID() {
@@ -163,7 +162,7 @@ func (s *RedTigerIntegrationTestSuite) Test_MAKES_SEVERAL_BET_REQUESTS_WITH_SAME
 	_, err = s.client.Payout(gameID, rnd(), roundID, toMoney(10.0), toMoney(0.0), toMoney(0.0), toJackpotMoney(0.0))
 	s.Require().NoError(err, "Request should not produce hard error")
 
-	// Firing twice with the same round ID should not be allowed if the round is is ended
+	// Firing twice with the same round ID should not be allowed if the round is ended
 	resp, err := s.client.Stake(gameID, rnd(), roundID, toMoney(10.0), toMoney(0.0), nil)
 	s.Require().Error(err, "Request should produce hard error")
 	s.Assert().False(resp.Success)
@@ -339,7 +338,7 @@ func (s *RedTigerIntegrationTestSuite) Test_TRY_TO_REFUND_A_REFUNDED_TRANSACTION
 	s.Assert().True(resp.Success)
 	balance := resp.Balance.Cash
 
-	s.Assert().True(decimal.Decimal(pam.Amt(balance)).GreaterThan(decimal.Decimal(balanceAfterStake)))
+	s.Assert().True(decimal.Decimal(balance).GreaterThan(decimal.Decimal(balanceAfterStake)))
 	resp, err = s.client.Refund(transID, gameID, roundID, toMoney(10.0))
 	balanceSecondCall := resp.Balance.Cash
 	// Refunding the same twice does nothing to balance

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	redtiger_bd "github.com/valkyrie-fnd/valkyrie-stubs/backdoors/redtiger"
+	redtigerBackdoor "github.com/valkyrie-fnd/valkyrie-stubs/backdoors/redtiger"
 
 	"github.com/valkyrie-fnd/valkyrie/provider/redtiger"
 )
@@ -53,8 +53,8 @@ func (api *RGIClient) SetSessionToken(token string) error {
 	return nil
 }
 
-func (api *RGIClient) createSession(currency string) (*redtiger_bd.Result, error) {
-	req := redtiger_bd.SessionRequest{
+func (api *RGIClient) createSession(currency string) (*redtigerBackdoor.Result, error) {
+	req := redtigerBackdoor.SessionRequest{
 		Currency: &currency,
 	}
 
@@ -62,7 +62,7 @@ func (api *RGIClient) createSession(currency string) (*redtiger_bd.Result, error
 		Timeout(api.timeout).
 		JSON(&req)
 
-	var resp redtiger_bd.SessionResponse
+	var resp redtigerBackdoor.SessionResponse
 	if c, b, errs := a.Struct(&resp); c != fiber.StatusOK {
 		return nil, errors.Join(append(errs, fmt.Errorf("redtiger/session request failed: %s", b))...)
 	} else if !resp.Success {
@@ -80,7 +80,7 @@ func (api *RGIClient) ResetSession() error {
 		for _, e := range errs {
 			errStr = fmt.Sprintf("%s - %s", errStr, e.Error())
 		}
-		return fmt.Errorf("Error resetting session: %s", errStr)
+		return fmt.Errorf("error resetting session: %s", errStr)
 	}
 	return nil
 }

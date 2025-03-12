@@ -2,10 +2,12 @@ package ops
 
 import (
 	"context"
-	"go.opentelemetry.io/otel"
 	"testing"
 
+	"go.opentelemetry.io/otel"
+
 	"github.com/stretchr/testify/assert"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 )
 

@@ -2,13 +2,13 @@
 
 ### Evolution API
 
-See evolution API (https://studio.evolution.com/api/docs) for details on Evolution eco system.
+See evolution API (https://studio.evolution.com/api/docs) for details on Evolution ecosystem.
 
 ### Valkyrie integration
 
 Integrate your gaming lobby and wallet system to Valkyrie and you will be able to access games offered by Evolution Gaming.
 
-Contact Evolution in order to setup an agreement and get needed configuration for the integration.
+Contact Evolution in order to set up an agreement and get needed configuration for the integration.
 
 ### Required configuration
 

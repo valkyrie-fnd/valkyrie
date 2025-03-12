@@ -4,8 +4,6 @@ package test
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/suite"
@@ -13,10 +11,11 @@ import (
 	"github.com/valkyrie-fnd/valkyrie-stubs/datastore"
 	"github.com/valkyrie-fnd/valkyrie-stubs/genericpam"
 	"github.com/valkyrie-fnd/valkyrie-stubs/memorydatastore"
-
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/server"
+	"os"
+	"time"
 )
 
 const (
@@ -101,6 +100,12 @@ func (s *IntegrationTestSuite) buildConfig(pamURL string, providerPort, operator
 		HTTPServer: configs.HTTPServerConfig{
 			ProviderAddress: fmt.Sprintf(baseAddr, providerPort),
 			OperatorAddress: fmt.Sprintf(baseAddr, operatorPort),
+		},
+		HTTPClient: configs.HTTPClientConfig{
+			ReadTimeout:    10 * time.Second,
+			WriteTimeout:   3 * time.Second,
+			RequestTimeout: 10 * time.Second,
+			IdleTimeout:    30 * time.Second,
 		},
 	}
 }

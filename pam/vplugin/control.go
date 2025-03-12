@@ -24,7 +24,7 @@ var (
 	MagicCookieValue = "ff912fb194609a432cfe8d504951f133a0a21b18"
 )
 
-var PluginConfig func(string, string) plugin.ClientConfig = func(name, path string) plugin.ClientConfig {
+var PluginConfig = func(name, path string) plugin.ClientConfig {
 	return plugin.ClientConfig{
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  1,
@@ -58,12 +58,12 @@ func start(ctx context.Context, name, path string) (PAM, error) {
 		return nil, err
 	}
 
-	plugin, ok := raw.(PAM)
+	pamPlugin, ok := raw.(PAM)
 	if !ok {
-		return nil, fmt.Errorf("Vplugin [%s] at [%s] does not fullfil PAM interface", name, path)
+		return nil, fmt.Errorf("vplugin [%s] at [%s] does not fullfil PAM interface", name, path)
 	}
 
-	return plugin, nil
+	return pamPlugin, nil
 }
 
 func killOnDone(ctx context.Context, client *plugin.Client) {

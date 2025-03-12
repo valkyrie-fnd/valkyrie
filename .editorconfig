@@ -16,7 +16,3 @@ indent_style = tab
 
 [{*.yml,*.yaml}]
 trim_trailing_whitespace = false
-
-[{helm/**.yaml, helm/**.tpl}]
-indent_size = 2
-indent_style = space

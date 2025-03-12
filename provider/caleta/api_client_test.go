@@ -29,11 +29,11 @@ type mockRestClient struct {
 	JSONFunc func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
 }
 
-func (m mockRestClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m mockRestClient) Post(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
-func (m mockRestClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m mockRestClient) Get(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.JSONFunc(ctx, req, resp)
 }
 
@@ -280,7 +280,7 @@ func Test_roundTransactions(t *testing.T) {
 			if test.e != nil {
 				assert.EqualError(t, err, test.e.Error())
 			}
-			assert.Equal(t, (*test.want), (*tx))
+			assert.Equal(t, *test.want, *tx)
 		})
 	}
 }

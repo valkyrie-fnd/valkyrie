@@ -8,11 +8,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/valyala/fasthttp"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
-	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -56,7 +57,7 @@ func (api *mockAPIClient) requestGameLaunch(ctx context.Context, body GameUrlBod
 	return api.requestGameLaunchFn(ctx, body)
 }
 
-func (api *mockAPIClient) getGameRoundRender(ctx context.Context, gameRoundID, casinoID string) (*gameRoundRenderResponse, error) {
+func (api *mockAPIClient) getGameRoundRender(ctx context.Context, gameRoundID, _ string) (*gameRoundRenderResponse, error) {
 	return api.getGameRoundRenderFn(ctx, gameRoundID)
 }
 
@@ -296,12 +297,12 @@ func Test_Requesting_Gameround_Render_Page_error_from_response(t *testing.T) {
 
 func Test_Requesting_Gameround_Render_Page_error_posting(t *testing.T) {
 	service, err := NewCaletaService(&mockAPIClient{getGameRoundRenderFn: func(ctx context.Context, gameRoundID string) (*gameRoundRenderResponse, error) {
-		return nil, fmt.Errorf("Some network error")
+		return nil, fmt.Errorf("some network error")
 	}}, configs.ProviderConf{})
 	assert.NoError(t, err)
 	app := fiber.New()
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	res, err := service.GetGameRoundRender(ctx, provider.GameRoundRenderRequest{GameRoundID: "gameRoundId"})
 	assert.Equal(t, 500, res)
-	assert.EqualError(t, err, "Some network error")
+	assert.EqualError(t, err, "some network error")
 }

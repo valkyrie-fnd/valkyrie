@@ -23,7 +23,7 @@ services:
 
     # Prometheus
   prometheus:
-    image: prom/prometheus:v2.42.0
+    image: prom/prometheus:v2.55.1
     command:
       - --config.file=/etc/prometheus/prometheus-config.yaml
     volumes:

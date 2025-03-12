@@ -11,7 +11,7 @@ Requires login to access
 
 Integrate your gaming lobby and wallet system to Valkyrie and you will be able to access games offered by Red Tiger.
 
-Contact Red Tiger in order to setup an agreement and get access to their developer portal to see operator specific configuration.
+Contact Red Tiger in order to set up an agreement and get access to their developer portal to see operator specific configuration.
 
 ### Required configuration
 

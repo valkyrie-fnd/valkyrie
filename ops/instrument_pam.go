@@ -3,13 +3,13 @@ package ops
 import (
 	"context"
 	"errors"
-	"go.opentelemetry.io/otel/metric"
 	"reflect"
 	"strings"
 	"time"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.opentelemetry.io/otel/trace"
 
@@ -70,20 +70,15 @@ func PAMMetricHandler(name string, attributes ...attribute.KeyValue) pipeline.Ha
 	}
 
 	return func(pc pipeline.PipelineContext[any]) error {
-		attrs := make([]attribute.KeyValue, len(attributes))
-		copy(attrs, attributes)
-		attrs = append(attrs, semconv.EventName(getRequestName(pc.Payload())))
-		opts := metric.WithAttributes(attrs...)
-
 		start := time.Now()
-		pamClientActive.Add(pc.Context(), 1, opts)
+		pamClientActive.Add(pc.Context(), 1, metric.WithAttributes(attributes...))
 
 		err := pc.Next()
 
-		pamClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), opts)
-		pamClientActive.Add(pc.Context(), -1, opts)
+		pamClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), metric.WithAttributes(attributes...))
+		pamClientActive.Add(pc.Context(), -1, metric.WithAttributes(attributes...))
 		if err != nil {
-			pamClientErrors.Add(pc.Context(), 1, opts)
+			pamClientErrors.Add(pc.Context(), 1, metric.WithAttributes(attributes...))
 		}
 
 		return err

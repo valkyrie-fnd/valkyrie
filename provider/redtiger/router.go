@@ -18,7 +18,7 @@ func init() {
 	provider.ProviderFactory().
 		Register(ProviderName, func(args provider.ProviderArgs) (*provider.Router, error) {
 			if args.PamClient.GetTransactionSupplier() == pam.PROVIDER {
-				return nil, fmt.Errorf("Unsupported transaction supplier")
+				return nil, fmt.Errorf("unsupported transaction supplier")
 			}
 			service := NewService(args.PamClient)
 			controller := NewProviderController(service)

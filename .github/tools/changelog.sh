@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 MARKER_PREFIX="##"
 VERSION="$1"
 
@@ -11,7 +11,7 @@ if [[ $VERSION == *-pre\.* ]]; then
 fi
 
 # This script prints a subset of changelog matching the version entry
-cat CHANGELOG.md | while read "line"; do
+while read -r "line"; do
 
     # If not found and matching heading
     if [ $found -eq 0 ] && echo "$line" | grep -q "^$MARKER_PREFIX \[$VERSION\]"; then
@@ -29,4 +29,4 @@ cat CHANGELOG.md | while read "line"; do
     if [ $found -eq 1 ]; then
         echo "$line"
     fi
-done
+done < CHANGELOG.md

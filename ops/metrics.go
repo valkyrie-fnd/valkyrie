@@ -2,11 +2,11 @@ package ops
 
 import (
 	"context"
-	"go.opentelemetry.io/otel"
 	"strings"
 
 	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/sdk/metric"
@@ -55,7 +55,7 @@ func ConfigureMetrics(vConf *configs.ValkyrieConfig) error {
 	}
 
 	// labels/tags/resources that are common to all metrics.
-	resource := resource.NewWithAttributes(
+	res := resource.NewWithAttributes(
 		semconv.SchemaURL,
 		semconv.ServiceName(cfg.ServiceName),
 		semconv.ServiceNamespace(cfg.Namespace),
@@ -63,12 +63,13 @@ func ConfigureMetrics(vConf *configs.ValkyrieConfig) error {
 	)
 
 	mp := metric.NewMeterProvider(
-		metric.WithResource(resource),
+		metric.WithResource(res),
 		metric.WithReader(
 			// collects and exports metric data every 60 seconds by default.
 			metric.NewPeriodicReader(exp),
 		),
 	)
+
 	otel.SetMeterProvider(mp)
 
 	log.Info().Msgf("Configured metrics using exporter=%s", cfg.Exporter)

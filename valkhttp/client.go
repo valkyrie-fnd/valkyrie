@@ -61,8 +61,8 @@ func Create(config configs.HTTPClientConfig) *Client {
 			NoDefaultUserAgentHeader:      true, // Don't send: User-Agent: fasthttp
 			DisableHeaderNamesNormalizing: true, // If you set the case on your headers correctly you can enable this
 			DisablePathNormalizing:        true,
-			RetryIf: func(_ *fasthttp.Request) bool {
-				return false // Disable automatic retries for GET/PATCH/PUT
+			RetryIfErr: func(_ *fasthttp.Request, _ int, _ error) (resetTimeout bool, retry bool) {
+				return false, false // Disable automatic retries for GET/PATCH/PUT
 			},
 			MaxIdemponentCallAttempts: 1,
 			// increase DNS cache time to an hour instead of default minute
@@ -108,7 +108,7 @@ func (p *jsonParser) Read(target interface{}) responseParseFn {
 		}
 		err = validate.Struct(target)
 		if err != nil {
-			return fmt.Errorf("Validation error: %w", err)
+			return fmt.Errorf("validation error: %w", err)
 		}
 		return nil
 	}
@@ -143,7 +143,7 @@ func (p *xmlParser) Read(target interface{}) responseParseFn {
 		}
 		err = validate.Struct(target)
 		if err != nil {
-			return fmt.Errorf("Validation error: %w", err)
+			return fmt.Errorf("validation error: %w", err)
 		}
 		return nil
 	}
@@ -171,7 +171,7 @@ func (p *plainParser) Read(target any) responseParseFn {
 	return func(r *fasthttp.Response) error {
 		t, ok := target.(*[]byte)
 		if !ok {
-			return fmt.Errorf("Invalid type of target, should be *[]byte")
+			return fmt.Errorf("invalid type of target, should be *[]byte")
 		}
 		*t = r.Body()
 		return nil
@@ -183,7 +183,7 @@ func (p *plainParser) Write(content any) requestContentFn {
 	return func(r *fasthttp.Request) error {
 		c, ok := content.([]byte)
 		if !ok {
-			return fmt.Errorf("Invalid type of content, should be []byte")
+			return fmt.Errorf("invalid type of content, should be []byte")
 		}
 		if len(r.Header.ContentType()) == 0 {
 			r.Header.SetContentTypeBytes(headerContentTypeText)

@@ -19,15 +19,15 @@ type mockClient struct {
 	PutJSONFunc  func(ctx context.Context, req *valkhttp.HTTPRequest, resp any) error
 }
 
-func (m mockClient) Get(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m mockClient) Get(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.GetJSONFunc(ctx, req, resp)
 }
 
-func (m mockClient) Post(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m mockClient) Post(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PostJSONFunc(ctx, req, resp)
 }
 
-func (m mockClient) Put(ctx context.Context, p valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
+func (m mockClient) Put(ctx context.Context, _ valkhttp.Parser, req *valkhttp.HTTPRequest, resp any) error {
 	return m.PutJSONFunc(ctx, req, resp)
 }
 

@@ -10,7 +10,7 @@ import (
 // primarily custom wire format
 type Amount pam.Amt
 
-var ZeroAmount Amount = Amount(pam.Zero)
+var ZeroAmount = Amount(pam.Zero)
 
 func (a *Amount) toAmt() pam.Amt {
 	return pam.Amt(*a)
