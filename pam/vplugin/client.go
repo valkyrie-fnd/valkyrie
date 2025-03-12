@@ -9,7 +9,7 @@ import (
 	"github.com/valkyrie-fnd/valkyrie/pam"
 )
 
-// PamClient Interface describing available PAM operations. The implementing plugins
+// PAM interface describing available operations. The implementing plugins
 // are expected to fulfill this interface.
 type PAM interface {
 	// GetSession Return session
@@ -65,7 +65,7 @@ func Create(ctx context.Context, cfg configs.PamConf) (*PluginPAM, error) {
 	// Call the server and get the transaction supplier, this needs to be done only once.
 	transactionSupplier := plugin.GetTransactionSupplier()
 	if transactionSupplier == "" {
-		return nil, fmt.Errorf("Could not get PAM transaction supplier")
+		return nil, fmt.Errorf("could not get PAM transaction supplier")
 	}
 	return &PluginPAM{plugin: plugin, transactionSupplier: transactionSupplier}, nil
 }

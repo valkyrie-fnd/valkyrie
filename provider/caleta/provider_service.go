@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/go-querystring/query"
 	"github.com/valkyrie-fnd/valkyrie-stubs/utils"
+
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/provider"
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
@@ -55,7 +56,7 @@ func (service *caletaService) GameLaunch(ctx *fiber.Ctx, g *provider.GameLaunchR
 	case Request:
 		return service.requestingGameLaunch(ctx, g, h)
 	default:
-		return "", fmt.Errorf("Invalid Gamelaunch type: %s", service.caletaConfig.GameLaunchType)
+		return "", fmt.Errorf("invalid Gamelaunch type: %s", service.caletaConfig.GameLaunchType)
 	}
 }
 

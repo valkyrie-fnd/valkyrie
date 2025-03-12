@@ -28,7 +28,7 @@ func (pr *Registry) Register(provider *Router) error {
 
 	// Make sure the provider (i.e. base path) is unique
 	if p, found := pr.routes[basePath]; found {
-		return fmt.Errorf("Base path %s is already claimed by provider %s", basePath, p.Name)
+		return fmt.Errorf("base path %s is already claimed by provider %s", basePath, p.Name)
 	}
 
 	// Reserve the base path

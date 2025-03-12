@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Security updates are continously provided for the latest version of Valkyrie.
+Security updates are continuously provided for the latest version of Valkyrie.
 
 ## Reporting a Vulnerability
 

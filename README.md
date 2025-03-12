@@ -81,7 +81,7 @@ For instructions how to use the chart please refer to [helm/README.md](./helm/RE
 Valkyrie can be installed as `systemd` service by these steps:
 - obtaining a linux [release package of valkyrie](/releases/latest/), named like `valkyrie-X.X.X-linux-amd64.tar.gz`
 - unpacking and setting up a configuration file named `config.yml`
-- executing `./svc.sh install` to setup the service
+- executing `./svc.sh install` to set up the service
 
 ### Swagger
 
@@ -140,7 +140,7 @@ Fulfilling this specification will enable you to use `<genericpam>`. In the diag
 + routes/                 # Setting up the routes for each provider and the operator
 + server/                 # Starting the Valkyrie servers, exposed toward Operator and Providers
 ```
-"Provider Server" and "Operator Server" from the Component diagram above would be in `routes/routes.go` where the operator and provider routes are setup. It utilizes `provider/registry.go` to add the routes to the `fiber.App`. Each provider needs to implement both "Operator Router" and "Provider Router". They are implemented under `{gameProvider}/router.go`. For more details on all the "Provider Module"-components the [example game provider](./example/README.md) can be viewed, with documentation through out the example.
+"Provider Server" and "Operator Server" from the Component diagram above would be in `routes/routes.go` where the operator and provider routes are set up. It utilizes `provider/registry.go` to add the routes to the `fiber.App`. Each provider needs to implement both "Operator Router" and "Provider Router". They are implemented under `{gameProvider}/router.go`. For more details on all the "Provider Module"-components the [example game provider](./example/README.md) can be viewed, with documentation throughout the example.
 
 ### CI
 
@@ -166,7 +166,7 @@ The GitHub actions workflow will perform the following steps:
 * Tag the version in git
 
 ## Performance
-Valkyrie aims to be lightweight and fast. While running single instances of Valkyrie and a PAM, we are able to generate and process the following number of bet requests (a.k.a debit/withdraw/stake) for the respective provider implementations (all run locally on an 2021 MacBook Pro w/ M1 MAX CPU, no tracing enabled and INFO log level).
+Valkyrie aims to be lightweight and fast. While running single instances of Valkyrie and a PAM, we are able to generate and process the following number of bet requests (a.k.a. debit/withdraw/stake) for the respective provider implementations (all run locally on an 2021 MacBook Pro w/ M1 MAX CPU, no tracing enabled and INFO log level).
 
 
 | Provider  | Requests/sec |

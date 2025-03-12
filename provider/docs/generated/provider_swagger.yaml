@@ -990,7 +990,6 @@ definitions:
         type: string
     required:
     - currency
-    - game
     - sid
     - userId
     type: object
@@ -1384,10 +1383,8 @@ definitions:
         maxLength: 32
         type: string
       payout:
-        minimum: 0
         type: number
       payoutPromo:
-        minimum: 0
         type: number
       sources:
         $ref: '#/definitions/redtiger.Sources'

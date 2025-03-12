@@ -21,7 +21,7 @@ var validate = validator.New()
 func (service RedTigerService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRequest,
 	h *provider.GameLaunchHeaders) (string, error) {
 	if h.SessionKey == "" {
-		return "", fmt.Errorf("Missing SessionKey")
+		return "", fmt.Errorf("missing SessionKey")
 	}
 	glr := &GameLaunchRequest{
 		Token:    h.SessionKey,
@@ -51,8 +51,9 @@ func (service RedTigerService) GameLaunch(_ *fiber.Ctx, g *provider.GameLaunchRe
 	return url, nil
 }
 func (service RedTigerService) GetGameRoundRender(*fiber.Ctx, provider.GameRoundRenderRequest) (int, error) {
-	return 404, fmt.Errorf("Not available")
+	return 404, fmt.Errorf("not available")
 }
+
 func getLaunchConfig(conf map[string]interface{}) (*rtGameLaunchConfig, error) {
 	var launchConfig rtGameLaunchConfig
 	cfg := &mapstructure.DecoderConfig{

@@ -39,7 +39,7 @@ func (s *exampleProviderService) GameLaunch(c *fiber.Ctx, r *provider.GameLaunch
 	resp := &launchResponse{}
 	err := s.httpClient.Post(c.UserContext(), &valkhttp.JSONParser, req, resp)
 	if err != nil {
-		return "", fmt.Errorf("Error calling example gamelaunch: %w", err)
+		return "", fmt.Errorf("error calling example gamelaunch: %w", err)
 	}
 	return resp.GameURL, nil
 }

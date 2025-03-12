@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
@@ -76,19 +76,19 @@ func ConfigureTracing(cfg *TracingConfig) error {
 	}
 
 	// Always be sure to batch in production.
-	bsp := tracesdk.NewBatchSpanProcessor(exp)
+	bsp := trace.NewBatchSpanProcessor(exp)
 
-	tp := tracesdk.NewTracerProvider(
-		tracesdk.WithSpanProcessor(bsp),
+	tp := trace.NewTracerProvider(
+		trace.WithSpanProcessor(bsp),
 		// Record information about this application in a Resource.
-		tracesdk.WithResource(resource.NewWithAttributes(
+		trace.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceName(cfg.ServiceName),
 			semconv.ServiceNamespace(cfg.Namespace),
 			semconv.ServiceVersion(cfg.Version),
 		)),
 		// Set sampling based on upstream
-		tracesdk.WithSampler(tracesdk.ParentBased(tracesdk.TraceIDRatioBased(cfg.SampleRatio))),
+		trace.WithSampler(trace.ParentBased(trace.TraceIDRatioBased(cfg.SampleRatio))),
 	)
 
 	otel.SetTracerProvider(tp)
@@ -102,9 +102,9 @@ func ConfigureTracing(cfg *TracingConfig) error {
 	return nil
 }
 
-func createProviderExporter(cfg *TracingConfig) (tracesdk.SpanExporter, error) {
+func createProviderExporter(cfg *TracingConfig) (trace.SpanExporter, error) {
 	var (
-		exp tracesdk.SpanExporter
+		exp trace.SpanExporter
 		err error
 	)
 	switch cfg.Exporter {

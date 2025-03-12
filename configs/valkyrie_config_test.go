@@ -481,7 +481,7 @@ func Test_expandEnvVariables(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// test repalces all strings with the same word
+			// test replaces all strings with the same word
 			expandEnvVariables(tt.strukt, func(s string) string { return "pelle" })
 			assert.Equal(t, tt.expected, tt.strukt)
 		})

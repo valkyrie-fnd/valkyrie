@@ -13,7 +13,7 @@ func VerifySignature(v auth.Verifier) fiber.Handler {
 		body := c.Request().Body()
 		err := v.Verify(signature, body)
 		if err != nil {
-			// any body is works. We just want the RequestUuid
+			// any body works, we just want the RequestUuid
 			var req WalletBalanceBody
 			_ = c.BodyParser(&req)
 			return c.Status(fiber.StatusOK).JSON(BalanceResponse{Status: RSERRORINVALIDSIGNATURE, RequestUuid: req.RequestUuid})

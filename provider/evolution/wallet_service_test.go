@@ -432,7 +432,7 @@ func TestProviderService_PromoPayout(t *testing.T) {
 }
 
 // Test_UnknownUserResponse verifies that potential IDOR issues are not propagated by Valkyrie. It's assumed
-// that PAM's handle that properly but lets make sure it actually works. Ergo: unknown user issues should
+// that PAM's handle that properly but let's make sure it actually works. Ergo: unknown user issues should
 // result in invalid session and nothing else.
 func Test_UnknownUserResponse(t *testing.T) {
 	pamStub := pamStub{}

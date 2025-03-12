@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/valkyrie-fnd/valkyrie/valkhttp"
 )
 

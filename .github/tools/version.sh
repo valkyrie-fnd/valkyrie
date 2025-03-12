@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Get revision of latest tag
 LATEST_TAG_REV=$(git rev-list --tags --max-count=1)
 # Get revision of latest commit
@@ -12,13 +12,13 @@ else
 fi
 
 # Strip 'v' prefix
-LATEST_TAG=$(echo "$LATEST_TAG" | sed 's/^v//g')
+LATEST_TAG=${LATEST_TAG#v}
 
 if [ "$LATEST_TAG_REV" != "$LATEST_COMMIT_REV" ]; then
     # If revision for latest commit doesn't match revision of latest tag,
     # it means we are creating a prerelease.
 
-    # Strip any existing prerelase from tag
+    # Strip any existing prerelease from tag
     LATEST_TAG=$(echo "$LATEST_TAG" | cut -d "-" -f1)
 
     # Increment the patch version (0.0.2 -> 0.0.3)

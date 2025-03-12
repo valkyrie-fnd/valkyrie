@@ -16,7 +16,6 @@ import (
 
 	"github.com/valkyrie-fnd/valkyrie/configs"
 	"github.com/valkyrie-fnd/valkyrie/internal/testutils"
-	"github.com/valkyrie-fnd/valkyrie/pam"
 	"github.com/valkyrie-fnd/valkyrie/provider/evolution"
 )
 
@@ -854,7 +853,7 @@ func (s *EvolutionIntegrationTestSuite) prepareCase(userID string) (*EvoRGIClien
 	s.Assert().Equal("OK", balanceResp.Status)
 
 	// Here we pay for all the layers of type wrapping
-	s.Require().True(decimal.Decimal(pam.Amt(balanceResp.Balance)).GreaterThanOrEqual(decimal.NewFromFloat(50)),
+	s.Require().True(decimal.Decimal(balanceResp.Balance).GreaterThanOrEqual(decimal.NewFromFloat(50)),
 		"Starting balance needs to be >= 50")
 
 	return client, balanceResp
@@ -941,12 +940,12 @@ func rnd() string {
 
 // addToAmount unpacks amounts to decimals and does simple addition
 func addToAmount(amt evolution.Amount, val float64) evolution.Amount {
-	res := decimal.Decimal(pam.Amt(amt)).Add(decimal.NewFromFloat(val))
-	return evolution.Amount(pam.Amt(res))
+	res := decimal.Decimal(amt).Add(decimal.NewFromFloat(val))
+	return evolution.Amount(res)
 }
 
 func multiply(amt evolution.Amount, times int64) float64 {
-	res := decimal.Decimal(pam.Amt(amt)).Mul(decimal.NewFromInt(times))
+	res := decimal.Decimal(amt).Mul(decimal.NewFromInt(times))
 	return res.InexactFloat64()
 }
 

@@ -27,7 +27,7 @@ func ConfigureLogging(logConfig configs.LogConfig, profiles *Profiles) {
 	} else {
 		zerolog.SetGlobalLevel(level)
 	}
-	// Profile to prevent changing of logging. Test will set up logging it self
+	// Profile to prevent changing of logging. Test will set up logging itself
 	if profiles.Has("testlog") {
 		return
 	}

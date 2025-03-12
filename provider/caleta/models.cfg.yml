@@ -1,6 +1,3 @@
-# Used with oapi-codegen
-# To install oapi-codegen run: "go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest"
-# To generate: oapi-codegen --config generate.cfg.yml /path/to/caleta-oapi3-definition.yaml
 output: models.gen.go
 package: caleta
 generate:

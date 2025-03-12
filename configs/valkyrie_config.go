@@ -82,7 +82,7 @@ type ProviderConf struct {
 	Auth map[string]any `yaml:"auth"`
 	// ProviderSpecific Any other config specific to each provider
 	ProviderSpecific map[string]any `yaml:"provider_specific,omitempty"`
-	// URL url to use for example gamelaunch
+	// URL to use for example gamelaunch
 	URL string `yaml:"url"`
 	// BasePath used to distinguish endpoints exposed by Valkyrie
 	BasePath string `yaml:"base_path,omitempty"`

@@ -37,7 +37,7 @@ func (s *WalletService) WithContext(ctx context.Context) Service {
 func (s *WalletService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorResponse) {
 	session, err := s.pamClient.RefreshSession(s.refreshSessionRequestMapper(req))
 	if err != nil {
-		e := createRtErrorResponse(fmt.Errorf("Failed to Auth: %w", err))
+		e := createRtErrorResponse(fmt.Errorf("failed to Auth: %w", err))
 		return nil, &e
 	}
 
@@ -49,7 +49,7 @@ func (s *WalletService) Auth(req AuthRequest) (*AuthResponseWrapper, *ErrorRespo
 
 	balance, err := s.pamClient.GetBalance(s.getBalanceMapper(req.BaseRequest))
 	if err != nil {
-		e := createRtErrorResponse(fmt.Errorf("Failed to Auth: %w", err))
+		e := createRtErrorResponse(fmt.Errorf("failed to Auth: %w", err))
 		return nil, &e
 	}
 

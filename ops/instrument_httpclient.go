@@ -2,7 +2,6 @@ package ops
 
 import (
 	"context"
-	"go.opentelemetry.io/otel/metric"
 	"time"
 
 	"github.com/gofiber/fiber/v2/utils"
@@ -11,6 +10,7 @@ import (
 	"github.com/valyala/fasthttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/semconv/v1.17.0"
 
 	"github.com/valkyrie-fnd/valkyrie/internal/pipeline"
@@ -60,7 +60,6 @@ func addTraceHeaders(ctx context.Context, headers *fasthttp.RequestHeader) {
 
 func HTTPLoggingHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 	return func(pc pipeline.PipelineContext[T]) error {
-
 		log.Ctx(pc.Context()).
 			Debug().
 			Func(logHTTPRequest(pc.Payload().Request())).
@@ -114,21 +113,18 @@ func HTTPMetricHandler[T FastHTTPPayload]() pipeline.Handler[T] {
 	}
 
 	return func(pc pipeline.PipelineContext[T]) error {
-
 		attributes := httpClientReqAttributes(pc.Payload().Request())
-		opts := metric.WithAttributes(attributes...)
 		start := time.Now()
-		httpClientActive.Add(pc.Context(), 1, opts)
+		httpClientActive.Add(pc.Context(), 1, metric.WithAttributes(attributes...))
 
 		err := pc.Next()
 
 		attributes = append(attributes, httpClientRespAttributes(pc.Payload().Response())...)
-		opts = metric.WithAttributes(attributes...)
 
-		httpClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), opts)
-		httpClientActive.Add(pc.Context(), -1, opts)
+		httpClientDuration.Record(pc.Context(), time.Since(start).Milliseconds(), metric.WithAttributes(attributes...))
+		httpClientActive.Add(pc.Context(), -1, metric.WithAttributes(attributes...))
 		if err != nil || pc.Payload().Response().StatusCode() >= 500 {
-			httpClientErrors.Add(pc.Context(), 1, opts)
+			httpClientErrors.Add(pc.Context(), 1, metric.WithAttributes(attributes...))
 		}
 
 		return err
